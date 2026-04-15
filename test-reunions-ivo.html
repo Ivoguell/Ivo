@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test de diagnosi de reunions</title>
+  <style>
+    :root{
+      --bg:#f5f7fa;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#d1d5db;
+      --accent:#1f4e79;
+      --accent-2:#e8f0f7;
+      --risk:#8b1e1e;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Segoe UI", Arial, sans-serif;
+      background:linear-gradient(180deg,#f7f9fc 0%,#eef2f7 100%);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:36px 20px 60px}
+    .hero{
+      background:linear-gradient(135deg,#1f4e79 0%,#2d658f 100%);
+      color:#fff;border-radius:24px;padding:34px 34px 28px;
+      box-shadow:var(--shadow);margin-bottom:24px;
+    }
+    .hero h1{margin:0 0 10px 0;font-size:2rem;line-height:1.15;letter-spacing:-0.02em}
+    .hero p{margin:0;max-width:860px;line-height:1.55;color:rgba(255,255,255,.92);font-size:1rem}
+    .panel{
+      background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:26px;margin-bottom:18px;border:1px solid rgba(31,78,121,.07);
+    }
+    .panel h2{margin:0 0 8px 0;font-size:1.25rem;color:var(--accent)}
+    .muted{color:var(--muted);line-height:1.55}
+    .q{padding:20px 0;border-top:1px solid var(--line)}
+    .q:first-of-type{border-top:none;padding-top:8px}
+    .q-title{font-weight:600;font-size:1rem;line-height:1.45;margin-bottom:12px}
+    .scale{display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));gap:10px;margin-top:14px}
+    .scale-note{
+      display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));gap:10px;
+      font-size:.85rem;color:var(--muted);margin-top:8px;text-align:center;
+    }
+    .opt{position:relative}
+    .opt input{position:absolute;opacity:0;pointer-events:none}
+    .opt label{
+      display:flex;align-items:center;justify-content:center;min-height:52px;
+      border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;
+      font-weight:600;transition:.18s ease;user-select:none;
+    }
+    .opt label:hover{border-color:var(--accent);background:var(--accent-2)}
+    .opt input:checked + label{
+      background:var(--accent);color:#fff;border-color:var(--accent);
+      box-shadow:0 6px 16px rgba(31,78,121,.18);
+    }
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+    button{
+      border:none;border-radius:14px;padding:14px 18px;font-size:1rem;
+      font-weight:600;cursor:pointer;transition:.18s ease;
+    }
+    .primary{background:var(--accent);color:#fff}
+    .primary:hover{filter:brightness(1.05)}
+    .secondary{background:#eef2f7;color:var(--text)}
+    .secondary:hover{background:#e5eaf0}
+    .result{
+      display:none;margin-top:26px;padding:22px;border-radius:18px;background:#fbfcfe;
+      border:1px solid #dbe4ef;
+    }
+    .result.show{display:block}
+    .scorebox{
+      display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:stretch;margin-bottom:16px
+    }
+    .scorecard,.levelcard,.feedback{
+      background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:18px;
+    }
+    .score{font-size:2rem;font-weight:700;color:var(--accent);margin:6px 0 2px}
+    .level{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+    .feedback p{margin:0 0 10px 0;line-height:1.55}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;font-size:.88rem;border-radius:999px;
+      padding:8px 12px;font-weight:700;background:#eef2f7;color:var(--accent);
+    }
+    .footer-note{margin-top:16px;color:var(--muted);font-size:.9rem;line-height:1.5}
+    .error{color:var(--risk);font-weight:600;margin-top:14px;display:none}
+    .mini{font-size:.9rem;color:var(--muted)}
+    @media (max-width:860px){
+      .scorebox{grid-template-columns:1fr}
+      .hero{padding:26px 22px}
+      .panel{padding:20px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Test de diagnosi de reunions</h1>
+      <p>
+        Aquest qüestionari permet valorar com funcionen actualment les reunions dins l’equip o l’organització.
+        Respon de l’1 al 5, on 1 és “gairebé mai” i 5 és “gairebé sempre”.
+        Al final obtindràs una lectura ràpida del nivell de maduresa de les reunions i una devolució avaluadora breu.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Escala de resposta</h2>
+      <p class="muted">Marca una opció a cada pregunta.</p>
+      <div class="scale-note" style="margin-top:14px;">
+        <div>1<br><span class="mini">Gairebé mai</span></div>
+        <div>2<br><span class="mini">Poques vegades</span></div>
+        <div>3<br><span class="mini">De vegades</span></div>
+        <div>4<br><span class="mini">Sovint</span></div>
+        <div>5<br><span class="mini">Gairebé sempre</span></div>
+      </div>
+    </section>
+
+    <form id="quiz" class="panel">
+      <h2>Qüestionari</h2>
+      <p class="muted">Valora el funcionament real de les reunions, no el funcionament ideal.</p>
+      <div id="questions"></div>
+      <div class="error" id="error">Falten preguntes per respondre. Revisa-les i torna a calcular el resultat.</div>
+      <div class="actions">
+        <button type="button" class="primary" id="calcBtn">Calcular resultat</button>
+        <button type="reset" class="secondary" id="resetBtn">Reiniciar</button>
+      </div>
+      <div class="result" id="result">
+        <div class="scorebox">
+          <div class="scorecard">
+            <div class="badge">Resultat global</div>
+            <div class="score" id="scoreText">0 / 75</div>
+            <div class="muted" id="scoreDetail"></div>
+          </div>
+          <div class="levelcard">
+            <div class="badge">Nivell detectat</div>
+            <div class="level" id="levelText"></div>
+            <div class="muted" id="levelDesc"></div>
+          </div>
+        </div>
+        <div class="feedback">
+          <h2 style="margin-top:0;">Resposta avaluadora</h2>
+          <div id="feedbackText"></div>
+        </div>
+        <div class="footer-note">
+          Recomanació: utilitza aquest resultat com a punt de partida per obrir una conversa de millora, no com a judici tancat.
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const questions = [
+      "Les reunions tenen un objectiu clar abans de començar.",
+      "L’ordre del dia està definit i es comparteix amb antelació.",
+      "Només hi assisteixen les persones realment necessàries.",
+      "La informació prèvia arriba amb temps suficient per preparar-se.",
+      "La durada de les reunions acostuma a ser adequada.",
+      "La persona que condueix la reunió manté el focus i el ritme.",
+      "Les intervencions acostumen a ser concretes i orientades al tema.",
+      "Es gestiona bé la participació de totes les persones presents.",
+      "Les reunions serveixen per prendre decisions, no només per parlar.",
+      "Els acords queden clars i visibles abans de tancar la reunió.",
+      "Cada acord té responsable assignat.",
+      "Cada acord té termini o data de seguiment.",
+      "Després de la reunió es comparteix un resum o acta útil.",
+      "Es fa seguiment real del que s’ha decidit.",
+      "En general, les reunions aporten valor i ajuden a avançar."
+    ];
+
+    const container = document.getElementById("questions");
+
+    questions.forEach((q, i) => {
+      const block = document.createElement("div");
+      block.className = "q";
+      block.innerHTML = `
+        <div class="q-title">${i + 1}. ${q}</div>
+        <div class="scale">
+          ${[1,2,3,4,5].map(v => `
+            <div class="opt">
+              <input type="radio" id="q${i+1}_${v}" name="q${i+1}" value="${v}">
+              <label for="q${i+1}_${v}">${v}</label>
+            </div>
+          `).join("")}
+        </div>
+      `;
+      container.appendChild(block);
+    });
+
+    function sixLines(lines){
+      return lines.map(line => `<p>${line}</p>`).join("");
+    }
+
+    function buildFeedback(score){
+      if(score <= 30){
+        return {
+          level: "Nivell crític",
+          desc: "Les reunions mostren una estructura feble i generen poc retorn operatiu.",
+          lines: [
+            "Les reunions actuals presenten un nivell baix d’eficàcia i una estructura poc consistent.",
+            "Probablement hi ha manca de preparació, dispersió durant la conversa i poc tancament executiu.",
+            "Això acostuma a traduir-se en temps perdut, desgast d’equip i decisions poc traçables.",
+            "El primer pas no és reunir més, sinó ordenar millor per a què us reuniu i com ho feu.",
+            "Cal reforçar objectius, agenda, moderació, síntesi i seguiment posterior.",
+            "Hi ha molt marge de millora i l’impacte d’ordenar aquest sistema pot ser alt i ràpid."
+          ]
+        };
+      } else if(score <= 45){
+        return {
+          level: "Nivell fràgil",
+          desc: "Hi ha bases aprofitables, però el model encara és irregular i poc robust.",
+          lines: [
+            "Les reunions tenen alguns elements útils, però encara funcionen de manera desigual.",
+            "Segurament hi ha bones intencions, però no sempre hi ha prou disciplina metodològica.",
+            "La preparació, la conducció i el seguiment no acaben de ser consistents en tots els casos.",
+            "Això fa que algunes reunions aportin valor i d’altres quedin en conversa sense prou retorn.",
+            "El focus hauria d’estar en sistematitzar bones pràctiques i reduir la improvisació.",
+            "Amb petits ajustos en estructura i lideratge, la millora pot ser molt visible."
+          ]
+        };
+      } else if(score <= 60){
+        return {
+          level: "Nivell funcional",
+          desc: "Les reunions funcionen raonablement bé, tot i que encara hi ha recorregut de millora.",
+          lines: [
+            "Les reunions mostren una base funcional i, en general, ajuden a coordinar i avançar.",
+            "Hi ha criteri, una certa estructura i una sensació de treball prou ordenat.",
+            "Tot i això, encara pot haver-hi marge en concreció, agilitat i qualitat del tancament.",
+            "Probablement no esteu en un escenari problemàtic, però sí en un punt perfectible.",
+            "El repte ara és passar de reunions correctes a reunions realment eficients i directives.",
+            "Professionalitzar petits detalls pot multiplicar la qualitat del temps compartit."
+          ]
+        };
+      } else if(score <= 69){
+        return {
+          level: "Nivell sòlid",
+          desc: "El sistema de reunions està ben encaminat i transmet maduresa organitzativa.",
+          lines: [
+            "Les reunions reflecteixen una dinàmica madura, bastant ordenada i orientada a resultat.",
+            "Hi ha una bona base de preparació, conducció i seguiment en la majoria de situacions.",
+            "Això acostuma a reforçar la confiança, la claredat i la velocitat de coordinació.",
+            "El marge de millora existeix, però ja no és tant estructural com d’afinament.",
+            "Ara el valor està en guanyar precisió, eficiència i encara més qualitat directiva.",
+            "Sou a prop d’un model de reunió exemplar si manteniu disciplina i criteri."
+          ]
+        };
+      } else {
+        return {
+          level: "Nivell excel·lent",
+          desc: "Les reunions projecten un model altament efectiu, rigorós i orientat a valor.",
+          lines: [
+            "Les reunions actuals presenten un nivell de qualitat molt alt i una gran coherència operativa.",
+            "Hi ha preparació, focus, bona conducció, decisions clares i seguiment real dels acords.",
+            "Això converteix la reunió en una eina de lideratge i no en una font de desgast.",
+            "El model transmet cultura d’eficiència, respecte pel temps i orientació a resultats.",
+            "El repte ja no és corregir grans mancances, sinó preservar aquest nivell i refinar-lo.",
+            "Teniu una base molt sòlida per ser referència interna de bones pràctiques."
+          ]
+        };
+      }
+    }
+
+    document.getElementById("calcBtn").addEventListener("click", () => {
+      const form = document.getElementById("quiz");
+      const error = document.getElementById("error");
+      const result = document.getElementById("result");
+
+      let total = 0;
+      let answered = 0;
+
+      questions.forEach((_, i) => {
+        const checked = form.querySelector(`input[name="q${i+1}"]:checked`);
+        if (checked) {
+          total += Number(checked.value);
+          answered += 1;
+        }
+      });
+
+      if (answered !== questions.length) {
+        error.style.display = "block";
+        result.classList.remove("show");
+        return;
+      }
+
+      error.style.display = "none";
+
+      const percent = Math.round((total / 75) * 100);
+      const fb = buildFeedback(total);
+
+      document.getElementById("scoreText").textContent = `${total} / 75`;
+      document.getElementById("scoreDetail").textContent = `Equival aproximadament a un ${percent}% de maduresa percebuda en les reunions.`;
+      document.getElementById("levelText").textContent = fb.level;
+      document.getElementById("levelDesc").textContent = fb.desc;
+      document.getElementById("feedbackText").innerHTML = sixLines(fb.lines);
+
+      result.classList.add("show");
+      result.scrollIntoView({behavior:"smooth", block:"start"});
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("error").style.display = "none";
+      document.getElementById("result").classList.remove("show");
+      window.scrollTo({top: 0, behavior: "smooth"});
+    });
+  </script>
+</body>
+</html>

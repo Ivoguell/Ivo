@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radar de Prioridades No Atendidas | IDEI Consultores</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: #020617;
+      color: #fff;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card{
+      padding-right: 200px;
+      min-height: 220px;
+    }
+    .logo {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      width: 118px;
+      height: 118px;
+      object-fit: contain;
+      opacity: .98;
+      background: rgba(255,255,255,.96);
+      border-radius: 22px;
+      padding: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .32em;
+      font-size: 11px;
+      color: #67e8f9;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 48px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      max-width: 720px;
+    }
+    .lead {
+      color: #cbd5e1;
+      font-size: 18px;
+      line-height: 1.5;
+      max-width: 760px;
+      margin-bottom: 18px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .chip {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+    .progressbar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+    .progressbar > div {
+      height: 100%;
+      width: 0%;
+      background: #67e8f9;
+      transition: width .25s ease;
+    }
+    .progress-text {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .qcard {
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 26px;
+      padding: 24px;
+      margin-top: 18px;
+    }
+    .block {
+      text-transform: uppercase;
+      letter-spacing: .24em;
+      color: #94a3b8;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+    .question {
+      font-size: 22px;
+      line-height: 1.35;
+      margin-bottom: 16px;
+    }
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+    .option {
+      width: 100%;
+      text-align: left;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      color: white;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+    .option:hover { background: rgba(255,255,255,0.08); }
+    .option.active {
+      border-color: #67e8f9;
+      background: rgba(103,232,249,0.12);
+      box-shadow: 0 10px 30px rgba(103,232,249,0.12);
+    }
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    input {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(15,23,42,1);
+      color: white;
+      padding: 14px 16px;
+      font-size: 15px;
+      outline: none;
+    }
+    .btn {
+      display: inline-block;
+      border-radius: 18px;
+      padding: 14px 18px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .btn-primary {
+      background: #67e8f9;
+      color: #082f49;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .sticky { position: sticky; top: 28px; }
+    .result-card {
+      background: linear-gradient(to bottom, rgba(103,232,249,.10), rgba(255,255,255,.05));
+    }
+    .result-box {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(2,6,23,.46);
+      border-radius: 20px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .result-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .result-desc {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    ul {
+      margin: 10px 0 0 18px;
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.45;
+      padding: 0;
+    }
+    .cta-box {
+      margin-top: 18px;
+      border: 1px solid rgba(103,232,249,.2);
+      background: rgba(103,232,249,.05);
+      border-radius: 18px;
+      padding: 16px;
+      color: #e2e8f0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .btns { display: grid; gap: 10px; margin-top: 16px; }
+    @media (max-width: 960px) {
+      .wrap { grid-template-columns: 1fr; }
+      .sticky { position: static; }
+      h1 { font-size: 36px; max-width: 100%; }
+      .hero-card { padding-right: 28px; padding-top: 120px; }
+      .logo { width: 88px; height: 88px; top: 22px; right: 22px; }
+      .inputs { grid-template-columns: 1fr; }
+      .logo { width: 76px; height: 76px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div>
+      <div class="card hero-card">
+        <img src="IDEI consultores logo 1 .png" alt="IDEI Consultores" class="logo">
+        <div class="eyebrow">Apoyo ejecutivo externo</div>
+        <h1>Radar de Prioridades No Atendidas</h1>
+        <div class="lead">Esto no es un test. Es una lectura ejecutiva rápida para detectar qué temas importantes estáis dejando sin abordar y dónde tendría más sentido intervenir ahora.</div>
+        <div class="chips">
+          <div class="chip">2–3 minutos</div>
+          <div class="chip">Directivos y responsables</div>
+          <div class="chip">Resultado accionable</div>
+        </div>
+        <div class="progressbar"><div id="progress"></div></div>
+        <div class="progress-text">Avance: <span id="progressText">0%</span></div>
+      </div>
+
+      <div id="questions"></div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="result-title">Dónde enviarte el resultado</div>
+        <div class="inputs">
+          <input id="name" placeholder="Nombre">
+          <input id="company" placeholder="Empresa">
+          <input id="email" placeholder="Email">
+          <input id="phone" placeholder="Teléfono">
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky">
+      <div class="card result-card">
+        <div class="eyebrow">Resultado</div>
+        <div class="result-title" style="font-size:30px;margin-bottom:12px;">Lectura ejecutiva</div>
+        <div class="lead" id="summary" style="font-size:16px;margin-bottom:8px;">Responde las preguntas y aquí aparecerá la lectura ejecutiva.</div>
+        <div id="results"></div>
+        <div class="cta-box">
+          Cuando una empresa detecta con claridad qué está dejando sin abordar, ya ha dado medio paso. El siguiente es decidir cómo activarlo sin añadir estructura fija ni ruido innecesario.
+        </div>
+        <div class="btns">
+          <a id="emailBtn" class="btn btn-primary" href="#">Enviar por email</a>
+          <a id="waBtn" class="btn btn-secondary" href="#" target="_blank" rel="noreferrer">Enviar por WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const questions = [
+  {
+    id: 'q1',
+    text: '¿Qué frentes relevantes sabéis que deberían estar mejor atendidos hoy, pero siguen sin dueño claro o sin tiempo real?',
+    multi: true,
+    options: [
+      { label: 'Clientes y experiencia', tags: ['clientes', 'propuesta_valor', 'ejecucion_comercial'] },
+      { label: 'Talento, liderazgo o clima', tags: ['talento', 'liderazgo', 'clima'] },
+      { label: 'Marketing, visibilidad o captación', tags: ['marketing', 'propuesta_valor', 'ejecucion_comercial'] },
+      { label: 'Digitalización, procesos o IA aplicada', tags: ['digitalizacion', 'ia', 'organizacion'] },
+    ]
+  },
+  {
+    id: 'q2',
+    text: 'Cuando una mejora importante no avanza, ¿qué suele frenarla más?',
+    multi: false,
+    options: [
+      { label: 'Falta de tiempo directivo', tags: ['priorizacion', 'organizacion'] },
+      { label: 'No hay perfil interno que lo lidere', tags: ['talento', 'liderazgo'] },
+      { label: 'Se habla, pero no se ejecuta', tags: ['ejecucion_comercial', 'organizacion', 'priorizacion'] },
+      { label: 'No está claro por dónde empezar', tags: ['propuesta_valor', 'digitalizacion', 'ia'] },
+    ]
+  },
+  {
+    id: 'q3',
+    text: '¿Dónde notáis más coste oculto hoy?',
+    multi: false,
+    options: [
+      { label: 'Clientes que no repiten, dudan o comparan demasiado', tags: ['clientes', 'propuesta_valor'] },
+      { label: 'Incorporaciones lentas o talento mal activado', tags: ['welcome', 'talento'] },
+      { label: 'Equipos cansados, reactivos o poco alineados', tags: ['clima', 'liderazgo'] },
+      { label: 'Mucho esfuerzo comercial o de marketing con poco retorno', tags: ['marketing', 'ejecucion_comercial'] },
+    ]
+  },
+  {
+    id: 'q4',
+    text: '¿Cuál de estas frases os representa más ahora mismo?',
+    multi: false,
+    options: [
+      { label: 'Tenemos buenas ideas, pero no bajan a tierra', tags: ['priorizacion', 'organizacion'] },
+      { label: 'Vamos tarde en varios temas importantes', tags: ['digitalizacion', 'ia', 'marketing'] },
+      { label: 'Dependemos demasiado de pocas personas', tags: ['liderazgo', 'talento', 'organizacion'] },
+      { label: 'Sabemos que hay margen de mejora, pero nadie puede cogerlo', tags: ['priorizacion', 'ejecucion_comercial'] },
+    ]
+  },
+  {
+    id: 'q5',
+    text: 'En relación con clientes y mercado, ¿qué os preocupa más?',
+    multi: false,
+    options: [
+      { label: 'Afinar mejor la propuesta de valor', tags: ['propuesta_valor'] },
+      { label: 'Ordenar marketing y captación', tags: ['marketing'] },
+      { label: 'Mejorar seguimiento y conversión comercial', tags: ['ejecucion_comercial'] },
+      { label: 'Entender mejor cliente, experiencia o fidelización', tags: ['clientes'] },
+    ]
+  },
+  {
+    id: 'q6',
+    text: 'En relación con personas y organización, ¿qué duele más?',
+    multi: false,
+    options: [
+      { label: 'Mandos o liderazgo poco homogéneos', tags: ['liderazgo'] },
+      { label: 'Clima, implicación o compromiso', tags: ['clima'] },
+      { label: 'Onboarding o integración mejorables', tags: ['welcome'] },
+      { label: 'Falta de foco, orden o coordinación', tags: ['organizacion'] },
+    ]
+  },
+  {
+    id: 'q7',
+    text: '¿Qué grado de avance real tenéis en digitalización e IA aplicada?',
+    multi: false,
+    options: [
+      { label: 'Muy poco; sabemos que vamos tarde', tags: ['digitalizacion', 'ia'] },
+      { label: 'Hay pruebas sueltas, sin criterio claro', tags: ['ia', 'priorizacion'] },
+      { label: 'Tenemos herramientas, pero no adopción real', tags: ['digitalizacion', 'liderazgo'] },
+      { label: 'Hay avance, pero aún no genera impacto suficiente', tags: ['digitalizacion', 'ia', 'organizacion'] },
+    ]
+  },
+  {
+    id: 'q8',
+    text: 'Si durante los próximos 90 días alguien con criterio os ayudara de verdad, ¿dónde tendría más sentido intervenir?',
+    multi: false,
+    options: [
+      { label: 'Ordenar prioridades y acelerar ejecución', tags: ['priorizacion', 'organizacion'] },
+      { label: 'Reforzar clientes, marketing o ventas', tags: ['clientes', 'marketing', 'ejecucion_comercial'] },
+      { label: 'Activar talento, liderazgo o clima', tags: ['talento', 'liderazgo', 'clima'] },
+      { label: 'Impulsar digitalización e IA aplicada', tags: ['digitalizacion', 'ia'] },
+    ]
+  }
+];
+
+const tagLabels = {
+  clientes: 'Clientes y experiencia',
+  talento: 'Talento',
+  clima: 'Clima y compromiso',
+  welcome: 'Welcome y onboarding',
+  liderazgo: 'Liderazgo',
+  marketing: 'Marketing',
+  digitalizacion: 'Digitalización',
+  ia: 'IA aplicada',
+  organizacion: 'Organización',
+  propuesta_valor: 'Propuesta de valor',
+  ejecucion_comercial: 'Ejecución comercial',
+  priorizacion: 'Priorización estratégica',
+};
+
+const descriptions = {
+  clientes: 'Hay margen para entender mejor al cliente, reforzar la experiencia y convertir ese criterio en fidelización o crecimiento.',
+  talento: 'Se percibe necesidad de reforzar atracción, activación o desarrollo del talento con más intención y estructura.',
+  clima: 'Puede haber desgaste, baja implicación o falta de alineación que ya afecta al rendimiento y al ambiente.',
+  welcome: 'La entrada de nuevas personas no parece estar suficientemente diseñada ni aprovechada como palanca de integración.',
+  liderazgo: 'Conviene reforzar criterio directivo, hábitos de gestión y capacidad de tracción en mandos y responsables.',
+  marketing: 'Hay oportunidad para ordenar foco, mensaje, acciones y retorno comercial del esfuerzo de marketing.',
+  digitalizacion: 'Hay recorrido claro para simplificar procesos, ganar agilidad y ordenar mejor herramientas y forma de trabajar.',
+  ia: 'La IA aparece como oportunidad real, pero aún sin convertirla en impacto práctico y útil en el día a día.',
+  organizacion: 'Se detecta necesidad de más orden operativo, definición de responsabilidades y mejor coordinación.',
+  propuesta_valor: 'Puede faltar una formulación más clara y potente de lo que la empresa aporta y por qué debería elegirse.',
+  ejecucion_comercial: 'El reto no parece ser solo vender más, sino vender con más método, seguimiento y capacidad de conversión.',
+  priorizacion: 'Probablemente hay demasiadas cosas abiertas y falta un criterio claro para decidir qué activar primero.',
+};
+
+const examples = {
+  clientes: ['Mapa rápido de puntos de fricción del cliente', 'Ajuste de experiencia y propuesta de valor', 'Plan de mejora de fidelización o seguimiento'],
+  talento: ['Diagnóstico ejecutivo de talento y roles críticos', 'Plan de activación o refuerzo de personas clave', 'Acciones concretas para atracción, desarrollo o engagement'],
+  clima: ['Lectura rápida del clima real', 'Palancas para implicación y coordinación', 'Acciones de mejora del compromiso sin burocracia'],
+  welcome: ['Diseño de welcome/onboarding útil y ligero', 'Secuencia de integración para nuevas incorporaciones', 'Activación temprana de cultura, foco y autonomía'],
+  liderazgo: ['Acompañamiento a mandos y responsables', 'Criterios comunes de liderazgo y seguimiento', 'Intervención para ordenar decisiones y hábitos de gestión'],
+  marketing: ['Revisión de mensaje, foco y canales', 'Plan de marketing realista y accionable', 'Priorización de acciones con impacto comercial'],
+  digitalizacion: ['Lectura rápida de procesos mejorables', 'Priorización de automatizaciones o herramientas', 'Plan simple de avance digital con foco de negocio'],
+  ia: ['Detección de usos de IA con impacto inmediato', 'Casos aplicados por área', 'Implantación ligera y acompañada'],
+  organizacion: ['Clarificación de prioridades, roles y seguimiento', 'Simplificación de reuniones y coordinación', 'Estructura operativa más ligera y efectiva'],
+  propuesta_valor: ['Ajuste de posicionamiento y argumentos de valor', 'Reformulación comercial clara y diferenciadora', 'Aterrizaje de mensajes para mercado y equipo'],
+  ejecucion_comercial: ['Mejora del proceso comercial', 'Seguimiento de oportunidades y cierre', 'Alineación entre marketing, ventas y propuesta'],
+  priorizacion: ['Definición de frentes críticos para 90 días', 'Secuencia realista de decisiones y ejecución', 'Desbloqueo directivo con foco y criterio'],
+};
+
+const answers = {};
+
+function renderQuestions() {
+  const container = document.getElementById('questions');
+  container.innerHTML = '';
+  questions.forEach((q, qIndex) => {
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="block">Bloque ${qIndex + 1}</div>
+      <div class="question">${q.text}</div>
+      <div class="options"></div>
+    `;
+    const optionsDiv = card.querySelector('.options');
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        if (!answers[q.id]) answers[q.id] = [];
+        if (q.multi) {
+          const pos = answers[q.id].indexOf(idx);
+          if (pos >= 0) answers[q.id].splice(pos, 1);
+          else answers[q.id].push(idx);
+        } else {
+          answers[q.id] = [idx];
+        }
+        renderQuestions();
+        updateResults();
+      };
+      if ((answers[q.id] || []).includes(idx)) btn.classList.add('active');
+      optionsDiv.appendChild(btn);
+    });
+    container.appendChild(card);
+  });
+}
+
+function getRanking() {
+  const scores = {};
+  questions.forEach(q => {
+    (answers[q.id] || []).forEach(idx => {
+      q.options[idx].tags.forEach(tag => {
+        scores[tag] = (scores[tag] || 0) + 1;
+      });
+    });
+  });
+  return Object.entries(scores).sort((a,b) => b[1] - a[1]);
+}
+
+function summaryPhrase(topAreas) {
+  if (topAreas.includes('priorizacion') && topAreas.includes('organizacion')) {
+    return 'Ahora mismo el reto no parece ser la falta de ideas, sino bajar prioridades a ejecución real con más foco, orden y tracción.';
+  }
+  if (topAreas.includes('clientes') || topAreas.includes('marketing') || topAreas.includes('ejecucion_comercial')) {
+    return 'Hay margen claro para convertir mejor el esfuerzo del negocio en crecimiento, relación con cliente y resultado comercial.';
+  }
+  if (topAreas.includes('talento') || topAreas.includes('liderazgo') || topAreas.includes('clima')) {
+    return 'El punto sensible parece estar en personas, liderazgo y capacidad de activar mejor el rendimiento colectivo.';
+  }
+  if (topAreas.includes('digitalizacion') || topAreas.includes('ia')) {
+    return 'La oportunidad principal parece estar en ordenar mejor cómo la empresa trabaja y cómo aprovecha tecnología e IA con criterio.';
+  }
+  return 'Se percibe una empresa con recorrido claro de mejora, pero con varios temas relevantes todavía sin dueño, sin foco o sin tiempo real.';
+}
+
+function updateResults() {
+  const answered = Object.keys(answers).length;
+  const progress = Math.round((answered / questions.length) * 100);
+  document.getElementById('progress').style.width = progress + '%';
+  document.getElementById('progressText').textContent = progress + '%';
+
+  const ranking = getRanking();
+  const topAreas = ranking.slice(0, 4).map(r => r[0]);
+  document.getElementById('summary').textContent = answered ? summaryPhrase(topAreas) : 'Responde las preguntas y aquí aparecerá la lectura ejecutiva.';
+
+  const res = document.getElementById('results');
+  res.innerHTML = '';
+  topAreas.forEach(tag => {
+    const box = document.createElement('div');
+    box.className = 'result-box';
+    box.innerHTML = `
+      <div class="result-title">${tagLabels[tag]}</div>
+      <div class="result-desc">${descriptions[tag]}</div>
+      <ul>${examples[tag].slice(0,3).map(x => `<li>${x}</li>`).join('')}</ul>
+    `;
+    res.appendChild(box);
+  });
+
+  const name = document.getElementById('name').value || '[Nombre]';
+  const company = document.getElementById('company').value || '[Empresa]';
+  const email = document.getElementById('email').value || '[Email]';
+  const phone = document.getElementById('phone').value || '[Teléfono]';
+
+  const message =
+`Hola Ivo, te envío el resultado de mi lectura ejecutiva rápida.
+
+Nombre: ${name}
+Empresa: ${company}
+Email: ${email}
+Teléfono: ${phone}
+
+Resumen: ${summaryPhrase(topAreas)}
+
+Áreas prioritarias:
+${topAreas.map((tag, i) => `${i+1}. ${tagLabels[tag]}`).join('\n')}
+
+Podemos hablar de cómo abordar estos temas con tu apoyo externo.`;
+
+  document.getElementById('emailBtn').href =
+    'mailto:ivo.guell@alumni.esade.edu?subject=' + encodeURIComponent('Resultado lectura ejecutiva rápida') +
+    '&body=' + encodeURIComponent(message);
+
+  document.getElementById('waBtn').href =
+    'https://wa.me/34676100061?text=' + encodeURIComponent(message);
+}
+
+['name','company','email','phone'].forEach(id => {
+  document.addEventListener('input', e => {
+    if (e.target && e.target.id === id) updateResults();
+  });
+});
+
+renderQuestions();
+updateResults();
+</script>
+</body>
+</html>

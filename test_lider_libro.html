@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test interactivo del libro</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --line: #334155;
+      --accent: #d4a24c;
+      --ok: #16a34a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #0b1220 0%, #111827 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(212,162,76,0.14), rgba(255,255,255,0.03));
+      border: 1px solid rgba(212,162,76,0.25);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.02;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 780px;
+      margin: 0;
+    }
+
+    .card {
+      background: rgba(17,24,39,0.92);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.16);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .question-number {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .question-title {
+      font-size: 22px;
+      line-height: 1.35;
+      margin: 0 0 18px;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .option:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .option input {
+      margin-top: 3px;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .option-text {
+      font-size: 16px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #1a1a1a;
+    }
+
+    .btn-secondary {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .hidden { display: none; }
+
+    .result-score {
+      font-size: clamp(38px, 7vw, 68px);
+      line-height: 1;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 10px 0 12px;
+    }
+
+    .result-title {
+      font-size: 28px;
+      margin: 0 0 8px;
+    }
+
+    .result-text, .recommendations li {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .recommendations {
+      margin: 14px 0 0;
+      padding-left: 18px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 18px 14px 60px; }
+      .hero, .card { padding: 18px; }
+      .question-title { font-size: 20px; }
+      .option { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Test interactivo</div>
+      <h1>¿Qué nivel tienes hoy?</h1>
+      <p class="subtitle">
+        Responde este diagnóstico breve y descubre tu punto de partida. Al final obtendrás una lectura de tu perfil y algunas recomendaciones prácticas.
+      </p>
+      <div class="meta">
+        <div class="pill">Liderazgo</div>
+        <div class="pill">Humanismo digital</div>
+        <div class="pill">Gestión del cambio</div>
+      </div>
+    </section>
+
+    <section id="quiz"></section>
+
+    <section class="card" id="controls">
+      <div class="actions">
+        <button class="btn-primary" id="finishBtn">Ver resultado</button>
+        <button class="btn-secondary" id="resetBtn">Reiniciar</button>
+      </div>
+      <p class="footer-note">Puedes sustituir las preguntas, las opciones y la lógica del resultado por la versión definitiva del libro.</p>
+    </section>
+
+    <section class="card hidden" id="resultCard">
+      <div class="eyebrow">Resultado</div>
+      <div class="result-score" id="resultScore">0%</div>
+      <h2 class="result-title" id="resultTitle">Perfil</h2>
+      <p class="result-text" id="resultText"></p>
+      <ul class="recommendations" id="recommendations"></ul>
+
+      <div class="card" style="margin-top:20px; background: rgba(255,255,255,0.02); border-color: rgba(212,162,76,0.18);">
+        <div class="question-number">Recibe tu resultado por email</div>
+        <p class="footer-note" style="margin-top:0; margin-bottom:16px;">Se abrirá tu gestor de correo con el resultado preparado y con copia a ivo.guell@alumni.esade.edu, que si quieres puedes eliminar antes de enviarlo.</p>
+        <div style="display:grid; gap:12px; grid-template-columns: 1fr 1fr;">
+          <input id="userName" type="text" placeholder="Tu nombre" style="width:100%; padding:14px 16px; border-radius:14px; border:1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text); font-size:15px;" />
+          <input id="userEmail" type="email" placeholder="Tu email" style="width:100%; padding:14px 16px; border-radius:14px; border:1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text); font-size:15px;" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" id="emailBtn">Enviar resultado por email</button>
+        <button class="btn-secondary" id="backBtn">Volver al test</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "Cuando diriges un equipo o un proyecto en un entorno de cambio, sueles...",
+        options: [
+          { text: "Esperar a tener total certeza antes de mover ficha.", value: 1 },
+          { text: "Adaptarte, aunque con dudas o cierta improvisación.", value: 2 },
+          { text: "Actuar con criterio, ajustando el rumbo cuando hace falta.", value: 3 }
+        ]
+      },
+      {
+        text: "Ante la irrupción de nuevas tecnologías, tu actitud más habitual es...",
+        options: [
+          { text: "Desconfianza o bloqueo.", value: 1 },
+          { text: "Interés, pero sin una integración clara.", value: 2 },
+          { text: "Curiosidad crítica y uso consciente.", value: 3 }
+        ]
+      },
+      {
+        text: "En tu forma de liderar, el factor humano ocupa...",
+        options: [
+          { text: "Un lugar secundario frente a la urgencia.", value: 1 },
+          { text: "Un lugar importante, aunque no siempre consistente.", value: 2 },
+          { text: "Un lugar central en las decisiones y relaciones.", value: 3 }
+        ]
+      },
+      {
+        text: "Cuando debes tomar una decisión difícil...",
+        options: [
+          { text: "La pospones demasiado.", value: 1 },
+          { text: "La tomas, aunque con inseguridad.", value: 2 },
+          { text: "La afrontas con responsabilidad y claridad.", value: 3 }
+        ]
+      },
+      {
+        text: "Respecto al cambio organizativo o profesional...",
+        options: [
+          { text: "Lo vives como amenaza.", value: 1 },
+          { text: "Lo aceptas, aunque te cuesta sostenerlo.", value: 2 },
+          { text: "Lo conviertes en oportunidad de evolución.", value: 3 }
+        ]
+      },
+      {
+        text: "Tu relación con la inteligencia artificial es...",
+        options: [
+          { text: "Confusa o lejana.", value: 1 },
+          { text: "Utilitaria, pero poco estratégica.", value: 2 },
+          { text: "Consciente, práctica y alineada con valores.", value: 3 }
+        ]
+      },
+      {
+        text: "Cuando piensas en liderazgo, lo asocias sobre todo con...",
+        options: [
+          { text: "Control y resultados inmediatos.", value: 1 },
+          { text: "Coordinación y resolución de problemas.", value: 2 },
+          { text: "Visión, criterio, humanidad e impacto.", value: 3 }
+        ]
+      },
+      {
+        text: "En momentos de presión, tu capacidad de escucha suele ser...",
+        options: [
+          { text: "Baja, porque priorizas la urgencia.", value: 1 },
+          { text: "Variable, según el contexto.", value: 2 },
+          { text: "Alta, incluso en contextos complejos.", value: 3 }
+        ]
+      },
+      {
+        text: "Tu manera de gestionar el cambio en otras personas tiende a ser...",
+        options: [
+          { text: "Impaciente o poco acompañada.", value: 1 },
+          { text: "Bienintencionada, pero irregular.", value: 2 },
+          { text: "Clara, empática y movilizadora.", value: 3 }
+        ]
+      },
+      {
+        text: "Hoy, tu mayor fortaleza frente al futuro es...",
+        options: [
+          { text: "La voluntad de mejorar.", value: 1 },
+          { text: "Una base en construcción.", value: 2 },
+          { text: "Un criterio sólido con visión humana.", value: 3 }
+        ]
+      }
+    ];
+
+    const results = [
+      {
+        min: 10,
+        max: 16,
+        score: "Despertar",
+        title: "Necesitas reconstruir base antes de acelerar",
+        text: "Hoy no te falta solo información. Te falta una base más sólida para decidir, priorizar y sostener una dirección con serenidad. Probablemente percibes que el entorno cambia más rápido de lo que te gustaría y que, a veces, reaccionas desde la presión, la duda o el cansancio. No es una mala noticia: es un punto de partida valioso. Significa que aún tienes mucho margen para ganar claridad, integrar mejor la tecnología sin sentirte arrastrado por ella y construir una forma de liderazgo más consciente, más humana y más consistente. Antes de correr más, lo importante es reconstruir criterio, foco y estructura.",
+        recommendations: [
+          "Reduce el ruido y define tres prioridades reales para las próximas semanas.",
+          "Evita consumir más información de la que transformas en acción concreta.",
+          "Revisa qué decisiones estás aplazando por exceso de prudencia o saturación.",
+          "Recupera espacios de reflexión para que la urgencia no sustituya tu criterio.",
+          "Empieza por pequeños cambios sostenibles antes de intentar una transformación completa."
+        ]
+      },
+      {
+        min: 17,
+        max: 23,
+        score: "Evolución",
+        title: "Tienes base, pero aún no toda la consistencia",
+        text: "Estás en una fase de construcción real. Ya no partes de cero: tienes sensibilidad, intuición, voluntad de mejora y una base razonable para liderar con más criterio en entornos complejos. Sin embargo, todavía hay cierta distancia entre lo que intuyes y lo que consigues sostener de forma estable. A veces avanzas con claridad; otras, vuelves a patrones de dispersión, duda o exceso de análisis. El reto en esta etapa no es aprenderlo todo de nuevo, sino consolidar mejor lo que ya sabes: integrar tecnología, humanidad y gestión del cambio de una manera más coherente, más práctica y más estable. Tu evolución depende menos de saber más y más de sostener mejor.",
+        recommendations: [
+          "Convierte la intención en hábitos concretos, medibles y repetibles.",
+          "Decide antes, ajusta antes y evita quedarte atrapado en la preparación eterna.",
+          "Refuerza tu criterio personal para no depender tanto del contexto o de la presión externa.",
+          "Entrena una gestión del cambio más visible, más clara y más acompañada.",
+          "Haz que tu parte humana no sea un discurso, sino una práctica reconocible."
+        ]
+      },
+      {
+        min: 24,
+        max: 30,
+        score: "Alta madurez",
+        title: "Tienes una base sólida para liderar con criterio",
+        text: "Tu resultado refleja una base madura y valiosa para liderar en la era de la IA sin perder la esencia humana. Muestras capacidad para decidir, adaptarte, integrar tecnología con mirada crítica y sostener una visión más equilibrada entre resultados, personas y transformación. No significa perfección ni ausencia de tensión, pero sí una posición de mayor solidez que la media. Tu reto ya no es despertar ni empezar a construir, sino refinar, escalar y convertir tu criterio en influencia positiva sobre otros. Cuando alguien alcanza este nivel, la siguiente frontera no es solo mejorar su propia gestión, sino inspirar una forma más humana, inteligente y responsable de liderar el cambio.",
+        recommendations: [
+          "Eleva tu estándar de ejecución sin perder humanidad ni capacidad de escucha.",
+          "Convierte tu criterio en influencia positiva sobre equipos, clientes o colaboradores.",
+          "Usa la tecnología como palanca de valor, no como sustituto de presencia o pensamiento.",
+          "Profundiza en la coherencia entre lo que piensas, decides y haces visible.",
+          "Haz del liderazgo humanista una práctica transferible, no solo una fortaleza personal."
+        ]
+      }
+    ];
+
+    const quizEl = document.getElementById('quiz');
+    const resultCard = document.getElementById('resultCard');
+    const resultScore = document.getElementById('resultScore');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultText = document.getElementById('resultText');
+    const recommendations = document.getElementById('recommendations');
+    const controls = document.getElementById('controls');
+
+    let currentResult = null;
+    let currentTotal = 0;
+
+    function renderQuiz() {
+      quizEl.innerHTML = '';
+      questions.forEach((q, i) => {
+        const card = document.createElement('section');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="question-number">Pregunta ${i + 1}</div>
+          <h2 class="question-title">${q.text}</h2>
+          <div class="options">
+            ${q.options.map(opt => `
+              <label class="option">
+                <input type="radio" name="q${i}" value="${opt.value}" />
+                <div class="option-text">${opt.text}</div>
+              </label>
+            `).join('')}
+          </div>
+        `;
+        quizEl.appendChild(card);
+      });
+    }
+
+    function calculateResult() {
+      let total = 0;
+      for (let i = 0; i < questions.length; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (!selected) {
+          alert(`Te falta responder la pregunta ${i + 1}.`);
+          return;
+        }
+        total += Number(selected.value);
+      }
+
+      const match = results.find(r => total >= r.min && total <= r.max);
+      currentResult = match;
+      currentTotal = total;
+      resultScore.textContent = `${total}/${questions.length * 3}`;
+      resultTitle.textContent = `${match.score} · ${match.title}`;
+      resultText.textContent = match.text;
+      recommendations.innerHTML = match.recommendations.map(item => `<li>${item}</li>`).join('');
+
+      resultCard.classList.remove('hidden');
+      controls.classList.add('hidden');
+      quizEl.classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+      const userName = document.getElementById('userName');
+      const userEmail = document.getElementById('userEmail');
+      if (userName) userName.value = '';
+      if (userEmail) userEmail.value = '';
+      currentResult = null;
+      currentTotal = 0;
+      resultCard.classList.add('hidden');
+      controls.classList.remove('hidden');
+      quizEl.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function sendResultByEmail() {
+      if (!currentResult) return;
+
+      const userName = document.getElementById('userName')?.value.trim() || 'Lector/a';
+      const userEmail = document.getElementById('userEmail')?.value.trim();
+
+      if (!userEmail) {
+        alert('Introduce tu email para preparar el envío del resultado.');
+        return;
+      }
+
+      const subject = `Resultado del test · ${currentResult.score}`;
+      const body = [
+        'Hola,',
+        '',
+        'Comparto mi resultado del test interactivo del libro.',
+        '',
+        `Nombre: ${userName}`,
+        `Email: ${userEmail}`,
+        `Puntuación: ${currentTotal}/${questions.length * 3}`,
+        `Nivel: ${currentResult.score}`,
+        `Título del resultado: ${currentResult.title}`,
+        '',
+        'Lectura del resultado:',
+        currentResult.text,
+        '',
+        'Recomendaciones:',
+        ...currentResult.recommendations.map((item, index) => `${index + 1}. ${item}`),
+        '',
+        'Enviado desde el test interactivo del libro.'
+      ].join('\n');
+
+      const mailto = `mailto:${encodeURIComponent(userEmail)}?cc=${encodeURIComponent('ivo.guell@alumni.esade.edu')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const link = document.createElement('a');
+      link.href = mailto;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    document.getElementById('finishBtn').addEventListener('click', calculateResult);
+    document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+    document.getElementById('backBtn').addEventListener('click', resetQuiz);
+    document.getElementById('emailBtn').addEventListener('click', sendResultByEmail);
+
+    renderQuiz();
+  </script>
+</body>
+</html>

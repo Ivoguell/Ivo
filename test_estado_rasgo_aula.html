@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Autodiagnóstico Estado/Rasgo · Activación, calma y gestión emocional</title>
+  <meta name="description" content="Herramienta formativa en HTML para trabajar en aula la ansiedad estado/rasgo, con informe automático, descarga y envío por email." />
+  <style>
+    :root{
+      --bg:#0e1116;
+      --panel:#151a22;
+      --panel2:#1b2230;
+      --text:#eef2f7;
+      --muted:#aab4c2;
+      --soft:#d6dde8;
+      --line:rgba(255,255,255,.12);
+      --accent:#d8b46a;
+      --accent2:#8fb7ff;
+      --good:#87d68d;
+      --warn:#ffd166;
+      --risk:#ff9f6e;
+      --high:#ff6b6b;
+      --shadow:0 24px 70px rgba(0,0,0,.35);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(216,180,106,.18), transparent 28%),
+        radial-gradient(circle at 84% 14%, rgba(143,183,255,.16), transparent 30%),
+        linear-gradient(180deg,#0e1116 0%, #10141b 42%, #0b0d12 100%);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{color:var(--accent2)}
+    .wrap{max-width:1160px;margin:0 auto;padding:28px 18px 80px}
+    .hero{
+      min-height:72vh;
+      display:grid;
+      align-items:center;
+      padding:38px 0 36px;
+      position:relative;
+    }
+    .hero-card{
+      background:linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+      border:1px solid var(--line);
+      border-radius:34px;
+      padding:clamp(26px,5vw,64px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-card:before{
+      content:"";
+      position:absolute;
+      width:520px;height:520px;border-radius:50%;
+      border:1px solid rgba(216,180,106,.20);
+      right:-180px;top:-230px;
+    }
+    .hero-card:after{
+      content:"";
+      position:absolute;
+      width:260px;height:260px;border-radius:50%;
+      border:1px solid rgba(143,183,255,.15);
+      right:70px;bottom:-140px;
+    }
+    .eyebrow{
+      display:inline-flex;gap:10px;align-items:center;
+      color:#f7e4b2;
+      border:1px solid rgba(216,180,106,.35);
+      background:rgba(216,180,106,.08);
+      border-radius:999px;
+      padding:8px 13px;
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-weight:750;
+    }
+    h1{
+      font-size:clamp(38px,7vw,78px);
+      line-height:.98;
+      letter-spacing:-.06em;
+      margin:26px 0 18px;
+      max-width:980px;
+    }
+    .subtitle{
+      font-size:clamp(18px,2.4vw,25px);
+      color:var(--soft);
+      max-width:860px;
+      margin:0 0 28px;
+    }
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:32px;position:relative;z-index:1}
+    .mini-card{
+      background:rgba(10,12,16,.52);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+    }
+    .mini-card h3{margin:0 0 8px;font-size:18px}
+    .mini-card p{margin:0;color:var(--muted)}
+    .notice{
+      background:rgba(255,209,102,.08);
+      border:1px solid rgba(255,209,102,.25);
+      color:#ffe6a3;
+    }
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+    button,.button{
+      appearance:none;border:0;cursor:pointer;text-decoration:none;
+      border-radius:999px;
+      padding:13px 19px;
+      font-weight:800;
+      font-size:15px;
+      color:#101215;
+      background:linear-gradient(135deg, #f1d58d, #c99b45);
+      box-shadow:0 10px 28px rgba(216,180,106,.18);
+      transition:.18s transform ease,.18s opacity ease,.18s background ease;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    }
+    button:hover,.button:hover{transform:translateY(-1px)}
+    button.secondary,.button.secondary{
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    button.ghost{background:transparent;color:var(--soft);border:1px solid var(--line);box-shadow:none}
+    button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    section{margin:34px 0}
+    .panel{
+      background:rgba(21,26,34,.78);
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:clamp(20px,3vw,34px);
+      box-shadow:0 18px 50px rgba(0,0,0,.20);
+      backdrop-filter:blur(10px);
+    }
+    .section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:22px}
+    h2{font-size:clamp(28px,4vw,44px);letter-spacing:-.04em;line-height:1.05;margin:0 0 8px}
+    .lead{color:var(--muted);font-size:17px;max-width:830px;margin:0}
+    .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+    label.field{display:block}
+    .field span{display:block;margin:0 0 7px;color:var(--soft);font-size:14px;font-weight:700}
+    input,select{
+      width:100%;
+      background:rgba(255,255,255,.07);
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px 14px;
+      outline:none;
+      font-size:15px;
+    }
+    input::placeholder{color:rgba(238,242,247,.45)}
+    .progress-wrap{position:sticky;top:0;z-index:10;padding:10px 0;background:linear-gradient(180deg, rgba(14,17,22,.95), rgba(14,17,22,.65), transparent);backdrop-filter:blur(8px)}
+    .progress-box{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;height:12px;overflow:hidden}
+    .progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.2s width ease}
+    .progress-text{font-size:13px;color:var(--muted);margin:8px 4px 0;display:flex;justify-content:space-between}
+    .question-group{display:grid;gap:14px}
+    .q-card{
+      background:rgba(255,255,255,.055);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+    }
+    .q-top{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;margin-bottom:14px}
+    .q-num{width:34px;height:34px;border-radius:50%;background:rgba(216,180,106,.13);color:#f5da9b;display:grid;place-items:center;font-weight:900;font-size:13px;border:1px solid rgba(216,180,106,.25)}
+    .q-text{font-size:17px;font-weight:750;color:#f4f6fa}
+    .scale{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .scale label{
+      border:1px solid var(--line);
+      background:rgba(10,12,16,.32);
+      border-radius:16px;
+      min-height:70px;
+      padding:10px 8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:750;
+      cursor:pointer;
+      transition:.16s ease;
+    }
+    .scale input{position:absolute;opacity:0;pointer-events:none}
+    .scale label:has(input:checked){background:rgba(216,180,106,.18);border-color:rgba(216,180,106,.65);color:#fff;transform:translateY(-1px)}
+    .scale label:hover{border-color:rgba(255,255,255,.28);color:#fff}
+    .divider{height:1px;background:var(--line);margin:28px 0}
+    .result{display:none}
+    .score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}
+    .score-card{background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));border:1px solid var(--line);border-radius:24px;padding:22px}
+    .score-label{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+    .score-value{font-size:48px;letter-spacing:-.06em;font-weight:950;margin:8px 0 2px}
+    .tag{display:inline-flex;border-radius:999px;padding:7px 10px;font-size:13px;font-weight:850;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--soft)}
+    .bar{height:12px;background:rgba(255,255,255,.09);border-radius:999px;overflow:hidden;margin-top:14px;border:1px solid rgba(255,255,255,.06)}
+    .bar span{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#87d68d,#ffd166,#ff9f6e,#ff6b6b);transition:.6s width ease}
+    .profile-hero{background:linear-gradient(135deg, rgba(216,180,106,.13), rgba(143,183,255,.10));border:1px solid rgba(216,180,106,.22);border-radius:28px;padding:26px;margin:20px 0}
+    .profile-hero h3{font-size:32px;line-height:1.05;letter-spacing:-.04em;margin:0 0 10px}
+    .profile-hero p{font-size:18px;color:var(--soft);margin:0}
+    .report{
+      background:#f8fafc;
+      color:#12151a;
+      border-radius:28px;
+      padding:clamp(22px,3vw,42px);
+      box-shadow:0 20px 60px rgba(0,0,0,.22);
+      margin-top:20px;
+    }
+    .report h2,.report h3,.report h4{color:#11151b;letter-spacing:-.025em}
+    .report h2{font-size:34px;margin:0 0 8px}
+    .report h3{font-size:24px;margin:30px 0 8px}
+    .report h4{font-size:18px;margin:18px 0 6px}
+    .report p{color:#2c3440;margin:10px 0;font-size:16px}
+    .report .muted{color:#647081;font-size:14px}
+    .report ul{margin:10px 0 18px;padding-left:22px;color:#2c3440}
+    .report li{margin:7px 0}
+    .report blockquote{border-left:4px solid #d8b46a;margin:18px 0;padding:10px 18px;background:#fff7e4;border-radius:0 18px 18px 0;color:#28220f}
+    .report .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+    .report .light-card{background:#fff;border:1px solid #e7ebf1;border-radius:18px;padding:18px}
+    .report .pill{display:inline-block;background:#11151b;color:#fff;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    .callout{background:rgba(255,107,107,.10);border:1px solid rgba(255,107,107,.25);border-radius:20px;padding:16px;color:#ffd2d2;margin-top:16px}
+    .footer-note{color:var(--muted);font-size:13px;margin-top:18px}
+    .toast{position:fixed;right:18px;bottom:18px;background:#11151b;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);display:none;z-index:99;max-width:360px}
+    .toast.show{display:block;animation:pop .2s ease}
+    @keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @media (max-width:900px){
+      .hero-grid,.form-grid,.score-grid,.report .report-grid{grid-template-columns:1fr}
+      .scale{grid-template-columns:1fr 1fr}
+      .section-head{display:block}
+    }
+    @media print{
+      body{background:#fff;color:#111}
+      .hero,.progress-wrap,#testPanel .actions,.no-print,.toast{display:none!important}
+      .wrap{max-width:none;padding:0}
+      .panel{box-shadow:none;border:0;background:#fff;padding:0}
+      .result{display:block!important}
+      .report{box-shadow:none;border-radius:0;padding:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-card">
+        <span class="eyebrow">Herramienta formativa · Aula · Desarrollo personal</span>
+        <h1>Mapa Estado/Rasgo de activación y calma</h1>
+        <p class="subtitle">Un autodiagnóstico práctico para entender qué parte de la tensión pertenece al momento y qué parte forma parte de un patrón más habitual. Pensado para clase, reflexión individual y conversación adulta.</p>
+        <div class="actions">
+          <a class="button" href="#datos">Empezar el test</a>
+          <a class="button secondary" href="#marco">Ver cómo se interpreta</a>
+        </div>
+        <div class="hero-grid">
+          <div class="mini-card">
+            <h3>Qué mide</h3>
+            <p><strong>Estado</strong>: cómo estás ahora, en este momento. <strong>Rasgo</strong>: cómo sueles funcionar de manera más repetida ante presión, incertidumbre o exigencia.</p>
+          </div>
+          <div class="mini-card notice">
+            <h3>Importante</h3>
+            <p>Esta es una herramienta propia para formación. No es el STAI oficial, no reproduce sus ítems, no ofrece diagnóstico clínico y no sustituye una valoración profesional.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="marco" class="panel">
+      <div class="section-head">
+        <div>
+          <h2>Marco de lectura</h2>
+          <p class="lead">La ansiedad no siempre significa debilidad. Muchas veces es información: el cuerpo detecta exigencia, riesgo, evaluación, incertidumbre o exceso de carga. La clave no es negar la activación, sino aprender a leerla, regularla y convertirla en acción inteligente.</p>
+        </div>
+      </div>
+      <div class="hero-grid">
+        <div class="mini-card">
+          <h3>Ansiedad estado</h3>
+          <p>Fotografía del momento. Puede subir antes de una presentación, una entrevista, una decisión difícil, un examen, una conversación incómoda o una etapa de presión.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Ansiedad rasgo</h3>
+          <p>Patrón de fondo. Indica si tu sistema tiende a anticipar amenazas, preocuparse, revisar demasiado, tensarse o vivir con alerta interna de forma frecuente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="datos" class="panel">
+      <div class="section-head">
+        <div>
+          <h2>Antes de empezar</h2>
+          <p class="lead">El resultado se calcula en tu navegador. No se guarda en ninguna base de datos. Al final podrás copiarlo, descargarlo, imprimirlo o abrir un email con el informe.</p>
+        </div>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Nombre o iniciales</span><input id="name" placeholder="Ej.: Marta / M.G." /></label>
+        <label class="field"><span>Email para enviar el resultado</span><input id="email" type="email" placeholder="tu@email.com" /></label>
+        <label class="field"><span>Contexto</span><input id="context" placeholder="Ej.: clase, entrevista, formación, equipo..." /></label>
+      </div>
+      <div class="actions">
+        <a class="button" href="#testPanel">Responder cuestionario</a>
+      </div>
+    </section>
+
+    <div class="progress-wrap no-print" aria-hidden="true">
+      <div class="progress-box"><div id="progressBar" class="progress-bar"></div></div>
+      <div class="progress-text"><span id="progressText">0 de 32 respuestas</span><span>Resultado al completar todo</span></div>
+    </div>
+
+    <section id="testPanel" class="panel">
+      <div class="section-head">
+        <div>
+          <h2>Cuestionario</h2>
+          <p class="lead">Responde con honestidad. No busques quedar bien. El valor del ejercicio está en reconocer el punto de partida, no en obtener una puntuación “bonita”.</p>
+        </div>
+      </div>
+      <div class="mini-card notice" style="margin-bottom:18px">
+        <h3>Instrucciones</h3>
+        <p>En las primeras 16 preguntas responde pensando en <strong>cómo te sientes ahora mismo</strong>. En las preguntas 17 a 32 responde pensando en <strong>cómo sueles sentirte habitualmente</strong>.</p>
+      </div>
+      <div id="questions" class="question-group"></div>
+      <div class="actions">
+        <button id="calculateBtn" type="button">Calcular mi informe</button>
+        <button class="ghost" type="button" id="resetBtn">Reiniciar</button>
+      </div>
+      <div id="missing" class="callout" style="display:none"></div>
+    </section>
+
+    <section id="result" class="panel result">
+      <div class="section-head no-print">
+        <div>
+          <h2>Resultado personal</h2>
+          <p class="lead">Este informe está pensado para que puedas leerlo con calma, enviártelo y usarlo como punto de partida para una mejora concreta.</p>
+        </div>
+      </div>
+      <div class="score-grid">
+        <div class="score-card">
+          <div class="score-label">Estado</div>
+          <div id="stateScore" class="score-value">--</div>
+          <span id="stateTag" class="tag">--</span>
+          <div class="bar"><span id="stateBar"></span></div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Rasgo</div>
+          <div id="traitScore" class="score-value">--</div>
+          <span id="traitTag" class="tag">--</span>
+          <div class="bar"><span id="traitBar"></span></div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">Lectura cruzada</div>
+          <div id="profileShort" class="score-value" style="font-size:30px;line-height:1.05">--</div>
+          <span id="profileTag" class="tag">--</span>
+          <div class="bar"><span id="balanceBar"></span></div>
+        </div>
+      </div>
+      <div id="profileHero" class="profile-hero"></div>
+      <div class="actions no-print">
+        <button type="button" id="copyBtn">Copiar informe completo</button>
+        <button class="secondary" type="button" id="downloadBtn">Descargar TXT</button>
+        <button class="secondary" type="button" id="emailBtn">Enviarme por email</button>
+        <button class="ghost" type="button" onclick="window.print()">Imprimir / guardar PDF</button>
+      </div>
+      <div id="report" class="report"></div>
+      <p class="footer-note no-print">Nota técnica: si el botón de email no incluye todo el texto por limitaciones del programa de correo, usa “Copiar informe completo” o “Descargar TXT” y pégalo en el email.</p>
+    </section>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const questions = [
+      {scale:'state', polarity:'direct', text:'Ahora mismo noto tensión en el cuerpo o dificultad para soltar el control.'},
+      {scale:'state', polarity:'reverse', text:'En este momento me siento sereno/a y con una sensación razonable de control.'},
+      {scale:'state', polarity:'direct', text:'Me cuesta concentrarme porque mi cabeza salta de una preocupación a otra.'},
+      {scale:'state', polarity:'direct', text:'Siento que algo puede salir mal aunque no tenga pruebas claras de ello.'},
+      {scale:'state', polarity:'reverse', text:'Ahora puedo respirar con calma y pensar con cierta claridad.'},
+      {scale:'state', polarity:'direct', text:'Tengo una sensación de urgencia interna, como si tuviera que resolverlo todo ya.'},
+      {scale:'state', polarity:'reverse', text:'Me siento suficientemente estable para afrontar lo que tengo delante.'},
+      {scale:'state', polarity:'direct', text:'Noto inquietud, nerviosismo o una activación difícil de bajar.'},
+      {scale:'state', polarity:'direct', text:'Me preocupa la imagen que puedo dar o cómo será evaluado lo que haga.'},
+      {scale:'state', polarity:'reverse', text:'Puedo observar lo que me pasa sin dejar que me arrastre por completo.'},
+      {scale:'state', polarity:'direct', text:'Siento presión en el pecho, en el estómago, en la mandíbula o en los hombros.'},
+      {scale:'state', polarity:'direct', text:'Me cuesta distinguir entre lo importante y lo urgente.'},
+      {scale:'state', polarity:'reverse', text:'Aunque haya presión, noto que puedo ordenar los próximos pasos.'},
+      {scale:'state', polarity:'direct', text:'Ahora mismo tengo pensamientos repetitivos que vuelven aunque intente apartarlos.'},
+      {scale:'state', polarity:'direct', text:'Me noto más reactivo/a, irritable o sensible de lo habitual.'},
+      {scale:'state', polarity:'reverse', text:'Tengo una sensación interna de calma suficiente para responder, no solo reaccionar.'},
+
+      {scale:'trait', polarity:'direct', text:'En general tiendo a anticipar problemas antes de que ocurran.'},
+      {scale:'trait', polarity:'reverse', text:'Habitualmente confío en que podré gestionar lo que aparezca.'},
+      {scale:'trait', polarity:'direct', text:'Me cuesta desconectar mentalmente de temas pendientes.'},
+      {scale:'trait', polarity:'direct', text:'Suelo exigirme mucho y me cuesta aceptar resultados simplemente correctos.'},
+      {scale:'trait', polarity:'reverse', text:'Normalmente puedo relativizar los errores sin convertirlos en una amenaza personal.'},
+      {scale:'trait', polarity:'direct', text:'Antes de actuar, a menudo reviso demasiadas veces lo que podría fallar.'},
+      {scale:'trait', polarity:'direct', text:'Me afecta bastante la incertidumbre cuando no puedo controlar todas las variables.'},
+      {scale:'trait', polarity:'reverse', text:'En mi vida diaria suelo recuperar la calma con relativa facilidad.'},
+      {scale:'trait', polarity:'direct', text:'Tiendo a cargar con más responsabilidad de la que realmente me corresponde.'},
+      {scale:'trait', polarity:'direct', text:'Cuando algo me preocupa, puede acompañarme durante horas o días.'},
+      {scale:'trait', polarity:'reverse', text:'Suelo pedirme pausas y descanso antes de llegar al límite.'},
+      {scale:'trait', polarity:'direct', text:'Me cuesta pedir ayuda porque siento que debería poder con todo.'},
+      {scale:'trait', polarity:'direct', text:'Mi mente suele funcionar en modo alerta, incluso cuando no hay peligro inmediato.'},
+      {scale:'trait', polarity:'reverse', text:'Normalmente puedo separar lo que depende de mí de lo que no depende de mí.'},
+      {scale:'trait', polarity:'direct', text:'Tiendo a interpretar el silencio, la ambigüedad o la espera como señales de problema.'},
+      {scale:'trait', polarity:'reverse', text:'En general me trato con comprensión cuando atravieso momentos de presión.'}
+    ];
+
+    const labels = {
+      state: ['Nada / casi nada', 'Algo', 'Bastante', 'Mucho'],
+      trait: ['Casi nunca', 'A veces', 'A menudo', 'Casi siempre']
+    };
+
+    const categoryInfo = [
+      {max:24, name:'Bajo', tone:'calma disponible', color:'var(--good)'},
+      {max:49, name:'Moderado', tone:'activación manejable', color:'var(--warn)'},
+      {max:74, name:'Alto', tone:'activación significativa', color:'var(--risk)'},
+      {max:100, name:'Muy alto', tone:'sobrecarga a atender', color:'var(--high)'}
+    ];
+
+    let lastReportText = '';
+    let lastShortText = '';
+    let lastScores = null;
+
+    function renderQuestions(){
+      const box = document.getElementById('questions');
+      box.innerHTML = '';
+      questions.forEach((q, index) => {
+        const block = document.createElement('div');
+        block.className = 'q-card';
+        const scaleLabels = labels[q.scale];
+        block.innerHTML = `
+          <div class="q-top">
+            <div class="q-num">${index + 1}</div>
+            <div class="q-text">${q.text}</div>
+          </div>
+          <div class="scale" role="radiogroup" aria-label="Pregunta ${index + 1}">
+            ${scaleLabels.map((lab, i) => `
+              <label>
+                <input type="radio" name="q${index}" value="${i+1}" />
+                <span>${lab}</span>
+              </label>
+            `).join('')}
+          </div>
+        `;
+        box.appendChild(block);
+      });
+      document.querySelectorAll('input[type="radio"]').forEach(input => input.addEventListener('change', updateProgress));
+    }
+
+    function updateProgress(){
+      const answered = questions.filter((_, i) => document.querySelector(`input[name="q${i}"]:checked`)).length;
+      const pct = Math.round(answered / questions.length * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${answered} de ${questions.length} respuestas`;
+    }
+
+    function normalize(raw, itemCount){
+      const min = itemCount;
+      const max = itemCount * 4;
+      return Math.round(((raw - min) / (max - min)) * 100);
+    }
+
+    function getCategory(score){
+      return categoryInfo.find(c => score <= c.max) || categoryInfo[3];
+    }
+
+    function scoreScale(scale){
+      return questions.reduce((acc, q, i) => {
+        if(q.scale !== scale) return acc;
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if(!selected) return acc;
+        const value = Number(selected.value);
+        const adjusted = q.polarity === 'reverse' ? 5 - value : value;
+        return acc + adjusted;
+      }, 0);
+    }
+
+    function missingQuestions(){
+      return questions.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`) ? null : i + 1).filter(Boolean);
+    }
+
+    function profileFor(state, trait){
+      const sHigh = state >= 60, sVery = state >= 75, sLow = state < 35;
+      const tHigh = trait >= 60, tVery = trait >= 75, tLow = trait < 35;
+      if(sHigh && tLow) return {
+        title:'Pico situacional',
+        short:'Pico situacional',
+        tag:'Mucho momento, poco patrón',
+        summary:'Tu resultado sugiere que la activación actual está más relacionada con el contexto inmediato que con una tendencia estable. Algo de lo que ocurre hoy, esta semana o en este entorno está presionando tu sistema por encima de lo habitual.',
+        interpretation:'Esta lectura suele aparecer cuando una persona, normalmente capaz de mantener cierta estabilidad, se ve colocada ante una situación de evaluación, exposición, conflicto, incertidumbre o acumulación de demandas. No habla necesariamente de “cómo eres”; habla de cómo te está impactando lo que tienes delante. La buena noticia es que, si el rasgo no está especialmente elevado, tu base de recuperación probablemente existe. La prioridad no es reconstruir toda tu manera de funcionar, sino bajar el pico, ordenar el contexto y recuperar margen de maniobra.',
+        strength:'Tienes una base interna que puede ayudarte a volver al centro cuando el estímulo externo se reduzca o cuando consigas darle estructura.',
+        risk:'El riesgo principal es tomar decisiones permanentes desde un estado temporal: contestar demasiado rápido, evitar una oportunidad, sobreactuar o interpretar una presión puntual como prueba de incapacidad personal.',
+        focus:'Regular el momento, separar hechos de anticipaciones y convertir la presión en una secuencia concreta de pasos.'
+      };
+      if(sHigh && tHigh) return {
+        title:'Sobrecarga acumulada',
+        short:'Sobrecarga acumulada',
+        tag:'Momento intenso + patrón de alerta',
+        summary:'Tu resultado muestra una combinación exigente: activación alta ahora y una tendencia habitual a vivir con presión, anticipación o alerta interna. No significa fragilidad; significa que tu sistema probablemente lleva demasiado tiempo trabajando por encima de su nivel sostenible.',
+        interpretation:'Cuando estado y rasgo aparecen altos, la ansiedad deja de ser solo una reacción puntual y empieza a parecerse a una arquitectura interna de vigilancia. Puede haber mucha capacidad, mucha responsabilidad y mucho compromiso, pero también una dificultad para parar, pedir ayuda, relativizar o soltar control. En personas muy competentes, este perfil puede pasar desapercibido porque desde fuera se ve rendimiento, resolución y exigencia. Por dentro, sin embargo, puede haber ruido mental, cansancio, hipervigilancia, autocrítica o sensación de que nunca es suficiente.',
+        strength:'Tu sistema detecta riesgos con rapidez, se anticipa y probablemente evita muchos errores. Esta sensibilidad puede ser una ventaja cuando se combina con descanso, criterio y límites.',
+        risk:'El riesgo es confundir vivir activado/a con vivir preparado/a. La alerta constante puede reducir creatividad, paciencia, escucha, disfrute y capacidad de decidir con perspectiva.',
+        focus:'Bajar carga, crear límites, pedir apoyo, priorizar de verdad y trabajar una regulación más estable, no solo apagar incendios.'
+      };
+      if(sLow && tHigh) return {
+        title:'Calma funcional con ruido de fondo',
+        short:'Ruido de fondo',
+        tag:'Hoy bajo control, patrón exigente',
+        summary:'Hoy puedes sentirte relativamente estable, pero tu patrón habitual indica tendencia a preocuparte, anticipar o sostener presión interna. Es un perfil interesante: por fuera puede haber calma, pero por dentro quizá exista una maquinaria mental que no descansa del todo.',
+        interpretation:'Esta combinación aparece en personas que han aprendido a funcionar incluso con tensión interna. Tal vez hoy no haya un disparador fuerte, o quizá estás en un momento de más control. Sin embargo, el rasgo elevado sugiere que la calma del día no siempre refleja la carga de fondo. A veces el cuerpo se acostumbra a vivir con exigencia y solo se da cuenta cuando baja el ritmo. Este perfil merece atención porque puede generar desgaste silencioso: se avanza, se cumple, se responde, pero con un coste interno elevado.',
+        strength:'Tienes capacidad de funcionamiento, autocontrol y probablemente una buena imagen de fiabilidad. Sabes sostener situaciones sin derrumbarte fácilmente.',
+        risk:'El riesgo es normalizar demasiado la presión interna y no intervenir hasta que el cuerpo, el ánimo o las relaciones pasen factura.',
+        focus:'No esperar a estar mal para cuidarte. Convertir la calma actual en una oportunidad para revisar hábitos, límites y diálogo interno.'
+      };
+      if(sLow && tLow) return {
+        title:'Base de calma disponible',
+        short:'Base de calma',
+        tag:'Buen margen de regulación',
+        summary:'Tu resultado indica una base de calma razonablemente disponible: baja activación actual y baja tendencia habitual a vivir desde la alerta. Esto no significa ausencia de problemas, sino buena capacidad para no convertir cada exigencia en amenaza.',
+        interpretation:'Este perfil suele asociarse con una relación más flexible con la incertidumbre, mejor recuperación tras la presión y mayor facilidad para distinguir entre lo que ocurre y lo que la mente imagina. Puede reflejar confianza, perspectiva y capacidad de autorregulación. La clave será no confundir calma con pasividad: una persona tranquila también necesita dirección, ambición, límites y acción. La calma es más valiosa cuando se convierte en presencia, claridad y criterio.',
+        strength:'Tu fortaleza está en la disponibilidad mental para pensar, escuchar, aprender y decidir sin quedar atrapado/a por la urgencia emocional.',
+        risk:'El riesgo, si existe, puede ser minimizar señales de tensión en otros o retrasar decisiones porque “no parece tan grave”.',
+        focus:'Usar la calma como ventaja estratégica: observar mejor, decidir mejor y acompañar a otros sin contagiarte del ruido.'
+      };
+      if(state >= trait + 18) return {
+        title:'El contexto está pesando más que tu patrón',
+        short:'Contexto exigente',
+        tag:'Estado por encima del rasgo',
+        summary:'La activación actual está claramente por encima de tu patrón habitual. Algo del momento presente está elevando la tensión.',
+        interpretation:'No conviene leer este resultado como identidad. Es más útil preguntarse qué ha cambiado: una fecha límite, un conflicto, una conversación pendiente, una evaluación, una decisión, cansancio acumulado o falta de claridad. Cuando el estado supera mucho al rasgo, la intervención más inteligente suele ser contextual: ordenar tareas, reducir ambigüedad, preparar el siguiente paso y recuperar control real.',
+        strength:'Tu patrón habitual puede ayudarte a volver a un estado más regulado cuando bajes la presión concreta.',
+        risk:'El riesgo es dramatizar el pico y construir una historia personal demasiado dura a partir de un momento difícil.',
+        focus:'No decidir desde el pico. Primero regular, después interpretar.'
+      };
+      if(trait >= state + 18) return {
+        title:'Tu patrón pesa más que el momento',
+        short:'Patrón exigente',
+        tag:'Rasgo por encima del estado',
+        summary:'Hoy quizá no estás en tu peor momento, pero tu patrón general muestra una tendencia relevante a sostener preocupación, autoexigencia o alerta.',
+        interpretation:'Este resultado invita a mirar más allá del día de hoy. A veces una persona se siente “bien” porque no hay un disparador inmediato, pero su manera habitual de anticipar, controlar o exigirse sigue consumiendo energía. Es una oportunidad excelente para trabajar prevención, no urgencia: hábitos, descanso, conversación interna, gestión de la incertidumbre y límites.',
+        strength:'Tienes sensibilidad para detectar problemas y probablemente responsabilidad alta.',
+        risk:'El riesgo es vivir con un coste interno que los demás no ven y tú has aprendido a normalizar.',
+        focus:'Regular el sistema antes de que el sistema tenga que gritar.'
+      };
+      return {
+        title:'Activación manejable con margen de mejora',
+        short:'Margen de mejora',
+        tag:'Lectura equilibrada',
+        summary:'Tus resultados no dibujan una situación extrema, pero sí ofrecen información útil. Hay activación o preocupación en grado manejable, suficiente para escucharla, no para dramatizarla.',
+        interpretation:'Este perfil es muy común en contextos de aprendizaje, cambio o presión moderada. La ansiedad puede estar señalando que algo importa, que deseas hacerlo bien o que necesitas más claridad. Bien gestionada, puede convertirse en energía, foco y preparación. Mal gestionada, puede derivar en rumiación, evitación o desgaste. La diferencia la marca la calidad de tus hábitos de regulación y la manera en que traduces la preocupación en acción concreta.',
+        strength:'Tienes margen para intervenir pronto y evitar que la activación suba innecesariamente.',
+        risk:'El riesgo es dejar que pequeñas tensiones se acumulen por falta de pausa, conversación o priorización.',
+        focus:'Convertir señales internas en decisiones pequeñas, concretas y sostenibles.'
+      };
+    }
+
+    function stateReading(cat, score){
+      if(cat.name === 'Bajo') return `Tu ansiedad estado aparece baja. En términos prácticos, hoy dispones de una ventana razonable de claridad: puedes observar, escuchar, aprender y decidir con menos interferencia emocional. Esto no quiere decir que todo esté perfecto, sino que tu sistema no parece estar en modo amenaza intensa en este momento. Es una buena condición para trabajar, hablar, planificar o mirar con honestidad asuntos que en otros momentos podrían parecer más grandes de lo que son.`;
+      if(cat.name === 'Moderado') return `Tu ansiedad estado aparece en una zona moderada. Hay activación, pero todavía puede ser útil. En esta franja, la tensión puede ayudarte a prestar atención, preparar mejor una tarea o tomar en serio algo importante. La clave está en no dejar que la activación mande más que tu criterio. Pregúntate: “¿Qué información útil me está dando esta sensación?” y “¿Cuál es el siguiente paso razonable, no perfecto?”`;
+      if(cat.name === 'Alto') return `Tu ansiedad estado aparece alta. Esto indica que el momento actual está ocupando mucho espacio mental y corporal. Puede haber presión, anticipación, sensación de urgencia, miedo a fallar, dificultad para priorizar o tendencia a interpretar señales ambiguas como amenazas. Aquí no conviene exigirte brillantez inmediata. Conviene bajar el ruido, recuperar cuerpo, ordenar hechos y reducir la situación a una primera acción posible.`;
+      return `Tu ansiedad estado aparece muy alta. Esto merece cuidado. Cuando la activación es tan elevada, la mente puede perder precisión: todo parece urgente, todo parece más grave, y el cuerpo puede comportarse como si hubiera peligro aunque solo haya presión, evaluación o incertidumbre. En esta zona no es recomendable tomar decisiones importantes en caliente. Prioriza estabilizarte, hablar con alguien de confianza y, si esta intensidad se mantiene o interfiere en tu vida, buscar apoyo profesional.`;
+    }
+
+    function traitReading(cat, score){
+      if(cat.name === 'Bajo') return `Tu ansiedad rasgo aparece baja. Esto sugiere que, en general, no vives desde una alerta interna constante. Probablemente tienes capacidad para relativizar, recuperar la calma y no convertir cada incertidumbre en amenaza. Esta es una fortaleza importante: te da espacio mental para pensar y aprender. El reto será no usar esa calma para posponer conversaciones necesarias ni minimizar la presión de otras personas.`;
+      if(cat.name === 'Moderado') return `Tu ansiedad rasgo aparece moderada. Hay una tendencia razonable a preocuparte ante ciertos escenarios, pero no necesariamente domina tu manera de vivir. Este nivel suele ser compatible con responsabilidad, preparación y sensibilidad. Bien canalizado, te ayuda a anticipar; mal canalizado, puede hacerte revisar demasiado o cargar con más de lo que toca. Tu trabajo consiste en convertir preocupación en método, no en ruido.`;
+      if(cat.name === 'Alto') return `Tu ansiedad rasgo aparece alta. Esto indica que la alerta no es solo del momento: puede formar parte de tu manera habitual de responder a presión, exigencia o incertidumbre. Puede que seas una persona responsable, previsora y comprometida, pero también que pagues un coste interno elevado. Aquí conviene trabajar hábitos de fondo: límites, descanso, autodiálogo, tolerancia a la incertidumbre y capacidad de pedir apoyo antes de llegar al límite.`;
+      return `Tu ansiedad rasgo aparece muy alta. Esta lectura sugiere un patrón de alerta sostenida que puede estar afectando tu energía, descanso, concentración, disfrute o manera de relacionarte contigo mismo/a. No es una etiqueta ni una condena, pero sí una señal clara de cuidado. Si esta tendencia te acompaña desde hace tiempo, si te limita o si te genera malestar frecuente, sería prudente hablar con un profesional cualificado. Pedir ayuda no es perder autonomía; es dejar de gestionar solo/a algo que consume demasiado.`;
+    }
+
+    function recommendations(state, trait){
+      const highState = state >= 60;
+      const highTrait = trait >= 60;
+      const very = state >= 75 || trait >= 75;
+      let rec = [];
+      rec.push(`<li><strong>Separar hechos de interpretaciones.</strong> Escribe dos columnas: “lo que sé” y “lo que estoy suponiendo”. La ansiedad suele mezclar ambas. Recuperar precisión baja mucho ruido.</li>`);
+      rec.push(`<li><strong>Reducir a la próxima acción.</strong> No intentes resolver toda tu vida emocional de golpe. Pregúntate cuál es el siguiente paso útil de menos de 15 minutos.</li>`);
+      rec.push(`<li><strong>Nombrar el estado sin fusionarte con él.</strong> Cambia “soy un desastre” por “estoy activado/a”. Cambia “no puedo” por “mi sistema está en alerta y necesito ordenarlo”.</li>`);
+      if(highState) rec.push(`<li><strong>Antes de decidir, baja activación.</strong> Respira lento, camina, bebe agua, cambia de postura, reduce estímulos y pospón respuestas delicadas si puedes. Decidir desde el pico aumenta errores.</li>`);
+      if(highTrait) rec.push(`<li><strong>Trabaja el sistema, no solo el síntoma.</strong> Si tu rasgo es alto, no basta con calmarte hoy. Necesitas rutinas de descanso, límites, conversación interna más justa y espacios periódicos de descarga.</li>`);
+      if(very) rec.push(`<li><strong>Activa apoyo.</strong> Si el malestar es muy intenso, recurrente o limitante, habla con alguien de confianza y considera apoyo profesional. No esperes a estar al límite para pedir ayuda.</li>`);
+      rec.push(`<li><strong>Convertir la autoexigencia en criterio.</strong> La pregunta no es “¿está perfecto?”, sino “¿es suficientemente bueno para avanzar sin traicionarme?”.</li>`);
+      rec.push(`<li><strong>Diseñar una pausa de recuperación.</strong> La calma no aparece solo por entender lo que pasa; también necesita cuerpo, sueño, movimiento, aire, silencio y límites digitales.</li>`);
+      return rec.join('');
+    }
+
+    function classroomQuestions(state, trait){
+      return `
+        <ul>
+          <li>¿Qué parte de mi resultado pertenece al momento y qué parte parece un patrón repetido?</li>
+          <li>¿Qué me está intentando proteger mi ansiedad, aunque lo haga de una manera poco cómoda?</li>
+          <li>¿Qué decisión estoy evitando por miedo, anticipación o exceso de perfeccionismo?</li>
+          <li>¿Qué límite, conversación o cambio de hábito reduciría más mi ruido interno?</li>
+          <li>¿Qué necesito dejar de demostrar para poder funcionar con más claridad?</li>
+          <li>¿Qué haría distinto esta semana si me tratara con firmeza y respeto a la vez?</li>
+        </ul>`;
+    }
+
+    function actionPlan(state, trait){
+      const highState = state >= 60;
+      const highTrait = trait >= 60;
+      let today = highState
+        ? 'Hoy tu prioridad no es rendir más, sino recuperar precisión. Haz una pausa breve, identifica el detonante principal, separa hechos de suposiciones y define una sola acción pequeña. Si tienes que comunicar algo sensible, escribe primero un borrador y revísalo cuando baje la activación.'
+        : 'Hoy puedes usar tu margen de calma para avanzar con criterio. Aprovecha para ordenar un tema pendiente, preparar una conversación o tomar una decisión que requiere serenidad. No gastes la calma en dispersión: conviértela en foco.';
+      let week = highTrait
+        ? 'Durante los próximos siete días observa tus patrones: cuándo te exiges demasiado, cuándo anticipas problemas, cuándo dices que sí por miedo o cuándo revisas más de lo necesario. El objetivo no es juzgarte, sino detectar el mecanismo. Elige un límite concreto y practícalo.'
+        : 'Durante los próximos siete días mantén las rutinas que te ayudan a regularte. Presta atención a pequeños signos de tensión antes de que crezcan. Tu trabajo no es apagar incendios, sino conservar un sistema que ya parece tener recursos.';
+      return `
+        <div class="report-grid">
+          <div class="light-card"><h4>En las próximas 24 horas</h4><p>${today}</p></div>
+          <div class="light-card"><h4>En los próximos 7 días</h4><p>${week}</p></div>
+        </div>
+        <div class="light-card"><h4>Microprotocolo de 3 pasos</h4>
+          <ul>
+            <li><strong>Parar:</strong> 90 segundos para respirar, notar el cuerpo y no responder en automático.</li>
+            <li><strong>Ordenar:</strong> escribir qué ocurre, qué temo, qué depende de mí y qué no.</li>
+            <li><strong>Actuar:</strong> elegir una acción pequeña que devuelva control real, no control imaginario.</li>
+          </ul>
+        </div>`;
+    }
+
+    function buildReport(scores){
+      const {stateNorm, traitNorm, stateRaw, traitRaw, profile, stateCat, traitCat} = scores;
+      const name = (document.getElementById('name').value || 'Participante').trim();
+      const context = (document.getElementById('context').value || 'actividad formativa').trim();
+      const today = new Date().toLocaleDateString('es-ES', {year:'numeric', month:'long', day:'numeric'});
+      const alertBlock = (stateNorm >= 75 || traitNorm >= 75) ? `
+        <blockquote><strong>Señal de cuidado:</strong> una puntuación muy alta no debe vivirse como una etiqueta, pero sí como una invitación seria a bajar carga, hablarlo y pedir apoyo si el malestar se mantiene, se repite o interfiere en el sueño, el trabajo, los estudios, las relaciones o la vida cotidiana.</blockquote>` : '';
+
+      const html = `
+        <h2>Informe personal de activación y calma</h2>
+        <p class="muted">Nombre: ${escapeHtml(name)} · Contexto: ${escapeHtml(context)} · Fecha: ${today}</p>
+        <p><span class="pill">Lectura principal</span></p>
+        <p><strong>${profile.title}.</strong> ${profile.summary}</p>
+        <p>${profile.interpretation}</p>
+        ${alertBlock}
+
+        <h3>1. Tu fotografía emocional de hoy: ansiedad estado</h3>
+        <p><strong>Puntuación estado:</strong> ${stateNorm}/100 · Nivel ${stateCat.name.toLowerCase()} (${stateCat.tone}).</p>
+        <p>${stateReading(stateCat, stateNorm)}</p>
+        <p>La ansiedad estado es especialmente útil porque te ayuda a no confundir un momento con una identidad. Puedes estar muy activado/a ahora y no ser una persona permanentemente ansiosa. Puedes sentir calma hoy y, aun así, tener patrones de fondo que conviene revisar. Por eso este resultado debe leerse como una fotografía, no como una sentencia.</p>
+
+        <h3>2. Tu patrón de fondo: ansiedad rasgo</h3>
+        <p><strong>Puntuación rasgo:</strong> ${traitNorm}/100 · Nivel ${traitCat.name.toLowerCase()} (${traitCat.tone}).</p>
+        <p>${traitReading(traitCat, traitNorm)}</p>
+        <p>El rasgo no define tu valor. Define una tendencia. Y una tendencia puede comprenderse, entrenarse y modificarse. Si tu rasgo es alto, no significa que “seas así y ya está”; significa que probablemente has aprendido a funcionar en alerta, quizá porque te ha servido para rendir, protegerte, anticipar o evitar errores. El punto de madurez es conservar la inteligencia de la anticipación sin vivir secuestrado/a por ella.</p>
+
+        <h3>3. Lectura cruzada: lo importante no es una cifra, es la relación entre ambas</h3>
+        <p><strong>${profile.title}</strong> significa que la relación entre tu estado actual y tu patrón habitual apunta a esta clave: <strong>${profile.focus}</strong></p>
+        <div class="report-grid">
+          <div class="light-card"><h4>Fortaleza probable</h4><p>${profile.strength}</p></div>
+          <div class="light-card"><h4>Riesgo a vigilar</h4><p>${profile.risk}</p></div>
+        </div>
+        <p>La lectura más útil no es “estoy bien” o “estoy mal”. La lectura adulta es: “¿Qué me está diciendo mi sistema y qué puedo hacer con esa información?”. La ansiedad bien leída puede convertirse en mapa. La ansiedad mal leída se convierte en ruido, bloqueo o autoexigencia.</p>
+
+        <h3>4. Interpretación de valor: qué puede estar pasando por debajo</h3>
+        <p>Cuando aparece activación, normalmente hay algo que importa. Puede ser deseo de hacerlo bien, miedo a decepcionar, sensación de falta de control, acumulación de tareas, comparación, exposición pública, conflicto pendiente o cansancio. El error es pelearse con la señal. La pregunta de más valor es: <strong>¿qué necesidad legítima hay debajo de esta tensión?</strong></p>
+        <p>Puede haber necesidad de claridad, descanso, reconocimiento, preparación, seguridad, límites, conversación o acompañamiento. Si solo atacas el síntoma, quizá te calmes un rato. Si entiendes la necesidad, puedes cambiar el sistema.</p>
+
+        <h3>5. Recomendaciones personalizadas</h3>
+        <ul>${recommendations(stateNorm, traitNorm)}</ul>
+
+        <h3>6. Plan de acción inmediato</h3>
+        ${actionPlan(stateNorm, traitNorm)}
+
+        <h3>7. Frases útiles para hablar de tu resultado sin dramatizar</h3>
+        <ul>
+          <li>“No necesito juzgarme; necesito entender qué está activando mi sistema.”</li>
+          <li>“Que mi cuerpo esté en alerta no significa que todo sea peligroso.”</li>
+          <li>“Puedo tomarme en serio lo que siento sin obedecerlo todo.”</li>
+          <li>“La calma no es desentenderme; es recuperar dirección.”</li>
+          <li>“No necesito resolverlo todo hoy. Necesito dar el siguiente paso correcto.”</li>
+        </ul>
+
+        <h3>8. Preguntas para trabajar en clase o por escrito</h3>
+        ${classroomQuestions(stateNorm, traitNorm)}
+
+        <h3>9. Cierre</h3>
+        <p>Este resultado no pretende etiquetarte. Pretende darte lenguaje. Cuando una persona puede nombrar lo que le pasa, deja de vivirlo como un enemigo invisible. A partir de ahí puede ordenar, pedir ayuda, decidir mejor y cuidarse sin perder ambición. El objetivo no es no sentir ansiedad nunca. El objetivo es que la ansiedad no decida por ti.</p>
+        <p><strong>Idea final:</strong> no eres tu puntuación. Eres la persona que puede leerla, aprender de ella y convertirla en una forma más inteligente de vivir, trabajar y relacionarte contigo mismo/a.</p>
+
+        <p class="muted">Puntuaciones técnicas internas: Estado bruto ${stateRaw}/64 · Rasgo bruto ${traitRaw}/64. Escala normalizada de lectura: 0-100. Herramienta formativa no clínica.</p>
+      `;
+      return html;
+    }
+
+    function htmlToText(html){
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      div.querySelectorAll('h2,h3,h4,p,li,blockquote').forEach(el => {
+        if(['H2','H3'].includes(el.tagName)) el.insertAdjacentText('beforebegin','\n\n');
+        if(el.tagName === 'LI') el.insertAdjacentText('afterbegin','• ');
+        el.insertAdjacentText('afterend','\n');
+      });
+      return div.innerText.replace(/\n{3,}/g,'\n\n').trim();
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag]));
+    }
+
+    function calculate(){
+      const missing = missingQuestions();
+      const missingBox = document.getElementById('missing');
+      if(missing.length){
+        missingBox.style.display = 'block';
+        missingBox.innerHTML = `<strong>Faltan respuestas.</strong> Revisa las preguntas: ${missing.join(', ')}.`;
+        missingBox.scrollIntoView({behavior:'smooth', block:'center'});
+        return;
+      }
+      missingBox.style.display = 'none';
+      const stateRaw = scoreScale('state');
+      const traitRaw = scoreScale('trait');
+      const stateNorm = normalize(stateRaw, 16);
+      const traitNorm = normalize(traitRaw, 16);
+      const stateCat = getCategory(stateNorm);
+      const traitCat = getCategory(traitNorm);
+      const profile = profileFor(stateNorm, traitNorm);
+      lastScores = {stateRaw, traitRaw, stateNorm, traitNorm, stateCat, traitCat, profile};
+
+      document.getElementById('stateScore').textContent = stateNorm;
+      document.getElementById('traitScore').textContent = traitNorm;
+      document.getElementById('stateTag').textContent = `${stateCat.name} · ${stateCat.tone}`;
+      document.getElementById('traitTag').textContent = `${traitCat.name} · ${traitCat.tone}`;
+      document.getElementById('profileShort').textContent = profile.short;
+      document.getElementById('profileTag').textContent = profile.tag;
+      document.getElementById('stateBar').style.width = stateNorm + '%';
+      document.getElementById('traitBar').style.width = traitNorm + '%';
+      document.getElementById('balanceBar').style.width = Math.round((stateNorm + traitNorm)/2) + '%';
+      document.getElementById('profileHero').innerHTML = `<h3>${profile.title}</h3><p>${profile.summary}</p>`;
+      const reportHtml = buildReport(lastScores);
+      document.getElementById('report').innerHTML = reportHtml;
+      lastReportText = htmlToText(reportHtml);
+      lastShortText = `Informe personal de activación y calma\n\nResultado principal: ${profile.title}\nEstado: ${stateNorm}/100 (${stateCat.name})\nRasgo: ${traitNorm}/100 (${traitCat.name})\n\n${profile.summary}\n\nClave de trabajo: ${profile.focus}\n\nNota: el informe completo se puede copiar o descargar desde la página.`;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').scrollIntoView({behavior:'smooth'});
+    }
+
+    async function copyReport(){
+      if(!lastReportText){ showToast('Primero calcula el resultado.'); return; }
+      try{
+        await navigator.clipboard.writeText(lastReportText);
+        showToast('Informe completo copiado al portapapeles.');
+      }catch(e){
+        showToast('No se ha podido copiar automáticamente. Selecciona el informe y cópialo manualmente.');
+      }
+    }
+
+    function downloadReport(){
+      if(!lastReportText){ showToast('Primero calcula el resultado.'); return; }
+      const name = (document.getElementById('name').value || 'participante').trim().toLowerCase().replace(/[^a-z0-9áéíóúñü]+/gi,'-');
+      const blob = new Blob([lastReportText], {type:'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `informe-activacion-calma-${name}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Informe descargado en formato TXT.');
+    }
+
+    async function emailReport(){
+      if(!lastReportText){ showToast('Primero calcula el resultado.'); return; }
+      const email = document.getElementById('email').value.trim();
+      if(!email || !/^\S+@\S+\.\S+$/.test(email)){
+        showToast('Escribe un email válido antes de enviar.');
+        document.getElementById('email').focus();
+        return;
+      }
+      const subject = 'Mi informe de activación y calma';
+      let body = lastReportText;
+      let usingShort = false;
+      const encodedLong = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      if(encodedLong.length > 7800){
+        usingShort = true;
+        try{ await navigator.clipboard.writeText(lastReportText); }catch(e){}
+        body = lastShortText + '\n\nEl informe completo se ha copiado al portapapeles o puede descargarse desde la página.';
+      }
+      window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      showToast(usingShort ? 'Abriendo email con versión breve. El informe completo queda disponible para copiar/descargar.' : 'Abriendo tu programa de correo con el informe.');
+    }
+
+    function showToast(msg){
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = 'toast show';
+      setTimeout(() => toast.className = 'toast', 3600);
+    }
+
+    function resetAll(){
+      document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+      document.getElementById('missing').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+      lastReportText = '';
+      lastShortText = '';
+      lastScores = null;
+      updateProgress();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    renderQuestions();
+    updateProgress();
+    document.getElementById('calculateBtn').addEventListener('click', calculate);
+    document.getElementById('copyBtn').addEventListener('click', copyReport);
+    document.getElementById('downloadBtn').addEventListener('click', downloadReport);
+    document.getElementById('emailBtn').addEventListener('click', emailReport);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+  </script>
+</body>
+</html>

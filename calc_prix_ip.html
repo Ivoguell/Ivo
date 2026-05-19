@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Precio por Kg</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1d4ed8;
+      --accent-light: #eff6ff;
+      --ok: #047857;
+      --warning: #b45309;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .header {
+      color: white;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .header p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 0;
+    }
+
+    .form-section,
+    .result-section {
+      padding: 30px;
+    }
+
+    .form-section {
+      border-right: 1px solid var(--line);
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 7px;
+      color: #111827;
+    }
+
+    .note {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.35;
+      margin-top: 6px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 14px 46px 14px 14px;
+      font-size: 18px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+    }
+
+    .unit {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .formula-box {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 8px;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #334155;
+      word-break: break-word;
+    }
+
+    .result-section {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .result-main {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .result-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #1e40af;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .result-value {
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.04em;
+    }
+
+    .result-value span {
+      font-size: 22px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .breakdown {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .row strong {
+      color: #111827;
+    }
+
+    .row span:last-child {
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .ok {
+      color: var(--ok);
+    }
+
+    .warning {
+      display: none;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      color: var(--warning);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .small-print {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    @media (max-width: 820px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-section {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .header h1 {
+        font-size: 27px;
+      }
+
+      .result-value {
+        font-size: 38px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Calculadora de precio de venta por kg</h1>
+      <p>Introduce las partidas de coste y calcula automáticamente el precio final por kilogramo aplicando el margen definido.</p>
+    </header>
+
+    <section class="card">
+      <div class="grid">
+        <div class="form-section">
+          <div class="field">
+            <label for="precioCompra">Precio de compra</label>
+            <div class="input-wrap">
+              <input id="precioCompra" type="text" inputmode="decimal" value="2,88" />
+              <span class="unit">€/kg</span>
+            </div>
+            <div class="note">Precio unitario de adquisición del producto por kilogramo.</div>
+          </div>
+
+          <div class="field">
+            <label for="kilos">Número de kg a servir</label>
+            <div class="input-wrap">
+              <input id="kilos" type="text" inputmode="decimal" value="400" />
+              <span class="unit">kg</span>
+            </div>
+            <div class="note">Cantidad total de producto que se entregará o servirá al cliente.</div>
+          </div>
+
+          <div class="field">
+            <label for="transporte">Precio transporte</label>
+            <div class="input-wrap">
+              <input id="transporte" type="text" inputmode="decimal" value="376" />
+              <span class="unit">€</span>
+            </div>
+            <div class="note">Coste total del transporte asociado a la operación.</div>
+          </div>
+
+          <div class="field">
+            <label for="gastos">Gastos adicionales</label>
+            <div class="input-wrap">
+              <input id="gastos" type="text" inputmode="decimal" value="0" />
+              <span class="unit">€</span>
+            </div>
+            <div class="note">Aranceles, dumping, tasas, seguros u otros costes adicionales imputables a la operación.</div>
+          </div>
+
+          <div class="field">
+            <label for="margen">Margen</label>
+            <div class="input-wrap">
+              <input id="margen" type="text" inputmode="decimal" value="3" />
+              <span class="unit">%</span>
+            </div>
+            <div class="note">Margen comercial aplicado sobre el coste unitario. Por defecto aparece el 3%, pero puede modificarse.</div>
+          </div>
+
+          <div class="formula-box">
+            Precio final €/kg = (((Precio compra × Kg) + Transporte + Gastos adicionales) / Kg) × (1 + Margen / 100)
+          </div>
+
+          <div class="buttons">
+            <button class="btn-primary" onclick="calcular()">Calcular</button>
+            <button class="btn-secondary" onclick="cargarEjemplo()">Cargar ejemplo</button>
+            <button class="btn-secondary" onclick="limpiar()">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div id="warning" class="warning">Introduce un número de kg superior a cero y revisa que todos los campos sean numéricos.</div>
+
+          <div class="result-main">
+            <div class="result-label">Precio final recomendado</div>
+            <div class="result-value" id="precioFinal">3,93 <span>€/kg</span></div>
+          </div>
+
+          <div class="breakdown">
+            <div class="row">
+              <span>Coste producto</span>
+              <span id="costeProducto">1.152,00 €</span>
+            </div>
+            <div class="row">
+              <span>Coste total antes de margen</span>
+              <span id="costeTotal">1.528,00 €</span>
+            </div>
+            <div class="row">
+              <span>Coste base por kg</span>
+              <span id="costeBaseKg">3,82 €/kg</span>
+            </div>
+            <div class="row">
+              <span>Margen aplicado por kg</span>
+              <span id="margenKg" class="ok">0,11 €/kg</span>
+            </div>
+            <div class="row">
+              <strong>Importe total con margen</strong>
+              <span id="importeTotal">1.573,84 €</span>
+            </div>
+          </div>
+
+          <div class="small-print">
+            El cálculo reparte transporte y gastos adicionales entre los kilos servidos. El margen se aplica como porcentaje sobre el coste unitario resultante.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const campos = ["precioCompra", "kilos", "transporte", "gastos", "margen"];
+
+    function parseNumero(valor) {
+      if (typeof valor !== "string") return Number(valor) || 0;
+      return Number(valor.replace(/\./g, "").replace(",", ".")) || 0;
+    }
+
+    function formatoEuro(valor, decimales = 2) {
+      return valor.toLocaleString("es-ES", {
+        minimumFractionDigits: decimales,
+        maximumFractionDigits: decimales
+      }) + " €";
+    }
+
+    function formatoKg(valor, decimales = 2) {
+      return valor.toLocaleString("es-ES", {
+        minimumFractionDigits: decimales,
+        maximumFractionDigits: decimales
+      }) + " €/kg";
+    }
+
+    function calcular() {
+      const precioCompra = parseNumero(document.getElementById("precioCompra").value);
+      const kilos = parseNumero(document.getElementById("kilos").value);
+      const transporte = parseNumero(document.getElementById("transporte").value);
+      const gastos = parseNumero(document.getElementById("gastos").value);
+      const margen = parseNumero(document.getElementById("margen").value);
+
+      const warning = document.getElementById("warning");
+
+      if (kilos <= 0) {
+        warning.style.display = "block";
+        return;
+      }
+
+      warning.style.display = "none";
+
+      const costeProducto = precioCompra * kilos;
+      const costeTotal = costeProducto + transporte + gastos;
+      const costeBaseKg = costeTotal / kilos;
+      const precioFinalKg = costeBaseKg * (1 + margen / 100);
+      const margenKg = precioFinalKg - costeBaseKg;
+      const importeTotal = precioFinalKg * kilos;
+
+      document.getElementById("precioFinal").innerHTML = `${precioFinalKg.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span>€/kg</span>`;
+      document.getElementById("costeProducto").textContent = formatoEuro(costeProducto);
+      document.getElementById("costeTotal").textContent = formatoEuro(costeTotal);
+      document.getElementById("costeBaseKg").textContent = formatoKg(costeBaseKg);
+      document.getElementById("margenKg").textContent = formatoKg(margenKg);
+      document.getElementById("importeTotal").textContent = formatoEuro(importeTotal);
+    }
+
+    function cargarEjemplo() {
+      document.getElementById("precioCompra").value = "2,88";
+      document.getElementById("kilos").value = "400";
+      document.getElementById("transporte").value = "376";
+      document.getElementById("gastos").value = "0";
+      document.getElementById("margen").value = "3";
+      calcular();
+    }
+
+    function limpiar() {
+      document.getElementById("precioCompra").value = "";
+      document.getElementById("kilos").value = "";
+      document.getElementById("transporte").value = "";
+      document.getElementById("gastos").value = "";
+      document.getElementById("margen").value = "3";
+      calcular();
+    }
+
+    campos.forEach(id => {
+      document.getElementById(id).addEventListener("input", calcular);
+    });
+
+    calcular();
+  </script>
+</body>
+</html>

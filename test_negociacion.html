@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NQX · Test Ejecutivo de Negociación</title>
+  <style>
+    :root{
+      --bg:#0a0d12;
+      --panel:#111723;
+      --panel2:#151d2b;
+      --card:#172132;
+      --soft:#202d42;
+      --line:rgba(255,255,255,.11);
+      --text:#f6f0e6;
+      --muted:#b9b2a8;
+      --muted2:#8f98a8;
+      --gold:#d8b56d;
+      --gold2:#f0d28a;
+      --blue:#86b7ff;
+      --green:#8ee6bd;
+      --red:#ff8b8b;
+      --shadow:0 22px 70px rgba(0,0,0,.42);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 16% -10%, rgba(216,181,109,.18), transparent 30%),
+        radial-gradient(circle at 85% 8%, rgba(134,183,255,.14), transparent 34%),
+        linear-gradient(135deg,#080a0e 0%,#0e1522 45%,#090b10 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+    .wrap{width:min(1180px,92vw);margin:0 auto;padding:28px 0 60px}
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:32px;
+      background:linear-gradient(135deg, rgba(17,23,35,.96), rgba(21,29,43,.84));
+      padding:38px;
+      box-shadow:var(--shadow);
+      min-height:360px;
+    }
+    .hero:before{
+      content:"";
+      position:absolute;inset:auto -10% -38% auto;
+      width:520px;height:520px;border-radius:50%;
+      border:1px solid rgba(216,181,109,.18);
+      background:radial-gradient(circle,rgba(216,181,109,.12),transparent 62%);
+      pointer-events:none;
+    }
+    .brand{display:flex;align-items:center;gap:12px;color:var(--gold2);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}
+    .mark{width:34px;height:34px;border-radius:13px;background:linear-gradient(145deg,var(--gold),#9b7131);display:grid;place-items:center;color:#101010;font-weight:950;box-shadow:0 10px 28px rgba(216,181,109,.22)}
+    h1{font-size:clamp(2.15rem,6vw,5.25rem);line-height:.92;margin:24px 0 14px;letter-spacing:-.07em;max-width:980px}
+    .hero p.lead{font-size:clamp(1.05rem,2vw,1.35rem);line-height:1.45;color:#ded6ca;max-width:790px;margin:0 0 22px}
+    .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+    .chip{border:1px solid var(--line);background:rgba(255,255,255,.055);border-radius:999px;padding:10px 14px;color:#e9e0d4;font-size:.92rem}
+    .startGrid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:20px;align-items:stretch}
+    .miniPanel{border:1px solid var(--line);background:rgba(10,13,18,.42);border-radius:var(--radius);padding:20px}
+    .miniPanel h3{margin:0 0 10px;font-size:1rem;color:var(--gold2)}
+    .miniPanel p{margin:0;color:var(--muted);line-height:1.5}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+    label.small{display:block;font-size:.78rem;color:var(--muted2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:800}
+    input{
+      width:100%;border:1px solid var(--line);background:rgba(255,255,255,.065);border-radius:14px;color:var(--text);padding:13px 14px;font-size:1rem;outline:none;
+    }
+    input:focus{border-color:rgba(216,181,109,.55);box-shadow:0 0 0 4px rgba(216,181,109,.1)}
+    .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+    button{font-family:inherit}
+    .btn{
+      border:0;border-radius:16px;padding:14px 18px;font-weight:850;cursor:pointer;
+      color:#101216;background:linear-gradient(135deg,var(--gold2),var(--gold));
+      box-shadow:0 14px 35px rgba(216,181,109,.22);transition:.18s transform,.18s filter;
+    }
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+    .btn.secondary{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--line);box-shadow:none}
+    .btn.ghost{background:transparent;color:var(--gold2);border:1px solid rgba(216,181,109,.3);box-shadow:none}
+    .sticky{
+      position:sticky;top:0;z-index:10;margin:16px 0 18px;
+      backdrop-filter: blur(14px);
+      background:rgba(8,10,14,.76);border:1px solid var(--line);border-radius:18px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 34px rgba(0,0,0,.22)
+    }
+    .progressShell{flex:1;height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.05)}
+    .progressBar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--blue));border-radius:999px;transition:width .25s ease}
+    .progressText{font-weight:800;color:#e5d8c3;font-size:.86rem;white-space:nowrap}
+    .sectionTitle{margin:34px 0 12px;display:flex;align-items:end;justify-content:space-between;gap:20px}
+    .sectionTitle h2{font-size:clamp(1.8rem,3.2vw,3rem);letter-spacing:-.04em;margin:0}
+    .sectionTitle p{margin:0;color:var(--muted);max-width:540px;line-height:1.45}
+    .question{
+      border:1px solid var(--line);border-radius:26px;background:linear-gradient(180deg,rgba(23,33,50,.92),rgba(14,19,29,.86));
+      padding:24px;margin:16px 0;box-shadow:0 14px 48px rgba(0,0,0,.22)
+    }
+    .qTop{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+    .num{min-width:42px;height:42px;border-radius:15px;background:rgba(216,181,109,.13);border:1px solid rgba(216,181,109,.28);display:grid;place-items:center;color:var(--gold2);font-weight:950}
+    .qText h3{margin:0 0 6px;font-size:1.15rem;letter-spacing:-.01em}
+    .qText p{margin:0;color:var(--muted);line-height:1.45}
+    .options{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+    .opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:18px;padding:14px;cursor:pointer;transition:.15s transform,.15s border-color,.15s background}
+    .opt:hover{transform:translateY(-1px);border-color:rgba(216,181,109,.34);background:rgba(255,255,255,.07)}
+    .opt input{width:auto;margin-top:4px;accent-color:#d8b56d}
+    .opt span{line-height:1.42;color:#e9e1d6}
+    .opt small{display:block;color:var(--muted2);margin-top:5px;line-height:1.35}
+    .results{display:none;margin-top:28px}
+    .resultHero{border:1px solid rgba(216,181,109,.24);background:linear-gradient(135deg,rgba(216,181,109,.13),rgba(134,183,255,.075),rgba(23,33,50,.9));border-radius:32px;padding:30px;box-shadow:var(--shadow)}
+    .resultHero h2{font-size:clamp(2rem,5vw,4.2rem);line-height:.96;letter-spacing:-.06em;margin:8px 0 10px}
+    .resultHero p{color:#dfd5c7;line-height:1.55;max-width:900px;font-size:1.05rem}
+    .scoreRow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 0}
+    .scoreBox{background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:20px;padding:16px}
+    .scoreBox b{display:block;font-size:1.8rem;color:var(--gold2);letter-spacing:-.04em}.scoreBox span{color:var(--muted);font-size:.88rem;line-height:1.3}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    .card{border:1px solid var(--line);background:rgba(23,33,50,.78);border-radius:24px;padding:22px;box-shadow:0 14px 38px rgba(0,0,0,.17)}
+    .card h3{margin:0 0 10px;font-size:1.18rem;color:#fff}.card p{color:var(--muted);line-height:1.55;margin:0 0 10px}.card ul{margin:10px 0 0;padding-left:19px;color:#ddd4c8;line-height:1.55}.card li{margin:6px 0}.tag{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(216,181,109,.25);background:rgba(216,181,109,.1);color:var(--gold2);border-radius:999px;padding:7px 10px;font-size:.78rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px}
+    .bars{display:grid;gap:12px}.barLine{display:grid;grid-template-columns:165px 1fr 46px;gap:10px;align-items:center}.barLabel{font-size:.9rem;color:#e7dccf;font-weight:750}.barTrack{height:12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.04);overflow:hidden}.barFill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--blue));width:0}.barVal{font-weight:900;color:var(--gold2);font-size:.85rem;text-align:right}
+    canvas{max-width:100%;background:rgba(0,0,0,.12);border:1px solid var(--line);border-radius:22px;padding:8px}
+    .warning{border-left:4px solid var(--red);padding-left:14px}.success{border-left:4px solid var(--green);padding-left:14px}.goldline{border-left:4px solid var(--gold);padding-left:14px}
+    .footer{margin:28px 0 0;color:var(--muted2);font-size:.9rem;line-height:1.45;text-align:center}
+    .answerTable{width:100%;border-collapse:collapse;margin-top:10px;overflow:hidden;border-radius:16px;font-size:.92rem}.answerTable th,.answerTable td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}.answerTable th{color:var(--gold2);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;background:rgba(255,255,255,.04)}.answerTable td{color:#ddd4c8}.hidden{display:none!important}
+    @media(max-width:860px){.startGrid,.grid{grid-template-columns:1fr}.fields,.scoreRow{grid-template-columns:1fr}.hero{padding:25px}.barLine{grid-template-columns:1fr}.sticky{top:8px}.progressText{display:none}}
+    @media print{
+      body{background:white;color:#111}.wrap{width:100%;padding:0}.hero,.sticky,#testBlock,.footer,.btns{display:none!important}.results{display:block!important}.resultHero,.card{box-shadow:none;background:white;color:#111;border:1px solid #ddd}.resultHero h2,.card h3,.scoreBox b,.tag,.barVal{color:#111}.resultHero p,.card p,.card ul,.answerTable td{color:#222}.grid{grid-template-columns:1fr 1fr}.scoreRow{grid-template-columns:repeat(4,1fr)}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero" id="top">
+      <div class="brand"><div class="mark">NQX</div> Test Ejecutivo de Negociación</div>
+      <h1>Cómo negocias cuando hay presión real.</h1>
+      <p class="lead">Un diagnóstico gamificado para directivos, mandos y perfiles B2B. No mide si “negocias bien” en abstracto: detecta cómo proteges valor, cómo lees intereses ocultos, qué haces bajo presión y dónde puedes estar perdiendo margen sin darte cuenta.</p>
+      <div class="chips">
+        <span class="chip">20 situaciones ejecutivas</span>
+        <span class="chip">6 arquetipos negociadores</span>
+        <span class="chip">Radar competencial</span>
+        <span class="chip">Harvard · BATNA · ZOPA · VUCA</span>
+      </div>
+      <div class="startGrid">
+        <div class="miniPanel">
+          <h3>Instrucciones</h3>
+          <p>Responde como actuarías de verdad en una negociación con presión, no como “deberías” actuar. El resultado será más útil cuanto menos idealices tu respuesta. No hay respuestas bonitas: hay patrones de conducta.</p>
+          <div class="btns">
+            <button class="btn" onclick="document.getElementById('testBlock').scrollIntoView({behavior:'smooth'})">Empezar test</button>
+            <button class="btn secondary" onclick="resetTest()">Reiniciar</button>
+          </div>
+        </div>
+        <div class="miniPanel">
+          <h3>Datos para personalizar el informe</h3>
+          <div class="fields">
+            <div><label class="small" for="participant">Nombre</label><input id="participant" placeholder="Nombre del participante"></div>
+            <div><label class="small" for="company">Empresa / área</label><input id="company" placeholder="Empresa, área o equipo"></div>
+          </div>
+          <p style="margin-top:12px">Los datos no se envían a ningún servidor. Todo funciona dentro de este archivo HTML.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="sticky">
+      <div class="progressShell"><div class="progressBar" id="progressBar"></div></div>
+      <div class="progressText" id="progressText">0 / 20</div>
+      <button class="btn ghost" onclick="calculateResults()">Ver resultado</button>
+    </div>
+
+    <main id="testBlock">
+      <div class="sectionTitle">
+        <h2>Elige tu respuesta dominante</h2>
+        <p>Cada situación fuerza una tensión real: relación versus margen, criterio versus rapidez, datos versus emoción, cerrar versus seguir explorando.</p>
+      </div>
+      <div id="questions"></div>
+      <div class="btns" style="justify-content:center;margin:28px 0 36px">
+        <button class="btn" onclick="calculateResults()">Calcular mi diagnóstico</button>
+        <button class="btn secondary" onclick="scrollToFirstMissing()">Ver si falta alguna respuesta</button>
+      </div>
+    </main>
+
+    <section class="results" id="results">
+      <div class="resultHero">
+        <div class="brand"><div class="mark">NQX</div> Informe individual</div>
+        <h2 id="profileTitle">Perfil negociador</h2>
+        <p id="profileIntro"></p>
+        <div class="scoreRow">
+          <div class="scoreBox"><b id="nqxScore">0</b><span>Índice NQX<br>madurez negociadora</span></div>
+          <div class="scoreBox"><b id="levelName">—</b><span>Nivel ejecutivo<br>de conducción</span></div>
+          <div class="scoreBox"><b id="mainArchetype">—</b><span>Arquetipo dominante</span></div>
+          <div class="scoreBox"><b id="shadowRisk">—</b><span>Riesgo sombra</span></div>
+        </div>
+        <div class="btns">
+          <button class="btn" onclick="window.print()">Imprimir / guardar PDF</button>
+          <button class="btn secondary" onclick="downloadReport()">Descargar informe TXT</button>
+          <button class="btn ghost" onclick="copyReport()">Copiar informe</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <span class="tag">Lectura ejecutiva</span>
+          <h3>Qué significa tu resultado</h3>
+          <p id="meaning"></p>
+          <div class="success"><p id="talent"></p></div>
+        </div>
+        <div class="card">
+          <span class="tag">Punto ciego</span>
+          <h3>Dónde puedes perder valor</h3>
+          <div class="warning"><p id="risk"></p></div>
+          <p id="perception"></p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <span class="tag">Radar competencial</span>
+          <h3>Tus capacidades críticas</h3>
+          <canvas id="radar" width="520" height="420"></canvas>
+        </div>
+        <div class="card">
+          <span class="tag">Puntuación por dimensión</span>
+          <h3>Lectura cuantitativa</h3>
+          <div class="bars" id="competencyBars"></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <span class="tag">Plan de entrenamiento</span>
+          <h3>Qué debes entrenar ahora</h3>
+          <ul id="training"></ul>
+        </div>
+        <div class="card">
+          <span class="tag">Frases de alto impacto</span>
+          <h3>Lenguaje negociador recomendado</h3>
+          <ul id="phrases"></ul>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <span class="tag">Harvard aplicado</span>
+          <h3>Tu ajuste al método Harvard</h3>
+          <p id="harvardText"></p>
+          <ul id="harvardActions"></ul>
+        </div>
+        <div class="card">
+          <span class="tag">VUCA / BANI</span>
+          <h3>Cómo respondes cuando cambia el contexto</h3>
+          <p id="vucaText"></p>
+          <ul id="vucaActions"></ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">Mapa de respuestas</span>
+        <h3>Patrones detectados en tus elecciones</h3>
+        <p>Esta tabla ayuda al debrief con formador, coach o equipo. No pretende etiquetar a la persona; muestra qué reflejo aparece cuando la negociación se tensa.</p>
+        <table class="answerTable" id="answerTable"></table>
+      </div>
+    </section>
+
+    <p class="footer">Diseñado como herramienta formativa para negociación B2B, directivos y mandos intermedios. Funciona en navegador, sin conexión y sin envío de datos.</p>
+  </div>
+
+<script>
+const competencies = {
+  strategy: "Estrategia",
+  listening: "Escucha",
+  questions: "Pregunta",
+  value: "Defensa de valor",
+  pressure: "Presión emocional",
+  relationship: "Relación",
+  influence: "Influencia",
+  closing: "Cierre",
+  harvard: "Harvard",
+  vuca: "VUCA"
+};
+
+const archetypes = {
+  estratega: {
+    label:"Arquitecto estratégico",
+    short:"Estratega",
+    intro:"Tu patrón dominante es diseñar la negociación como un sistema: poder, intereses, alternativas, riesgos, secuencia y cierre. No entras solo a conversar; entras a conducir.",
+    meaning:"Ves la negociación como una arquitectura de decisión. Tiendes a mapear actores, intereses, restricciones, BATNA, posibles concesiones y puntos de cierre. Esto te hace sólido en entornos complejos, especialmente cuando hay varios decisores y el acuerdo no depende de una sola variable.",
+    talent:"Tu talento diferencial: conviertes incertidumbre en estructura. Cuando otros reaccionan a la presión, tú puedes ordenar el tablero y recuperar criterio.",
+    risk:"Tu riesgo sombra es sobrediseñar. Puedes retrasar movimiento, sonar demasiado calculador o perder espontaneidad relacional. Si te quedas en el mapa, la otra parte puede sentir distancia o falta de energía comercial.",
+    perception:"Probablemente te perciben como alguien solvente, serio y difícil de improvisar. El reto es que también te perciban cercano, flexible y capaz de crear avance, no solo análisis.",
+    training:["Antes de cada negociación, reduce tu estrategia a tres hipótesis críticas, tres preguntas y dos opciones de acuerdo. Si necesitas más, quizá estás complicando el tablero.","Entrena cierres parciales: cada 15 minutos de conversación debe quedar un avance, una validación o una decisión pendiente asignada.","Incorpora más lectura emocional: no preguntes solo qué necesita la otra parte; observa qué necesita justificar, proteger o no perder."],
+    phrases:["Antes de discutir condiciones, pongamos el mapa completo: qué debe quedar protegido para ambas partes.","No cerremos la conversación en una sola variable; diseñemos opciones que hagan viable el acuerdo.","Mi límite no es una postura rígida: es la condición para que el acuerdo sea sostenible."],
+    shadow:"Sobrediseño"
+  },
+  relacional: {
+    label:"Constructor relacional",
+    short:"Relacional",
+    intro:"Tu patrón dominante es generar confianza, clima y continuidad. Entiendes que en B2B la relación no es decoración: es parte del activo negociador.",
+    meaning:"Tienes facilidad para leer personas, reducir tensión y sostener conversaciones difíciles sin romper puentes. Puedes detectar matices, intereses emocionales y señales políticas que otros no ven. Eres especialmente útil cuando la negociación requiere confianza, continuidad o reconstrucción de relación.",
+    talent:"Tu talento diferencial: abres información porque la otra parte se siente escuchada. Eso te permite acceder a intereses reales que no aparecen en una negociación puramente transaccional.",
+    risk:"Tu riesgo sombra es ceder para conservar armonía. Puedes confundir buen clima con buen acuerdo, evitar conversaciones duras o regalar margen por incomodidad ante la tensión.",
+    perception:"Probablemente te perciben como alguien fácil para trabajar y confiable. El reto es que también te perciban firme, con límites claros y capaz de decir no sin pedir disculpas.",
+    training:["Entrena la frase: ‘Puedo entenderlo, pero no puedo aceptar esa condición sin revisar el equilibrio del acuerdo’. Debe salir sin tensión y sin justificarte de más.","Nunca concedas por clima. Si haces una concesión, vincúlala siempre a una contrapartida concreta.","Prepara por escrito tu línea roja antes de reunirte. Tu límite debe existir antes de que aparezca la presión emocional."],
+    phrases:["Quiero cuidar la relación, precisamente por eso necesitamos un acuerdo que no deteriore el valor.","Puedo revisar opciones, pero cualquier ajuste debe tener una contrapartida clara.","Entiendo la presión interna; veamos cómo resolvemos eso sin convertir calidad en variable de sacrificio."],
+    shadow:"Cesión por armonía"
+  },
+  defensor: {
+    label:"Defensor de valor",
+    short:"Valor",
+    intro:"Tu patrón dominante es proteger objetivos, margen y posición. No te intimida la tensión y tiendes a sostener el valor cuando aparece presión de precio.",
+    meaning:"Tienes fuerza negociadora. Sabes que una negociación no es una conversación amable si al final destruye margen, precedente o calidad. Puedes ser muy eficaz cuando la otra parte presiona, exagera alternativas o intenta imponer su marco.",
+    talent:"Tu talento diferencial: transmites seguridad. Donde otros se justifican o ceden, tú puedes sostener el precio, el alcance y los límites.",
+    risk:"Tu riesgo sombra es convertir la negociación en pulso. Puedes escuchar tarde, preguntar poco o defender valor antes de entender el interés real. Eso puede cerrar información y activar resistencia.",
+    perception:"Probablemente te perciben como firme, directo y con capacidad de decisión. El reto es que no te perciban como rígido, defensivo o poco dispuesto a construir.",
+    training:["Antes de defender, haz dos preguntas. Regla práctica: ninguna respuesta dura sin una pregunta de diagnóstico previa.","Sustituye ‘no puedo’ por ‘podemos explorar opciones si protegemos estas condiciones’. Mantienes firmeza, pero abres diseño.","Entrena concesiones condicionadas: nunca bajes valor sin pedir volumen, duración, alcance, plazo, referencia, exclusividad o compromiso."],
+    phrases:["Puedo mover variables, pero no puedo convertir una solución seria en una solución frágil.","Antes de hablar de bajar, necesito entender qué riesgo queréis resolver con ese ajuste.","Si revisamos precio, revisamos también alcance, volumen o compromiso. El equilibrio debe mantenerse."],
+    shadow:"Pulso competitivo"
+  },
+  analitico: {
+    label:"Analista de criterios",
+    short:"Analítico",
+    intro:"Tu patrón dominante es ordenar la negociación con datos, criterios objetivos y lógica. Buscas reducir arbitrariedad y llevar la conversación a evidencias.",
+    meaning:"Tiendes a preparar información, comparar alternativas, detectar incoherencias y evitar decisiones basadas en presión, opinión o teatro negociador. Esto te hace especialmente fuerte cuando hay que defender ROI, calidad, coste total o riesgo operativo.",
+    talent:"Tu talento diferencial: reduces ruido. Puedes convertir una discusión subjetiva —‘me parece caro’— en una conversación sobre criterios, impacto y comparabilidad real.",
+    risk:"Tu riesgo sombra es saturar con datos o sonar frío. Puedes olvidar que la decisión también necesita seguridad, narrativa y confianza, no solo lógica.",
+    perception:"Probablemente te perciben como riguroso y preparado. El reto es que también te perciban claro, sintético y conectado con lo que preocupa a la otra parte.",
+    training:["Convierte datos en decisión: por cada dato que uses, formula una consecuencia ejecutiva clara.","No presentes más de tres evidencias a la vez. Si necesitas diez, todavía no has elegido bien.","Trabaja narrativa: problema, riesgo, impacto, opción y decisión. La lógica necesita una historia defendible."],
+    phrases:["Comparemos opciones equivalentes; si no son equivalentes, el precio no está diciendo la verdad completa.","Más que discutir percepciones, pongamos criterios: coste total, riesgo, cobertura y resultado esperado.","El dato relevante no es solo el precio inicial; es el coste de que esto falle o quede mal ejecutado."],
+    shadow:"Frialdad analítica"
+  },
+  agil: {
+    label:"Improvisador creativo",
+    short:"Ágil",
+    intro:"Tu patrón dominante es moverte rápido, adaptarte y crear salidas cuando la conversación cambia. Funcionas bien en negociaciones vivas y contextos VUCA.",
+    meaning:"Tienes flexibilidad, energía y capacidad para generar opciones sobre la marcha. Ves posibilidades donde otros ven bloqueo. Puedes reconducir una reunión difícil, detectar una oportunidad no prevista y proponer combinaciones que no estaban en el guion.",
+    talent:"Tu talento diferencial: desbloqueas. Cuando la negociación se atasca en sí/no, puedes abrir opciones, pilotos, fases, cambios de alcance o fórmulas de avance.",
+    risk:"Tu riesgo sombra es improvisar sin límites. Puedes moverte tanto que pierdas trazabilidad, prometas demasiado, no protejas margen o cierres ambiguo.",
+    perception:"Probablemente te perciben como resolutivo, dinámico y flexible. El reto es que también te perciban disciplinado, fiable y consciente de las consecuencias de cada concesión.",
+    training:["Antes de cada negociación define tres no negociables. La creatividad funciona mejor cuando sabe qué no debe romper.","Después de crear una opción, tradúcela inmediatamente a condiciones: alcance, plazo, responsable, precio y próximo paso.","Usa una hoja de control de concesiones: qué doy, qué pido, qué precedente crea y qué impacto tiene."],
+    phrases:["Podemos diseñar una fórmula alternativa, pero dejémosla cerrada con alcance, plazos y contrapartidas.","Abramos opciones, sí; pero sin perder el equilibrio económico ni operativo.","Una solución por fases puede desbloquear la decisión sin forzar una rebaja que degrade el proyecto."],
+    shadow:"Flexibilidad sin control"
+  },
+  experto: {
+    label:"Experto solucionador",
+    short:"Experto",
+    intro:"Tu patrón dominante es negociar desde conocimiento, experiencia y solvencia técnica. Te apoyas en dominio del producto, servicio, operación o sector.",
+    meaning:"Aportas criterio experto y puedes detectar necesidades reales detrás de demandas mal formuladas. Tu autoridad nace de saber cómo se ejecutan las cosas, qué riesgos existen y qué diferencia una solución seria de una aparente.",
+    talent:"Tu talento diferencial: das seguridad técnica. Cuando la otra parte teme equivocarse, tu conocimiento puede convertirse en confianza y en reducción de riesgo.",
+    risk:"Tu riesgo sombra es explicar demasiado y vender poco. Puedes defender características, procesos o detalles, pero no traducirlos a impacto directivo: riesgo evitado, valor creado, coste reducido o decisión defendible.",
+    perception:"Probablemente te perciben como competente y creíble. El reto es que también te perciban estratégico, comercial y orientado a decisión, no solo técnico.",
+    training:["Por cada explicación técnica, añade una traducción ejecutiva: ‘esto significa que reducimos riesgo en…’. ","Pregunta antes de diagnosticar. Tu experiencia es poderosa, pero puede sonar invasiva si llega antes de escuchar.","Prepara tres niveles de mensaje: técnico, económico y político-interno. La decisión B2B rara vez es solo técnica."],
+    phrases:["La diferencia no está en la característica; está en el riesgo que evita y en la continuidad que garantiza.","Déjeme traducir esto a impacto: menos incidencias, menos exposición interna y más control del resultado.","Técnicamente se puede hacer, pero la pregunta ejecutiva es si conviene hacerlo así."],
+    shadow:"Exceso técnico"
+  }
+};
+
+const questions = [
+  {t:"Un cliente importante exige un 15% de descuento para renovar.",d:"Asegura que tiene una alternativa más barata y que dirección financiera le está presionando.", options:[
+    {txt:"No rechazo de entrada. Pregunto qué debe resolver exactamente ese 15%: presupuesto, comparativa, presión interna o duda sobre el valor.", arch:"estratega", comps:{questions:3,harvard:3,value:2,pressure:1}},
+    {txt:"Le recuerdo la relación histórica y busco mantener clima, explorando si hay una fórmula que le ayude internamente sin romper la colaboración.", arch:"relacional", comps:{relationship:3,listening:2,questions:1,pressure:1}},
+    {txt:"Defiendo que ese descuento no es asumible sin tocar alcance, volumen, duración o nivel de servicio.", arch:"defensor", comps:{value:3,closing:2,pressure:2,harvard:1}},
+    {txt:"Le pido comparar ofertas equivalentes: cobertura, riesgo, calidad, soporte, incidencias y coste total.", arch:"analitico", comps:{value:2,harvard:2,strategy:1,influence:2}},
+    {txt:"Propongo una opción por fases o un piloto con revisión, evitando discutir solo precio.", arch:"agil", comps:{vuca:2,harvard:2,influence:1,closing:1}}
+  ]},
+  {t:"Tienes una negociación estratégica la próxima semana.",d:"Hay varios decisores, intereses no visibles y posible presión de compras.", options:[
+    {txt:"Construyo un mapa: decisores, intereses, BATNA, WATNA, ZOPA, criterios objetivos y concesiones condicionadas.", arch:"estratega", comps:{strategy:3,harvard:3,vuca:2,closing:1}},
+    {txt:"Primero intento hablar informalmente con alguien de confianza para entender clima, política interna y preocupaciones reales.", arch:"relacional", comps:{relationship:3,listening:3,strategy:1}},
+    {txt:"Defino muy bien mi línea roja y preparo cómo defenderé margen si intentan llevarme a precio.", arch:"defensor", comps:{value:3,pressure:2,strategy:2}},
+    {txt:"Preparo evidencias: datos de mercado, histórico de resultados, indicadores de calidad y ROI defendible.", arch:"analitico", comps:{value:2,harvard:2,influence:2,strategy:2}},
+    {txt:"Preparo tres escenarios alternativos para poder adaptarme si cambian presupuesto, tiempos o alcance.", arch:"agil", comps:{vuca:3,strategy:2,harvard:1}}
+  ]},
+  {t:"En plena reunión te dicen: ‘Es demasiado caro’. ",d:"La frase llega pronto, antes de haber revisado el valor de la propuesta.", options:[
+    {txt:"No entro al precio. Pregunto: ‘¿Con qué criterio lo estáis comparando exactamente?’", arch:"analitico", comps:{questions:3,harvard:2,value:2,listening:1}},
+    {txt:"Reformulo: ‘Entiendo que hay preocupación por inversión. ¿Qué tendría que quedar garantizado para que fuera defendible?’", arch:"estratega", comps:{questions:3,harvard:3,influence:1}},
+    {txt:"Sostengo que el precio responde al alcance y que bajar sin revisar condiciones deterioraría el resultado.", arch:"defensor", comps:{value:3,pressure:2,closing:1}},
+    {txt:"Exploro si la preocupación es real o si busca una concesión para mostrar victoria interna.", arch:"relacional", comps:{listening:2,relationship:2,questions:2}},
+    {txt:"Propongo paquetes: base, recomendado y premium para que el debate pase de precio a decisión.", arch:"agil", comps:{vuca:2,influence:2,value:1,closing:1}}
+  ]},
+  {t:"Aparece un nuevo decisor en la negociación.",d:"No estaba previsto y parece tener más poder que tu interlocutor inicial.", options:[
+    {txt:"Reabro diagnóstico: qué criterios trae, qué riesgos mira y cómo cambia el proceso de decisión.", arch:"estratega", comps:{strategy:3,questions:2,vuca:2,harvard:1}},
+    {txt:"Cuido la entrada: lo integro sin invalidar al interlocutor previo y leo la dinámica de poder.", arch:"relacional", comps:{relationship:3,listening:2,vuca:1}},
+    {txt:"Mantengo mi posición para que el cambio de persona no reinicie concesiones ya discutidas.", arch:"defensor", comps:{pressure:2,value:2,closing:2}},
+    {txt:"Le presento en dos minutos los criterios objetivos ya trabajados para evitar volver a opiniones.", arch:"analitico", comps:{influence:2,harvard:2,value:1,closing:1}},
+    {txt:"Adapto el formato: resumen ejecutivo, opciones y siguiente decisión posible.", arch:"agil", comps:{vuca:3,influence:2,closing:1}}
+  ]},
+  {t:"Detectas que la otra parte oculta información sobre una oferta competidora.",d:"La usa como presión, pero no muestra condiciones comparables.", options:[
+    {txt:"Pido comparar elementos equivalentes y separo precio de cobertura, riesgo y garantías.", arch:"analitico", comps:{harvard:3,value:2,questions:2}},
+    {txt:"Pregunto con calma qué parte de esa alternativa les resulta más atractiva y qué dudas mantiene.", arch:"relacional", comps:{listening:3,questions:2,relationship:1}},
+    {txt:"No entro en subasta. Marco que solo revisaré condiciones si hay información suficiente y contrapartida.", arch:"defensor", comps:{value:3,pressure:2,closing:1}},
+    {txt:"Uso la oferta como hipótesis: si el diferencial es precio, diseño alcance; si es riesgo, diseño garantía; si es plazo, diseño fases.", arch:"estratega", comps:{strategy:3,harvard:2,vuca:1}},
+    {txt:"Propongo un cuadro de opciones rápidas para salir del bloqueo sin comprar su marco de presión.", arch:"agil", comps:{vuca:2,influence:2,harvard:1}}
+  ]},
+  {t:"Un cliente histórico pide una entrega urgente sin coste adicional.",d:"Aceptar tensiona tu equipo y puede afectar la calidad del servicio.", options:[
+    {txt:"Reconozco la urgencia y pido entender qué pasaría si no se llega a esa fecha.", arch:"relacional", comps:{listening:3,relationship:2,questions:1}},
+    {txt:"Analizo impacto operativo y propongo alternativas con coste, alcance o prioridad claramente definidos.", arch:"estratega", comps:{strategy:2,value:2,harvard:2,closing:1}},
+    {txt:"Digo que la urgencia tiene coste y que asumirla gratis dañaría el equilibrio del acuerdo.", arch:"defensor", comps:{value:3,pressure:2,closing:1}},
+    {txt:"Calculo capacidad, riesgo y recursos necesarios antes de comprometer nada.", arch:"analitico", comps:{strategy:2,value:1,harvard:1,pressure:1}},
+    {txt:"Propongo una entrega parcial priorizada para cubrir lo crítico sin prometer lo imposible.", arch:"agil", comps:{vuca:3,closing:2,influence:1}}
+  ]},
+  {t:"Te piden ‘un gesto’ para cerrar.",d:"La frase es ambigua: puede ser simbólica, económica o política.", options:[
+    {txt:"Pregunto qué tipo de gesto necesita y qué decisión concreta desbloquearía.", arch:"estratega", comps:{questions:3,closing:2,harvard:2}},
+    {txt:"Intento entender si necesita sentirse escuchado, justificar internamente o conseguir una victoria visible.", arch:"relacional", comps:{listening:3,relationship:2,questions:1}},
+    {txt:"Acepto hablar de gesto solo si viene asociado a compromiso de firma, volumen o duración.", arch:"defensor", comps:{value:3,closing:2,pressure:1}},
+    {txt:"Cuantifico el gesto y su impacto para no abrir un precedente difícil de controlar.", arch:"analitico", comps:{value:2,strategy:2,harvard:1}},
+    {txt:"Busco un gesto de alto valor percibido y bajo coste real: formación, seguimiento, revisión o fase adicional limitada.", arch:"agil", comps:{vuca:2,influence:2,value:1}}
+  ]},
+  {t:"Tu equipo interno no está alineado antes de la negociación.",d:"Comercial quiere cerrar, operaciones teme no poder cumplir y finanzas no quiere bajar margen.", options:[
+    {txt:"Hago una pre-negociación interna: objetivos, límites, concesiones autorizadas y mensajes comunes.", arch:"estratega", comps:{strategy:3,closing:2,harvard:1}},
+    {txt:"Escucho las preocupaciones de cada área para que nadie boicotee el acuerdo después.", arch:"relacional", comps:{relationship:3,listening:2,strategy:1}},
+    {txt:"Defiendo que no se puede vender algo que luego destruya margen o credibilidad operativa.", arch:"defensor", comps:{value:3,pressure:2,influence:1}},
+    {txt:"Pongo datos: capacidad, costes, riesgos de incumplimiento y margen mínimo sostenible.", arch:"analitico", comps:{value:2,harvard:2,strategy:2}},
+    {txt:"Diseño una propuesta modular que permita cerrar sin forzar a todas las áreas al mismo riesgo.", arch:"agil", comps:{vuca:2,strategy:2,influence:1}}
+  ]},
+  {t:"La negociación parece cerrada, pero quedan compromisos poco claros.",d:"Hay buena sensación, pero nadie ha concretado responsables, plazos ni condiciones finales.", options:[
+    {txt:"Hago un resumen ejecutivo de acuerdos, pendientes, responsables, plazos y próximo paso por escrito.", arch:"estratega", comps:{closing:3,harvard:2,strategy:1}},
+    {txt:"Verifico verbalmente que todos se sienten cómodos y que no hay reservas ocultas.", arch:"relacional", comps:{relationship:2,listening:2,closing:1}},
+    {txt:"No doy la negociación por cerrada hasta que condiciones y contrapartidas queden explícitas.", arch:"defensor", comps:{closing:3,value:2,pressure:1}},
+    {txt:"Reviso cada variable crítica: alcance, precio, condiciones, exclusiones, riesgos y métricas de éxito.", arch:"analitico", comps:{closing:2,harvard:2,strategy:1}},
+    {txt:"Propongo cerrar un documento breve de una página para capturar el acuerdo sin burocratizarlo.", arch:"agil", comps:{closing:2,vuca:1,influence:1}}
+  ]},
+  {t:"El cliente es cordial, pero evita decidir.",d:"Todo le parece interesante, pero siempre falta una validación, una revisión o una reunión más.", options:[
+    {txt:"Pregunto qué condición concreta falta para decidir y quién debe validarla.", arch:"estratega", comps:{questions:3,closing:2,harvard:1}},
+    {txt:"Exploro si hay una preocupación no expresada que está frenando el avance.", arch:"relacional", comps:{listening:3,relationship:2,questions:1}},
+    {txt:"Marco una fecha y un criterio de decisión para evitar una negociación indefinida.", arch:"defensor", comps:{closing:3,pressure:2,value:1}},
+    {txt:"Le pido ordenar criterios de decisión: coste, riesgo, urgencia, ROI y aprobación interna.", arch:"analitico", comps:{harvard:2,questions:2,influence:1}},
+    {txt:"Propongo un siguiente paso pequeño pero comprometido: workshop, piloto, validación técnica o comité corto.", arch:"agil", comps:{closing:2,vuca:2,influence:1}}
+  ]},
+  {t:"Tienes muchos datos que respaldan tu propuesta, pero el cliente está emocionalmente tenso.",d:"Habla desde miedo a equivocarse y presión interna, no desde análisis racional.", options:[
+    {txt:"Bajo el ritmo, valido la preocupación y pregunto qué riesgo personal o interno necesita reducir.", arch:"relacional", comps:{listening:3,relationship:3,pressure:1}},
+    {txt:"Uso los datos solo después de identificar qué miedo concreto debo responder.", arch:"estratega", comps:{strategy:2,questions:2,influence:2}},
+    {txt:"Mantengo la calma y no dejo que la tensión me lleve a una concesión prematura.", arch:"defensor", comps:{pressure:3,value:2}},
+    {txt:"Selecciono tres datos clave y los convierto en una explicación simple de riesgo reducido.", arch:"analitico", comps:{influence:2,value:2,harvard:1}},
+    {txt:"Propongo una garantía, una fase de control o un punto de revisión que transforme miedo en seguridad.", arch:"agil", comps:{vuca:2,influence:2,relationship:1}}
+  ]},
+  {t:"En mitad del proceso, el cliente anuncia congelación parcial de presupuesto.",d:"El proyecto sigue siendo importante, pero el escenario financiero cambia.", options:[
+    {txt:"Recalculo ZOPA y BATNA: qué sigue siendo viable, qué no y qué variable puede moverse sin destruir valor.", arch:"estratega", comps:{strategy:3,harvard:3,vuca:2}},
+    {txt:"Exploro cómo la congelación afecta internamente a mi interlocutor y qué necesita proteger.", arch:"relacional", comps:{relationship:2,listening:2,questions:1}},
+    {txt:"Dejo claro que la congelación no puede trasladarse íntegramente a mi margen.", arch:"defensor", comps:{value:3,pressure:2}},
+    {txt:"Pido datos: importe congelado, calendario, partidas disponibles y criterios de priorización.", arch:"analitico", comps:{questions:2,harvard:2,strategy:1}},
+    {txt:"Propongo fasear: ahora lo crítico, después ampliación condicionada a presupuesto.", arch:"agil", comps:{vuca:3,closing:2,influence:1}}
+  ]},
+  {t:"Tu interlocutor necesita defender la decisión ante comité.",d:"Le gusta la propuesta, pero teme no poder justificarla internamente.", options:[
+    {txt:"Le ayudo a construir el caso interno: problema, coste de no actuar, ROI, riesgos y recomendación.", arch:"estratega", comps:{influence:3,strategy:2,value:2}},
+    {txt:"Le pregunto qué objeciones espera del comité y qué argumento le daría seguridad.", arch:"relacional", comps:{questions:2,listening:2,relationship:1}},
+    {txt:"Refuerzo por qué bajar calidad para aprobar precio puede salir más caro políticamente.", arch:"defensor", comps:{value:3,influence:1,pressure:1}},
+    {txt:"Le preparo una comparativa clara con criterios objetivos y coste total de decisión.", arch:"analitico", comps:{harvard:2,value:2,influence:2}},
+    {txt:"Le propongo un formato de decisión simple: tres opciones con recomendación y riesgos.", arch:"agil", comps:{influence:2,vuca:1,closing:1}}
+  ]},
+  {t:"La negociación es virtual y notas dispersión.",d:"Hay cámaras apagadas, multitarea y poca energía en la conversación.", options:[
+    {txt:"Estructuro la reunión con agenda, objetivos, decisiones esperadas y resúmenes parciales.", arch:"estratega", comps:{strategy:2,closing:2,influence:1}},
+    {txt:"Activo participación con preguntas directas y lectura de señales: quién calla, quién duda, quién bloquea.", arch:"relacional", comps:{listening:2,relationship:2,questions:2}},
+    {txt:"Evito que la dispersión diluya condiciones: mantengo foco en decisión, límites y próximos pasos.", arch:"defensor", comps:{closing:2,pressure:1,value:1}},
+    {txt:"Comparto criterios visuales: tabla de opciones, riesgos, costes y comparativas.", arch:"analitico", comps:{influence:2,harvard:1,value:1}},
+    {txt:"Cambio dinámica: votación rápida, matriz de prioridades o ronda breve para forzar claridad.", arch:"agil", comps:{vuca:3,influence:2,closing:1}}
+  ]},
+  {t:"Descubres que tu BATNA es débil.",d:"Necesitas el acuerdo más de lo que te gustaría admitir.", options:[
+    {txt:"No lo muestro. Reviso variables de valor, alternativas parciales y límites reales para no negociar desde miedo.", arch:"estratega", comps:{strategy:3,pressure:2,harvard:2}},
+    {txt:"Trabajo confianza y colaboración para que la negociación no se convierta en explotación de poder.", arch:"relacional", comps:{relationship:2,listening:1,pressure:1}},
+    {txt:"Sostengo mínimos aunque mi alternativa sea débil; un mal acuerdo puede ser peor que no cerrar.", arch:"defensor", comps:{pressure:3,value:3}},
+    {txt:"Calculo objetivamente cuánto puedo ceder y qué coste tendría aceptar condiciones inferiores.", arch:"analitico", comps:{strategy:2,value:2,harvard:1}},
+    {txt:"Creo opciones laterales: fase reducida, menor alcance, pago distinto o compromiso futuro.", arch:"agil", comps:{vuca:3,influence:1,closing:1}}
+  ]},
+  {t:"Te piden más servicio por el mismo precio.",d:"Lo plantean como algo ‘pequeño’, pero sabes que consume recursos.", options:[
+    {txt:"Pregunto qué resultado busca ese extra y si hay otra forma de conseguirlo sin ampliar alcance.", arch:"estratega", comps:{questions:2,harvard:2,value:1}},
+    {txt:"Reconozco la necesidad, pero hago visible que incluso lo pequeño puede afectar al equipo.", arch:"relacional", comps:{relationship:2,listening:1,value:1}},
+    {txt:"No acepto ampliación gratuita: si entra más alcance, debe entrar más precio, plazo o contrapartida.", arch:"defensor", comps:{value:3,closing:2,pressure:1}},
+    {txt:"Cuantifico horas, coste, riesgo de desviación y precedente creado por esa ampliación.", arch:"analitico", comps:{value:2,strategy:2,harvard:1}},
+    {txt:"Propongo convertirlo en opción adicional o fase posterior con condición clara.", arch:"agil", comps:{vuca:2,closing:2,influence:1}}
+  ]},
+  {t:"Después de un acuerdo verbal, la otra parte reabre un punto sensible.",d:"Dice que ‘lo ha revisado internamente’ y necesita modificar condiciones.", options:[
+    {txt:"Reviso qué ha cambiado, quién lo pide y cómo afecta al equilibrio completo del acuerdo.", arch:"estratega", comps:{strategy:2,questions:2,harvard:2}},
+    {txt:"Evito acusar. Mantengo relación y pregunto qué presión interna ha aparecido.", arch:"relacional", comps:{relationship:3,listening:2,pressure:1}},
+    {txt:"Marco que reabrir una variable implica reabrir contrapartidas. No acepto cambios unilaterales.", arch:"defensor", comps:{value:3,closing:2,pressure:2}},
+    {txt:"Vuelvo al documento de acuerdos y criterios para separar revisión legítima de regateo tardío.", arch:"analitico", comps:{harvard:2,closing:2,value:1}},
+    {txt:"Propongo una solución controlada: ajuste limitado, fecha de revisión o alternativa por fases.", arch:"agil", comps:{vuca:2,closing:2,influence:1}}
+  ]},
+  {t:"Tras presentar tu propuesta, aparece un silencio largo.",d:"No sabes si es duda, táctica, rechazo o reflexión real.", options:[
+    {txt:"Aguanto el silencio y después pregunto qué parte merece más análisis antes de avanzar.", arch:"estratega", comps:{pressure:2,questions:2,listening:1}},
+    {txt:"Leo lenguaje no verbal y doy espacio: quizá necesitan procesar o hablar internamente.", arch:"relacional", comps:{listening:3,relationship:2,pressure:1}},
+    {txt:"No lleno el silencio bajando precio. Mantengo presencia y espero respuesta.", arch:"defensor", comps:{pressure:3,value:2}},
+    {txt:"Vuelvo a los criterios: impacto, riesgos cubiertos, comparabilidad y próximos pasos.", arch:"analitico", comps:{harvard:2,value:2,influence:1}},
+    {txt:"Ofrezco dos caminos para facilitar respuesta: resolver dudas ahora o acordar validación concreta.", arch:"agil", comps:{closing:2,vuca:1,influence:1}}
+  ]},
+  {t:"Tu dirección te presiona para cerrar ‘como sea’. ",d:"Tú ves riesgo de margen, precedente y mala ejecución.", options:[
+    {txt:"Elevo la conversación: cerrar no es suficiente; el acuerdo debe ser rentable, ejecutable y defendible.", arch:"estratega", comps:{strategy:3,value:2,influence:1}},
+    {txt:"Intento alinear a dirección explicando el impacto en cliente, equipo y confianza futura.", arch:"relacional", comps:{relationship:2,influence:2,listening:1}},
+    {txt:"Defiendo que hay condiciones que no deben aceptarse aunque el cierre sea tentador.", arch:"defensor", comps:{value:3,pressure:2,closing:1}},
+    {txt:"Presento números: margen, riesgos, capacidad, coste de incumplir y precedente comercial.", arch:"analitico", comps:{value:3,harvard:1,strategy:2}},
+    {txt:"Propongo una salida intermedia: acuerdo mínimo viable, fase piloto o cierre condicionado.", arch:"agil", comps:{vuca:2,closing:2,influence:1}}
+  ]},
+  {t:"La otra parte usa una frase de presión: ‘Si no mejoráis la oferta, no podemos continuar’. ",d:"Quieres evitar reaccionar de forma defensiva.", options:[
+    {txt:"Desactivo el ultimátum: ‘Entiendo el punto. Antes de mover nada, aclaremos qué variable impide continuar’. ", arch:"estratega", comps:{pressure:2,questions:3,harvard:2}},
+    {txt:"Mantengo tono sereno y busco entender si es una presión real o una forma de negociar.", arch:"relacional", comps:{pressure:2,listening:2,relationship:1}},
+    {txt:"Contesto que mejorar oferta exige mejorar compromiso. No negocio bajo amenaza sin reciprocidad.", arch:"defensor", comps:{pressure:3,value:2,closing:1}},
+    {txt:"Pido criterios concretos de mejora: precio, riesgo, alcance, plazo, comparativa o aprobación interna.", arch:"analitico", comps:{questions:2,harvard:2,value:1}},
+    {txt:"Ofrezco rediseñar opciones: qué versión viable podría desbloquear continuidad sin destruir valor.", arch:"agil", comps:{vuca:2,influence:2,harvard:1}}
+  ]}
+];
+
+function renderQuestions(){
+  const holder=document.getElementById('questions');
+  holder.innerHTML='';
+  questions.forEach((q,qi)=>{
+    const div=document.createElement('div');
+    div.className='question'; div.id='q'+qi;
+    div.innerHTML=`<div class="qTop"><div class="num">${qi+1}</div><div class="qText"><h3>${q.t}</h3><p>${q.d}</p></div></div>`;
+    const opts=document.createElement('div'); opts.className='options';
+    q.options.forEach((o,oi)=>{
+      const lab=document.createElement('label'); lab.className='opt';
+      lab.innerHTML=`<input type="radio" name="q${qi}" value="${oi}"><span>${o.txt}<small>${archetypes[o.arch].label}</small></span>`;
+      opts.appendChild(lab);
+    });
+    div.appendChild(opts); holder.appendChild(div);
+  });
+  document.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',updateProgress));
+}
+function updateProgress(){
+  const answered=questions.filter((q,i)=>document.querySelector(`input[name=q${i}]:checked`)).length;
+  document.getElementById('progressBar').style.width=(answered/questions.length*100)+'%';
+  document.getElementById('progressText').textContent=`${answered} / ${questions.length}`;
+}
+function scrollToFirstMissing(){
+  for(let i=0;i<questions.length;i++){
+    if(!document.querySelector(`input[name=q${i}]:checked`)){document.getElementById('q'+i).scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('q'+i).style.borderColor='rgba(255,139,139,.8)';setTimeout(()=>document.getElementById('q'+i).style.borderColor='var(--line)',1200);return;}
+  }
+  calculateResults();
+}
+function emptyScores(){
+  const arch={}; Object.keys(archetypes).forEach(k=>arch[k]=0);
+  const comps={}; Object.keys(competencies).forEach(k=>comps[k]=0);
+  return {arch,comps,answers:[]};
+}
+function collectScores(){
+  const s=emptyScores();
+  questions.forEach((q,i)=>{
+    const checked=document.querySelector(`input[name=q${i}]:checked`);
+    if(!checked) return;
+    const opt=q.options[+checked.value];
+    s.arch[opt.arch]+=4;
+    Object.entries(opt.comps).forEach(([k,v])=>s.comps[k]+=v);
+    s.answers.push({n:i+1,question:q.t,answer:opt.txt,arch:archetypes[opt.arch].label});
+  });
+  return s;
+}
+function percentScores(raw,max){
+  const out={}; Object.entries(raw).forEach(([k,v])=>out[k]=Math.round((v/max)*100)); return out;
+}
+function topKey(obj){return Object.entries(obj).sort((a,b)=>b[1]-a[1])[0][0]}
+function sortedEntries(obj){return Object.entries(obj).sort((a,b)=>b[1]-a[1])}
+function calculateResults(){
+  const missing=questions.findIndex((q,i)=>!document.querySelector(`input[name=q${i}]:checked`));
+  if(missing!==-1){scrollToFirstMissing(); return;}
+  const s=collectScores();
+  const archPct=percentScores(s.arch, Math.max(...Object.values(s.arch),1));
+  const main=topKey(s.arch);
+  const secondary=sortedEntries(s.arch)[1][0];
+  const compMax={strategy:0,listening:0,questions:0,value:0,pressure:0,relationship:0,influence:0,closing:0,harvard:0,vuca:0};
+  questions.forEach(q=>q.options.forEach(o=>Object.entries(o.comps).forEach(([k,v])=>compMax[k]+=3))); // rough denominator normalized below
+  const compPct={};
+  Object.keys(competencies).forEach(k=>{
+    const practicalMax = questions.length*3; 
+    compPct[k]=Math.min(100,Math.round((s.comps[k]/practicalMax)*100*2.15));
+  });
+  const avg=Math.round(Object.values(compPct).reduce((a,b)=>a+b,0)/Object.keys(compPct).length);
+  const nqx=Math.min(99, Math.round(avg*0.72 + (s.comps.harvard+s.comps.vuca+s.comps.closing+s.comps.value)*0.75));
+  const level=getLevel(nqx);
+  const low=sortedEntries(compPct).reverse()[0][0];
+  const high=topKey(compPct);
+  const p=archetypes[main];
+  document.getElementById('profileTitle').textContent=p.label;
+  document.getElementById('profileIntro').textContent=`${getNameLine()}${p.intro} Perfil secundario: ${archetypes[secondary].label}.`;
+  document.getElementById('nqxScore').textContent=nqx;
+  document.getElementById('levelName').textContent=level.name;
+  document.getElementById('mainArchetype').textContent=p.short;
+  document.getElementById('shadowRisk').textContent=p.shadow;
+  document.getElementById('meaning').textContent=p.meaning;
+  document.getElementById('talent').textContent=p.talent;
+  document.getElementById('risk').textContent=p.risk;
+  document.getElementById('perception').textContent=p.perception + ` Tu competencia más alta ahora es ${competencies[high].toLowerCase()}; tu zona más vulnerable es ${competencies[low].toLowerCase()}.`;
+  fillList('training',p.training.concat(extraTraining(low,main)));
+  fillList('phrases',p.phrases.concat(extraPhrases(low)));
+  renderBars(compPct);
+  drawRadar(compPct);
+  renderMethodTexts(compPct.harvard,compPct.vuca,main,low);
+  renderAnswers(s.answers);
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+  window.latestReport=buildReport(p,secondary,nqx,level,compPct,low,high);
+}
+function getNameLine(){
+  const name=document.getElementById('participant').value.trim();
+  const company=document.getElementById('company').value.trim();
+  if(name && company) return `${name} · ${company}: `;
+  if(name) return `${name}: `;
+  return '';
+}
+function getLevel(n){
+  if(n<45) return {name:"Reactivo", text:"todavía negocia demasiado desde respuesta inmediata"};
+  if(n<60) return {name:"Protector", text:"protege algunas variables, pero aún pierde estructura bajo presión"};
+  if(n<74) return {name:"Conductor", text:"ya conduce conversaciones con criterio y límites"};
+  if(n<88) return {name:"Diseñador", text:"diseña acuerdos y gestiona intereses múltiples con madurez"};
+  return {name:"Orquestador", text:"opera con visión sistémica, lectura política y alta protección de valor"};
+}
+function fillList(id,items){document.getElementById(id).innerHTML=items.map(x=>`<li>${x}</li>`).join('')}
+function extraTraining(low,main){
+  const map={
+    strategy:["Zona crítica detectada: estrategia. Antes de negociar, escribe objetivo ideal, aceptable, límite, BATNA, WATNA y tres variables negociables."],
+    listening:["Zona crítica detectada: escucha. En la próxima negociación, resume dos veces lo que la otra parte ha dicho antes de defender tu propuesta."],
+    questions:["Zona crítica detectada: pregunta. Prepara cinco preguntas de diagnóstico antes de preparar cinco argumentos."],
+    value:["Zona crítica detectada: valor. Traduce cada elemento de tu propuesta a impacto: riesgo evitado, coste reducido, velocidad ganada o decisión defendible."],
+    pressure:["Zona crítica detectada: presión. Entrena silencio, pausa y reformulación. No concedas en los primeros treinta segundos posteriores a una presión."],
+    relationship:["Zona crítica detectada: relación. Separa firmeza de frialdad. Una relación cuidada abre información y reduce resistencia."],
+    influence:["Zona crítica detectada: influencia. Convierte datos en narrativa de decisión: problema, coste de no actuar, opción recomendada y siguiente paso."],
+    closing:["Zona crítica detectada: cierre. No salgas de una reunión sin acuerdo, desacuerdo o próximo paso con responsable y fecha."],
+    harvard:["Zona crítica detectada: Harvard. Practica separar posición, interés y necesidad real antes de responder a cualquier demanda."],
+    vuca:["Zona crítica detectada: VUCA. Prepara tres escenarios: continuidad, presión de precio y cambio brusco de contexto."]
+  };
+  return [map[low]];
+}
+function extraPhrases(low){
+  const map={
+    strategy:"Antes de decidir, aclaremos el mapa: objetivos, restricciones, riesgos y alternativas reales.",
+    listening:"Quiero asegurarme de haber entendido bien lo que hay detrás de vuestra petición.",
+    questions:"¿Qué tendría que quedar resuelto para que esta opción fuera defendible internamente?",
+    value:"El punto no es solo cuánto cuesta; es qué riesgo evita y qué resultado garantiza.",
+    pressure:"No quiero responder rápido a algo que afecta al equilibrio del acuerdo. Déjeme ordenarlo bien.",
+    relationship:"Me importa cuidar la relación, y por eso quiero evitar un acuerdo que después genere frustración.",
+    influence:"Permítame convertir esto en una decisión clara: qué ganamos, qué evitamos y qué pasaría si no actuamos.",
+    closing:"Para que no quede ambiguo, resumo acuerdo, pendientes, responsables y fecha de decisión.",
+    harvard:"Distingamos la posición de fondo del interés que necesitamos resolver.",
+    vuca:"Como el contexto ha cambiado, no forcemos el acuerdo anterior; rediseñemos una versión viable."
+  };
+  return [map[low]];
+}
+function renderBars(compPct){
+  const holder=document.getElementById('competencyBars');
+  holder.innerHTML=sortedEntries(compPct).map(([k,v])=>`<div class="barLine"><div class="barLabel">${competencies[k]}</div><div class="barTrack"><div class="barFill" style="width:${v}%"></div></div><div class="barVal">${v}</div></div>`).join('');
+}
+function drawRadar(compPct){
+  const c=document.getElementById('radar'),ctx=c.getContext('2d');
+  const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+  const keys=Object.keys(competencies);const cx=W/2,cy=H/2+8,r=150;
+  ctx.font='13px system-ui, -apple-system, Segoe UI, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let ring=1;ring<=4;ring++){
+    ctx.beginPath();
+    keys.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/keys.length;const rr=r*ring/4;const x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+    ctx.closePath();ctx.strokeStyle='rgba(255,255,255,.12)';ctx.stroke();
+  }
+  keys.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/keys.length;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);ctx.strokeStyle='rgba(255,255,255,.08)';ctx.stroke();ctx.fillStyle='#d8cbbd';ctx.fillText(competencies[k],cx+Math.cos(a)*(r+42),cy+Math.sin(a)*(r+30));});
+  ctx.beginPath();
+  keys.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/keys.length;const rr=r*(compPct[k]/100);const x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+  ctx.closePath();ctx.fillStyle='rgba(216,181,109,.25)';ctx.fill();ctx.strokeStyle='#f0d28a';ctx.lineWidth=2;ctx.stroke();
+  keys.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/keys.length;const rr=r*(compPct[k]/100);const x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#f0d28a';ctx.fill();});
+}
+function renderMethodTexts(h,v,main,low){
+  let ht,ha,vt,va;
+  if(h>=75){ht="Tu ajuste al método Harvard es alto: tiendes a separar personas y problema, explorar intereses, utilizar criterios y crear opciones antes de cerrar. Tu reto no es conocer el método, sino aplicarlo bajo presión sin convertirlo en discurso.";}
+  else if(h>=55){ht="Tienes una base Harvard razonable, pero aparece de forma irregular. En algunas situaciones preguntas y diseñas; en otras respondes demasiado pronto a la posición visible.";}
+  else{ht="El método Harvard aparece débil o poco automatizado. Hay riesgo de caer en regateo, defensa reactiva o concesiones sin explorar intereses reales.";}
+  ha = h>=75 ? ["Sigue usando preguntas de interés antes de discutir precio.","Documenta criterios objetivos antes de cada reunión crítica.","Cierra opciones con condiciones, responsables y fecha."] : ["Entrena la secuencia: posición → interés → necesidad real → opción → criterio.","No concedas sin preguntar qué desbloquea esa concesión.","Prepara BATNA, WATNA y ZOPA por escrito antes de negociaciones relevantes."];
+  if(v>=75){vt="Tu adaptación VUCA es fuerte: cuando cambia el contexto no te bloqueas; rediseñas opciones y reajustas el marco. Esto es especialmente valioso en B2B con presión de presupuesto, nuevos decisores o información incompleta.";}
+  else if(v>=55){vt="Respondes razonablemente al cambio, pero puedes perder velocidad o estructura cuando aparecen variables inesperadas. Necesitas preparar escenarios, no solo argumentos.";}
+  else{vt="Tu respuesta VUCA es vulnerable: si aparece un cambio brusco, puedes reaccionar tarde, conceder por urgencia o quedarte atrapado en la propuesta inicial.";}
+  va = v>=75 ? ["Mantén un menú de opciones por fases, alcance, plazo y garantías.","Distingue cambio real de táctica de presión.","Cuando cambie el contexto, recalcula ZOPA antes de mover precio."] : ["Prepara siempre tres escenarios: normal, presión y ruptura.","Usa una matriz rápida: qué cambió, quién gana poder, qué pregunta falta y qué variable puede moverse.","No confundas urgencia externa con obligación de conceder internamente."];
+  document.getElementById('harvardText').textContent=ht;
+  fillList('harvardActions',ha);
+  document.getElementById('vucaText').textContent=vt;
+  fillList('vucaActions',va);
+}
+function renderAnswers(ans){
+  const table=document.getElementById('answerTable');
+  table.innerHTML='<tr><th>#</th><th>Situación</th><th>Respuesta elegida</th><th>Reflejo dominante</th></tr>'+ans.map(a=>`<tr><td>${a.n}</td><td>${a.question}</td><td>${a.answer}</td><td>${a.arch}</td></tr>`).join('');
+}
+function buildReport(p,secondary,nqx,level,compPct,low,high){
+  const lines=[];
+  lines.push('TEST EJECUTIVO DE NEGOCIACIÓN NQX');
+  lines.push(getNameLine().replace(': ',''));
+  lines.push('Resultado: '+p.label);
+  lines.push('Perfil secundario: '+archetypes[secondary].label);
+  lines.push('Índice NQX: '+nqx+' · Nivel: '+level.name);
+  lines.push('');
+  lines.push('Qué significa: '+p.meaning);
+  lines.push('Talento diferencial: '+p.talent);
+  lines.push('Riesgo sombra: '+p.risk);
+  lines.push('Competencia más alta: '+competencies[high]);
+  lines.push('Zona vulnerable: '+competencies[low]);
+  lines.push('');
+  lines.push('Radar competencial:');
+  sortedEntries(compPct).forEach(([k,v])=>lines.push('- '+competencies[k]+': '+v));
+  lines.push('');
+  lines.push('Plan de entrenamiento:');
+  p.training.concat(extraTraining(low)).forEach(x=>lines.push('- '+x));
+  lines.push('');
+  lines.push('Frases recomendadas:');
+  p.phrases.concat(extraPhrases(low)).forEach(x=>lines.push('- '+x));
+  return lines.join('\n');
+}
+function downloadReport(){
+  if(!window.latestReport) calculateResults();
+  const blob=new Blob([window.latestReport||''],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='informe_test_negociacion_NQX.txt';a.click();URL.revokeObjectURL(a.href);
+}
+function copyReport(){
+  if(!window.latestReport) calculateResults();
+  navigator.clipboard.writeText(window.latestReport||'').then(()=>alert('Informe copiado al portapapeles.'));
+}
+function resetTest(){
+  document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
+  updateProgress();
+  document.getElementById('results').style.display='none';
+  document.getElementById('top').scrollIntoView({behavior:'smooth'});
+}
+renderQuestions(); updateProgress();
+</script>
+</body>
+</html>

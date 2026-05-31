@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Radar Inicial de Competencias Negociadoras</title>
+<style>
+  :root{
+    --bg:#0b1220;
+    --panel:#101a2f;
+    --panel2:#13213b;
+    --card:#f7f8fb;
+    --text:#172033;
+    --muted:#697386;
+    --line:#d9deea;
+    --accent:#d4a847;
+    --accent2:#f0d78a;
+    --green:#16a36a;
+    --blue:#2563eb;
+    --amber:#d97706;
+    --red:#dc2626;
+    --softgreen:#e9f8f1;
+    --softblue:#eef4ff;
+    --softamber:#fff5df;
+    --softred:#fff0f0;
+    --shadow:0 18px 45px rgba(0,0,0,.16);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(212,168,71,.25), transparent 32%),
+      radial-gradient(circle at 85% 15%, rgba(37,99,235,.22), transparent 34%),
+      linear-gradient(135deg, #09111f 0%, #101a2f 48%, #0b1220 100%);
+    min-height:100vh;
+    line-height:1.45;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 60px}
+  header{
+    color:white;
+    padding:32px 26px 28px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:30px;
+    background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header:before{
+    content:"";
+    position:absolute;
+    width:310px;height:310px;border-radius:50%;
+    right:-120px;top:-140px;
+    background:radial-gradient(circle, rgba(240,215,138,.38), transparent 66%);
+  }
+  .eyebrow{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    color:var(--accent2);
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-size:12px;
+    margin-bottom:10px;
+  }
+  h1{font-size:clamp(30px,5vw,56px);line-height:1.02;margin:0 0 12px;max-width:900px}
+  .subtitle{font-size:clamp(16px,2vw,20px);color:#dbe4f7;max-width:850px;margin:0}
+  .meta{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
+    margin-top:24px;position:relative;z-index:1;
+  }
+  .meta div{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;
+    padding:14px;
+    min-height:78px;
+  }
+  .meta b{display:block;color:white;font-size:13px;margin-bottom:6px}
+  .meta span{display:block;color:#c5cfdf;font-size:13px}
+  main{margin-top:24px;display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+  .panel{
+    background:rgba(255,255,255,.96);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid rgba(255,255,255,.4);
+    overflow:hidden;
+  }
+  .panel.pad{padding:24px}
+  .section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px}
+  h2{font-size:26px;line-height:1.08;margin:0;color:#101827}
+  h3{font-size:18px;margin:0 0 8px;color:#101827}
+  p{margin:0 0 12px}
+  .muted{color:var(--muted);font-size:14px}
+  .intro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .mini{
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:18px;
+    padding:14px;
+  }
+  .mini strong{display:block;margin-bottom:5px;color:#111827}
+  .question{
+    padding:18px 22px;
+    border-top:1px solid var(--line);
+    background:linear-gradient(180deg,#fff,#fbfcff);
+  }
+  .qtop{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+  .num{
+    flex:0 0 auto;width:34px;height:34px;border-radius:11px;
+    display:grid;place-items:center;background:#111827;color:white;font-weight:800;font-size:14px;
+  }
+  .qtitle{font-weight:800;color:#111827;font-size:16px;margin-bottom:3px}
+  .qtext{color:#3b4356;font-size:14px}
+  .scale{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:9px;
+  }
+  .option input{display:none}
+  .option label{
+    display:block;text-align:center;padding:12px 6px;border-radius:14px;
+    border:1px solid var(--line);background:white;cursor:pointer;
+    transition:.16s ease;font-weight:700;color:#475569;font-size:13px;
+    min-height:58px;
+  }
+  .option label small{display:block;font-weight:600;color:#7b8496;margin-top:2px;font-size:11px}
+  .option input:checked + label{
+    background:#111827;color:white;border-color:#111827;transform:translateY(-1px);
+    box-shadow:0 10px 20px rgba(17,24,39,.18);
+  }
+  .option input:checked + label small{color:#d1d5db}
+  .actions{
+    display:flex;gap:10px;flex-wrap:wrap;padding:20px 22px;border-top:1px solid var(--line);background:#fff;
+  }
+  button{
+    border:0;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;
+    transition:.16s ease;font-size:14px;
+  }
+  .primary{background:#111827;color:white}
+  .primary:hover{transform:translateY(-1px);box-shadow:0 12px 22px rgba(17,24,39,.22)}
+  .secondary{background:#eef1f7;color:#111827}
+  .secondary:hover{background:#e3e7ef}
+  .gold{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#111827}
+  .sticky{
+    position:sticky;top:18px;
+  }
+  .result-box{
+    min-height:300px;
+  }
+  .empty{
+    border:1px dashed #cbd5e1;border-radius:20px;padding:22px;background:#f8fafc;color:#64748b;
+  }
+  .score-card{
+    background:#111827;color:white;border-radius:24px;padding:20px;margin-bottom:14px;
+    background:
+      radial-gradient(circle at top right, rgba(212,168,71,.35), transparent 38%),
+      linear-gradient(135deg,#111827,#1e293b);
+  }
+  .score-number{font-size:44px;font-weight:900;line-height:1;margin-bottom:6px}
+  .score-label{font-size:18px;font-weight:900;color:var(--accent2)}
+  .barrow{
+    display:grid;grid-template-columns:145px 1fr 78px;gap:10px;align-items:center;
+    padding:10px 0;border-bottom:1px solid #edf0f6;
+  }
+  .bar-label{font-weight:800;font-size:13px;color:#1f2937}
+  .bar-bg{height:12px;border-radius:999px;background:#eef2f7;overflow:hidden}
+  .bar{height:100%;border-radius:999px;background:#111827;width:0%}
+  .tag{
+    display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;
+  }
+  .tag.muyalta{background:var(--softgreen);color:var(--green)}
+  .tag.alta{background:var(--softblue);color:var(--blue)}
+  .tag.media{background:var(--softamber);color:var(--amber)}
+  .tag.baja,.tag.muybaja{background:var(--softred);color:var(--red)}
+  .result-section{margin-top:18px}
+  .result-card{
+    border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0;background:#fff;
+  }
+  .result-card strong{display:block;color:#111827;font-size:15px;margin-bottom:5px}
+  .result-card .why{color:#4b5563;font-size:14px;margin-bottom:9px}
+  .result-card .train{
+    border-left:4px solid var(--accent);padding-left:10px;color:#111827;font-size:14px;background:#fffaf0;border-radius:4px;
+  }
+  .legend{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0 18px}
+  .legend div{font-size:12px;border-radius:12px;padding:9px;background:#f8fafc;border:1px solid #e5e7eb}
+  .facilitator{
+    margin-top:22px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:20px;padding:18px;
+  }
+  .facilitator ol{padding-left:20px;margin:10px 0 0}
+  .facilitator li{margin:7px 0}
+  .footer-note{
+    color:#cbd5e1;text-align:center;font-size:13px;margin-top:22px;
+  }
+  @media(max-width:960px){
+    main{grid-template-columns:1fr}
+    .sticky{position:static}
+    .meta{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:640px){
+    .wrap{padding:16px 10px 36px}
+    header{padding:24px 18px}
+    .meta,.intro-grid{grid-template-columns:1fr}
+    .scale{grid-template-columns:1fr}
+    .option label{text-align:left;min-height:auto}
+    .barrow{grid-template-columns:1fr;gap:6px}
+  }
+  @media print{
+    body{background:#fff}
+    header,.actions,.facilitator .no-print{display:none!important}
+    .wrap{max-width:100%;padding:0}
+    main{display:block}
+    .panel{box-shadow:none;border:0}
+    .question{display:none}
+    .sticky{position:static}
+    button{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Test de aula · Negociación B2B · Nivel inicial</div>
+    <h1>Radar Inicial de Competencias Negociadoras</h1>
+    <p class="subtitle">Autodiagnóstico rápido para directivos y mandos intermedios después de las primeras 4 horas de curso. No mide “si eres bueno o malo”: detecta qué músculo negociador tienes fuerte, cuál está en construcción y cuál puede hacerte perder valor.</p>
+    <div class="meta">
+      <div><b>Duración</b><span>8-12 minutos de respuesta + 15 minutos de reflexión.</span></div>
+      <div><b>Formato</b><span>Individual, con posible contraste posterior en parejas.</span></div>
+      <div><b>Salida</b><span>Semáforo competencial: muy alta, alta, media, baja.</span></div>
+      <div><b>Uso docente</b><span>Ideal para activar conversación antes de role plays.</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel pad">
+        <div class="section-title">
+          <div>
+            <h2>Instrucciones</h2>
+            <p class="muted">Responde pensando en tu comportamiento real en una negociación importante, no en lo que sabes que “deberías” hacer.</p>
+          </div>
+        </div>
+        <div class="intro-grid">
+          <div class="mini"><strong>1 = Muy bajo</strong><span class="muted">Casi nunca lo hago o me cuesta mucho aplicarlo.</span></div>
+          <div class="mini"><strong>3 = Medio</strong><span class="muted">Lo hago a veces, pero sin consistencia o bajo presión lo pierdo.</span></div>
+          <div class="mini"><strong>5 = Muy alto</strong><span class="muted">Lo hago de forma natural, incluso con tensión.</span></div>
+        </div>
+      </div>
+
+      <form id="testForm"></form>
+
+      <div class="actions">
+        <button class="primary" type="button" onclick="calculate()">Ver mi diagnóstico</button>
+        <button class="secondary" type="button" onclick="resetTest()">Reiniciar</button>
+        <button class="gold" type="button" onclick="window.print()">Imprimir / guardar en PDF</button>
+      </div>
+    </section>
+
+    <aside class="panel pad sticky">
+      <h2>Resultado</h2>
+      <p class="muted">Cuando completes todas las respuestas, aparecerá tu mapa competencial.</p>
+      <div class="legend">
+        <div><span class="tag muyalta">Muy alta</span> 4,3 - 5,0</div>
+        <div><span class="tag alta">Alta</span> 3,6 - 4,2</div>
+        <div><span class="tag media">Media</span> 2,8 - 3,5</div>
+        <div><span class="tag baja">Baja</span> 1,0 - 2,7</div>
+      </div>
+      <div id="results" class="result-box">
+        <div class="empty">
+          Completa el test para obtener:
+          <br><br>
+          <strong>· Competencias fuertes</strong><br>
+          <strong>· Zonas de entrenamiento</strong><br>
+          <strong>· Riesgos negociadores</strong><br>
+          <strong>· Microacciones para mejorar</strong>
+        </div>
+      </div>
+      <div class="actions" style="padding:16px 0 0;border:0">
+        <button class="secondary" type="button" onclick="copyReport()">Copiar informe</button>
+        <button class="secondary" type="button" onclick="downloadReport()">Descargar TXT</button>
+      </div>
+    </aside>
+  </main>
+
+  <section class="panel pad facilitator">
+    <h2>Uso recomendado por el formador</h2>
+    <ol>
+      <li><strong>Respuesta individual:</strong> cada participante completa el radar sin debate previo.</li>
+      <li><strong>Lectura silenciosa:</strong> identifica dos competencias altas y dos bajas.</li>
+      <li><strong>Contraste en parejas:</strong> “¿Dónde sueles perder valor cuando negocias?”</li>
+      <li><strong>Mini compromiso:</strong> cada participante elige una competencia para entrenar en el siguiente role play.</li>
+    </ol>
+  </section>
+
+  <div class="footer-note">Diseñado para formación ejecutiva en negociación · Diagnóstico breve, aplicable y orientado a práctica.</div>
+</div>
+
+<script>
+const competencies = [
+  {
+    id:"preparacion",
+    name:"Preparación",
+    question:"Antes de negociar, defino objetivo ideal, objetivo aceptable, límite mínimo y puntos que no debo conceder.",
+    high:"Entras en la negociación con mapa. Esto te permite no depender solo de la conversación y reduce concesiones impulsivas.",
+    medium:"Tienes cierta preparación, pero probablemente hay partes que sigues dejando a la intuición: límites, escenarios o contrapartidas.",
+    low:"Riesgo claro: puedes negociar desde la reacción. Sin preparación, la otra parte te marca el ritmo, el marco y a veces el precio.",
+    action:"Antes de la próxima negociación, escribe 4 líneas: objetivo ideal, aceptable, límite y primera pregunta que harás."
+  },
+  {
+    id:"escucha",
+    name:"Escucha diagnóstica",
+    question:"Cuando la otra parte habla, escucho para detectar intereses, preocupaciones y señales ocultas, no solo para responder.",
+    high:"Tienes capacidad de lectura. Esto es clave porque la información útil rara vez aparece en la primera frase.",
+    medium:"Escuchas, pero bajo presión puedes pasar demasiado rápido a argumentar o defender tu posición.",
+    low:"Riesgo: puedes contestar a la demanda literal y no al problema real. Eso te deja atrapado en posiciones.",
+    action:"En la próxima conversación, toma nota de tres frases repetidas por la otra parte: suelen señalar intereses reales."
+  },
+  {
+    id:"preguntas",
+    name:"Preguntas potentes",
+    question:"Antes de conceder, defender precio o cerrar una respuesta, hago preguntas para entender qué hay realmente detrás de la demanda.",
+    high:"Usas la pregunta como herramienta de control elegante. Eso te permite abrir información sin confrontar.",
+    medium:"Preguntas, pero quizá tarde o con preguntas demasiado generales. Puedes mejorar precisión y secuencia.",
+    low:"Riesgo: respondes demasiado pronto. En negociación, responder antes de entender suele costar margen.",
+    action:"Usa esta pregunta comodín: “¿Qué necesitáis resolver exactamente con esta petición?”"
+  },
+  {
+    id:"valor",
+    name:"Defensa de valor",
+    question:"Sé explicar el valor de mi propuesta sin reducir la conversación únicamente a precio, descuento o coste.",
+    high:"No vendes solo condiciones: ayudas a ver impacto, riesgo evitado, fiabilidad y retorno. Eso protege margen.",
+    medium:"Puedes defender valor, pero quizá todavía justificas demasiado el precio o te cuesta hacerlo tangible.",
+    low:"Riesgo: si no construyes valor, la negociación se convierte en una subasta. Y en una subasta gana quien baja más.",
+    action:"Prepara tres pruebas de valor: impacto, riesgo que reduces y coste de no hacerlo."
+  },
+  {
+    id:"presion",
+    name:"Gestión de presión",
+    question:"Cuando la otra parte presiona, amenaza con otra oferta o pide una rebaja fuerte, mantengo calma y no concedo por incomodidad.",
+    high:"Tienes estabilidad negociadora. No confundes tensión con peligro, y eso te da autoridad.",
+    medium:"Puedes aguantar presión moderada, pero ante urgencia, silencio o amenaza comercial puedes acelerar concesiones.",
+    low:"Riesgo: la incomodidad decide por ti. Muchas pérdidas de valor ocurren no por estrategia, sino por querer salir de la tensión.",
+    action:"Cuando aparezca presión, pausa y reformula: “Entiendo el punto. Antes de mover condiciones, aclaremos el criterio.”"
+  },
+  {
+    id:"limites",
+    name:"Límites y BATNA",
+    question:"Tengo clara mi mejor alternativa si no hay acuerdo y sé qué condiciones no debo aceptar.",
+    high:"Negocias con serenidad porque sabes qué harás si no se cierra. La alternativa te da poder real.",
+    medium:"Conoces algunos límites, pero puede que no tengas suficientemente trabajada tu alternativa o el coste de aceptar mal.",
+    low:"Riesgo: sin BATNA, cualquier acuerdo parece mejor que ninguno. Eso abre la puerta a acuerdos débiles o dañinos.",
+    action:"Define por escrito: “Si no hay acuerdo, haré…” y “Aunque quiera cerrar, no aceptaré…”"
+  },
+  {
+    id:"opciones",
+    name:"Creación de opciones",
+    question:"Cuando hay bloqueo, soy capaz de proponer varias fórmulas de acuerdo: fases, alcance, volumen, plazos, garantías o condiciones.",
+    high:"Tienes pensamiento de diseño de acuerdo. No te quedas encerrado en sí/no o precio/no precio.",
+    medium:"Generas algunas alternativas, pero quizá demasiado tarde o todavía muy centradas en condiciones económicas.",
+    low:"Riesgo: si solo negocias una variable, cualquier desacuerdo parece un bloqueo. Falta amplitud de juego.",
+    action:"Antes de ceder precio, crea tres opciones: ajustar alcance, cambiar plazo o vincular condición a volumen."
+  },
+  {
+    id:"contrapartidas",
+    name:"Concesiones con contrapartida",
+    question:"Si cedo algo, pido algo a cambio y evito regalar valor sin obtener compromiso, volumen, plazo o reciprocidad.",
+    high:"Proteges el valor de tus concesiones. Esto evita precedentes peligrosos y mantiene equilibrio.",
+    medium:"Pides contrapartidas a veces, pero no siempre con claridad o no siempre antes de conceder.",
+    low:"Riesgo: tus concesiones pueden parecer derechos adquiridos. Si regalas valor una vez, la siguiente negociación empieza más abajo.",
+    action:"Usa la fórmula: “Podríamos valorar eso si a cambio cerramos…”"
+  },
+  {
+    id:"persuasion",
+    name:"Persuasión ejecutiva",
+    question:"Sé ordenar argumentos de forma clara para que la otra parte pueda entender, preferir y defender internamente mi propuesta.",
+    high:"Tienes capacidad de influencia profesional. No solo explicas: ayudas a decidir.",
+    medium:"Argumentas, pero podrías mejorar la secuencia: problema, impacto, riesgo, solución y próximo paso.",
+    low:"Riesgo: puedes tener razón y no convencer. En B2B, una buena propuesta mal narrada se vuelve débil.",
+    action:"Estructura tu argumento en 4 frases: problema, riesgo, valor y decisión que propones."
+  },
+  {
+    id:"relacion",
+    name:"Relación y confianza",
+    question:"Cuido la relación sin perder firmeza: puedo ser cordial, directo y exigente al mismo tiempo.",
+    high:"Combinas clima y autoridad. Esto es esencial para acuerdos sostenibles y relaciones B2B de largo recorrido.",
+    medium:"Tienes sensibilidad relacional, pero puedes oscilar entre agradar demasiado o endurecerte cuando hay tensión.",
+    low:"Riesgo: puedes romper clima o, al contrario, ceder para evitar incomodidad. Ambas cosas reducen calidad negociadora.",
+    action:"Sustituye ataques por marco común: “Los dos necesitamos que esto sea viable y defendible.”"
+  },
+  {
+    id:"cierre",
+    name:"Cierre claro",
+    question:"Al final de una negociación, concreto acuerdos, pendientes, responsables, plazos y siguiente paso.",
+    high:"No dejas el acuerdo en el aire. Eso evita malentendidos, retrasos y reinterpretaciones posteriores.",
+    medium:"Cierras lo principal, pero pueden quedar zonas ambiguas que luego generan fricción.",
+    low:"Riesgo: una negociación sin cierre operativo no está cerrada; solo está aplazada.",
+    action:"Finaliza siempre con: qué se acuerda, quién hace qué, antes de cuándo y cómo se confirma."
+  },
+  {
+    id:"aprendizaje",
+    name:"Aprendizaje posterior",
+    question:"Después de negociar, reviso qué funcionó, dónde perdí valor y qué haré diferente la próxima vez.",
+    high:"Tienes mentalidad de mejora. Cada negociación se convierte en entrenamiento real.",
+    medium:"Reflexionas, pero quizá sin método o sin convertir aprendizajes en conducta observable.",
+    low:"Riesgo: repetirás patrones sin darte cuenta. La experiencia solo mejora si se analiza.",
+    action:"Después de la próxima negociación, responde tres preguntas: qué hice bien, dónde cedí mal y qué pregunta debí hacer."
+  }
+];
+
+let latestReport = "";
+
+function renderQuestions(){
+  const form = document.getElementById("testForm");
+  form.innerHTML = competencies.map((c,idx)=>`
+    <div class="question">
+      <div class="qtop">
+        <div class="num">${idx+1}</div>
+        <div>
+          <div class="qtitle">${c.name}</div>
+          <div class="qtext">${c.question}</div>
+        </div>
+      </div>
+      <div class="scale" role="radiogroup" aria-label="${c.name}">
+        ${[1,2,3,4,5].map(v=>`
+          <div class="option">
+            <input id="${c.id}_${v}" name="${c.id}" value="${v}" type="radio">
+            <label for="${c.id}_${v}">${v}<small>${labelFor(v)}</small></label>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+function labelFor(v){
+  return {
+    1:"Muy bajo",
+    2:"Bajo",
+    3:"Medio",
+    4:"Alto",
+    5:"Muy alto"
+  }[v];
+}
+
+function level(score){
+  if(score >= 4.3) return {key:"muyalta", text:"Muy alta"};
+  if(score >= 3.6) return {key:"alta", text:"Alta"};
+  if(score >= 2.8) return {key:"media", text:"Media"};
+  if(score >= 2.0) return {key:"baja", text:"Baja"};
+  return {key:"muybaja", text:"Muy baja"};
+}
+
+function interpretation(score, c){
+  if(score >= 4.3) return c.high;
+  if(score >= 3.6) return c.high;
+  if(score >= 2.8) return c.medium;
+  return c.low;
+}
+
+function calculate(){
+  const data = competencies.map(c=>{
+    const checked = document.querySelector(`input[name="${c.id}"]:checked`);
+    return {...c, score: checked ? Number(checked.value) : null};
+  });
+  const missing = data.filter(d=>d.score===null);
+  if(missing.length){
+    alert(`Faltan ${missing.length} competencias por responder.`);
+    return;
+  }
+
+  const avg = data.reduce((a,b)=>a+b.score,0)/data.length;
+  const sorted = [...data].sort((a,b)=>b.score-a.score);
+  const high = sorted.filter(d=>d.score>=4);
+  const medium = sorted.filter(d=>d.score>=2.8 && d.score<4);
+  const low = sorted.filter(d=>d.score<2.8);
+
+  const global = level(avg);
+  const results = document.getElementById("results");
+
+  latestReport = buildTextReport(avg, global, sorted, high, medium, low);
+
+  results.innerHTML = `
+    <div class="score-card">
+      <div class="score-number">${avg.toFixed(1)}/5</div>
+      <div class="score-label">Nivel global: ${global.text}</div>
+      <p style="color:#dbe4f7;margin-top:8px;margin-bottom:0">${globalMessage(avg)}</p>
+    </div>
+
+    <h3>Mapa competencial</h3>
+    ${sorted.map(d=>{
+      const l = level(d.score);
+      return `
+        <div class="barrow">
+          <div class="bar-label">${d.name}</div>
+          <div class="bar-bg"><div class="bar" style="width:${d.score*20}%"></div></div>
+          <div><span class="tag ${l.key}">${l.text}</span></div>
+        </div>
+      `;
+    }).join("")}
+
+    <div class="result-section">
+      <h3>Fortalezas inmediatas</h3>
+      ${high.length ? high.map(d=>card(d)).join("") : `<div class="result-card"><strong>No aparece ninguna competencia claramente alta.</strong><div class="why">No significa incapacidad; significa que todavía conviene construir seguridad antes de entrar en role plays exigentes.</div><div class="train">Empieza por preparación, preguntas y límites: son las tres palancas más rápidas.</div></div>`}
+    </div>
+
+    <div class="result-section">
+      <h3>Zonas de entrenamiento</h3>
+      ${medium.length ? medium.map(d=>card(d)).join("") : `<div class="result-card"><strong>No hay zona media destacada.</strong><div class="why">Tu mapa está muy polarizado: fortalezas claras y riesgos claros.</div><div class="train">Elige una competencia baja y conviértela en conducta observable para el próximo ejercicio.</div></div>`}
+    </div>
+
+    <div class="result-section">
+      <h3>Riesgos negociadores</h3>
+      ${low.length ? low.map(d=>card(d)).join("") : `<div class="result-card"><strong>No aparece ningún riesgo bajo.</strong><div class="why">Buen punto de partida. Ahora el reto es sostener estas conductas cuando haya presión real.</div><div class="train">En el siguiente role play, pide feedback específico sobre presión, preguntas y cierre.</div></div>`}
+    </div>
+
+    <div class="result-section">
+      <h3>Prioridad para el próximo role play</h3>
+      ${priorityBox(sorted)}
+    </div>
+  `;
+}
+
+function card(d){
+  const l = level(d.score);
+  return `
+    <div class="result-card">
+      <strong>${d.name} · <span class="tag ${l.key}">${l.text}</span></strong>
+      <div class="why">${interpretation(d.score,d)}</div>
+      <div class="train"><b>Entrenamiento:</b> ${d.action}</div>
+    </div>
+  `;
+}
+
+function globalMessage(avg){
+  if(avg >= 4.3) return "Perfil inicial muy sólido. El reto no es aprender conceptos básicos, sino sostenerlos bajo presión y con interlocutores difíciles.";
+  if(avg >= 3.6) return "Buen punto de partida. Ya hay base negociadora, pero conviene convertir conocimiento en método repetible.";
+  if(avg >= 2.8) return "Nivel funcional, con margen claro de mejora. Probablemente sabes negociar, pero aún pierdes consistencia en momentos de tensión.";
+  return "El radar muestra vulnerabilidad negociadora. La prioridad es ganar estructura: preparar mejor, preguntar antes y cerrar con más claridad.";
+}
+
+function priorityBox(sorted){
+  const lowest = [...sorted].sort((a,b)=>a.score-b.score)[0];
+  const strongest = [...sorted].sort((a,b)=>b.score-a.score)[0];
+  return `
+    <div class="result-card">
+      <strong>Entrena primero: ${lowest.name}</strong>
+      <div class="why">Es la competencia que más puede limitar tu resultado en una negociación real ahora mismo.</div>
+      <div class="train"><b>Microcompromiso:</b> ${lowest.action}</div>
+    </div>
+    <div class="result-card">
+      <strong>Apóyate en: ${strongest.name}</strong>
+      <div class="why">Es tu recurso más disponible. Úsalo conscientemente para compensar tus zonas débiles.</div>
+      <div class="train"><b>Uso práctico:</b> antes del role play, decide cómo esta fortaleza te ayudará a no perder valor.</div>
+    </div>
+  `;
+}
+
+function buildTextReport(avg, global, sorted, high, medium, low){
+  const lines = [];
+  lines.push("RADAR INICIAL DE COMPETENCIAS NEGOCIADORAS");
+  lines.push("Resultado global: " + avg.toFixed(1) + "/5 · " + global.text);
+  lines.push("");
+  lines.push("MAPA COMPETENCIAL");
+  sorted.forEach(d=>lines.push("- " + d.name + ": " + d.score + "/5 · " + level(d.score).text));
+  lines.push("");
+  lines.push("FORTALEZAS INMEDIATAS");
+  (high.length?high:[]).forEach(d=>lines.push("- " + d.name + ": " + interpretation(d.score,d)));
+  if(!high.length) lines.push("- No aparece ninguna competencia claramente alta.");
+  lines.push("");
+  lines.push("ZONAS DE ENTRENAMIENTO");
+  (medium.length?medium:[]).forEach(d=>lines.push("- " + d.name + ": " + interpretation(d.score,d) + " Entrenamiento: " + d.action));
+  if(!medium.length) lines.push("- No hay zona media destacada.");
+  lines.push("");
+  lines.push("RIESGOS NEGOCIADORES");
+  (low.length?low:[]).forEach(d=>lines.push("- " + d.name + ": " + interpretation(d.score,d) + " Entrenamiento: " + d.action));
+  if(!low.length) lines.push("- No aparece ningún riesgo bajo.");
+  lines.push("");
+  const lowest = [...sorted].sort((a,b)=>a.score-b.score)[0];
+  const strongest = [...sorted].sort((a,b)=>b.score-a.score)[0];
+  lines.push("PRIORIDAD PARA EL PRÓXIMO ROLE PLAY");
+  lines.push("- Entrena primero: " + lowest.name + ". " + lowest.action);
+  lines.push("- Apóyate en: " + strongest.name + ".");
+  return lines.join("\n");
+}
+
+function copyReport(){
+  if(!latestReport){
+    alert("Primero completa el test y genera el diagnóstico.");
+    return;
+  }
+  navigator.clipboard.writeText(latestReport).then(()=>{
+    alert("Informe copiado al portapapeles.");
+  }).catch(()=>{
+    alert("No se pudo copiar automáticamente. Puedes imprimir o descargar el informe.");
+  });
+}
+
+function downloadReport(){
+  if(!latestReport){
+    alert("Primero completa el test y genera el diagnóstico.");
+    return;
+  }
+  const blob = new Blob([latestReport], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "radar_competencias_negociadoras.txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function resetTest(){
+  document.getElementById("testForm").reset();
+  latestReport = "";
+  document.getElementById("results").innerHTML = `
+    <div class="empty">
+      Completa el test para obtener:
+      <br><br>
+      <strong>· Competencias fuertes</strong><br>
+      <strong>· Zonas de entrenamiento</strong><br>
+      <strong>· Riesgos negociadores</strong><br>
+      <strong>· Microacciones para mejorar</strong>
+    </div>
+  `;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+renderQuestions();
+</script>
+</body>
+</html>

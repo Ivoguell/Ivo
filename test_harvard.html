@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Harvard en Acción | Ivo Güell Torné</title>
+  <style>
+    :root{
+      --bg:#0e1424;
+      --bg2:#111a30;
+      --card:#ffffff;
+      --ink:#182033;
+      --muted:#697386;
+      --line:#e7ebf3;
+      --primary:#2457ff;
+      --primary2:#00a3ff;
+      --accent:#ffc857;
+      --good:#1f9d64;
+      --warn:#c47f00;
+      --bad:#c2413b;
+      --soft:#f6f8fc;
+      --shadow: 0 24px 70px rgba(0,0,0,.22);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(36,87,255,.25), transparent 30%),
+        radial-gradient(circle at 80% 0%, rgba(0,163,255,.18), transparent 32%),
+        linear-gradient(145deg, var(--bg), var(--bg2) 60%, #080b13);
+      color:var(--ink);
+      min-height:100vh;
+    }
+    .wrap{width:min(1180px, 94vw); margin:0 auto; padding:34px 0 52px;}
+    .hero{
+      color:white;
+      padding:34px 8px 30px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:24px;
+      align-items:end;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:9px;
+      padding:9px 13px; border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.08); border-radius:999px;
+      color:#dfe7ff; font-size:13px; letter-spacing:.2px;
+      backdrop-filter: blur(8px);
+    }
+    .badge span{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 6px rgba(255,200,87,.15)}
+    h1{font-size:clamp(34px, 5vw, 66px); line-height:.98; margin:20px 0 12px; letter-spacing:-2.2px;}
+    .lead{font-size:clamp(16px, 2vw, 20px); line-height:1.55; color:#dbe5ff; margin:0; max-width:840px;}
+    .hero-card{
+      background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18);
+      border-radius:var(--radius); padding:22px; backdrop-filter: blur(10px);
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+    }
+    .hero-card strong{display:block;color:white;font-size:15px;margin-bottom:8px}
+    .hero-card p{margin:0;color:#cfdbff;line-height:1.5;font-size:14px}
+    .grid{display:grid; grid-template-columns: 320px 1fr; gap:24px; align-items:start;}
+    .panel{
+      background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(255,255,255,.4);
+    }
+    .side{position:sticky; top:18px; overflow:hidden;}
+    .side-inner{padding:24px;}
+    .side h2{font-size:18px;margin:0 0 10px;letter-spacing:-.3px}
+    .side p{font-size:14px;line-height:1.52;color:var(--muted);margin:0 0 16px}
+    .progress-wrap{height:10px;background:#edf1f8;border-radius:999px;overflow:hidden;margin:16px 0 10px}
+    .progress{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:999px;transition:.35s ease}
+    .mini{font-size:12px;color:var(--muted)}
+    .pillars{display:grid;gap:10px;margin-top:18px}
+    .pillar{padding:12px 13px;border:1px solid var(--line);border-radius:15px;background:#fbfcff;}
+    .pillar b{display:block;font-size:13px;margin-bottom:3px}.pillar span{font-size:12px;color:var(--muted);line-height:1.35;display:block}
+    .intro-form{padding:26px 28px 18px;border-bottom:1px solid var(--line);}
+    .intro-form h2{margin:0 0 8px;font-size:24px;letter-spacing:-.6px}.intro-form p{margin:0 0 18px;color:var(--muted);line-height:1.55}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field.full{grid-column:1/-1}
+    label{display:block;font-size:13px;font-weight:700;margin-bottom:7px;color:#30394d}
+    input, textarea{
+      width:100%; border:1px solid #dbe1ec; border-radius:14px; padding:13px 14px; font:inherit; outline:none; background:white;
+      transition:.18s ease;
+    }
+    input:focus, textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(36,87,255,.10)}
+    .questions{padding:10px 28px 28px;}
+    .q{
+      border:1px solid var(--line); border-radius:22px; padding:22px; margin:18px 0; background:linear-gradient(180deg,#fff,#fbfcff);
+    }
+    .qtop{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}.qnum{
+      flex:0 0 auto; width:38px;height:38px;border-radius:13px;background:#eef3ff;color:var(--primary);display:grid;place-items:center;font-weight:900;
+    }
+    .q h3{font-size:18px;line-height:1.35;margin:0;letter-spacing:-.25px}.context{color:var(--muted);font-size:14px;line-height:1.48;margin:8px 0 0}
+    .options{display:grid;gap:10px;margin-top:15px}
+    .opt{
+      display:grid; grid-template-columns: 34px 1fr; gap:12px; align-items:start;
+      border:1px solid #dfe5f0; border-radius:17px; padding:13px; cursor:pointer; background:white; transition:.16s ease;
+    }
+    .opt:hover{border-color:#b9c6dc;transform:translateY(-1px)}
+    .opt input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--primary)}
+    .opt.selected{border-color:var(--primary);box-shadow:0 10px 25px rgba(36,87,255,.10);background:#f8faff}
+    .opt strong{font-size:14px}.opt span{display:block;color:#3f495e;font-size:14px;line-height:1.42}
+    .actions{
+      display:flex;flex-wrap:wrap;gap:12px;align-items:center;position:sticky;bottom:0;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:18px 28px;border-radius:0 0 var(--radius) var(--radius);
+    }
+    button,.btn{
+      border:0; border-radius:16px; padding:14px 18px; font-weight:850; font-size:15px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      transition:.18s ease;
+    }
+    .primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 12px 28px rgba(36,87,255,.24)}
+    .primary:hover{transform:translateY(-1px);box-shadow:0 18px 34px rgba(36,87,255,.29)}
+    .secondary{background:#eef3ff;color:#1b3fa7}.ghost{background:white;color:#273247;border:1px solid #dbe1ec}.danger{background:#fff0ed;color:#a92c24}
+    .msg{font-size:14px;color:var(--muted)}.msg.error{color:var(--bad);font-weight:800}.msg.ok{color:var(--good);font-weight:800}
+    .result{display:none;margin-top:24px;overflow:hidden}.result-head{padding:28px;background:linear-gradient(135deg,#111a30,#1f3aa6);color:white}
+    .result-head h2{margin:0 0 8px;font-size:32px;letter-spacing:-1px}.result-head p{margin:0;color:#dce6ff;line-height:1.55}
+    .result-body{padding:28px;display:grid;gap:20px}.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.scorebox{background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:16px}.scorebox b{font-size:13px;color:#3a4458}.scorebox .n{font-size:31px;font-weight:950;letter-spacing:-1px;margin:8px 0 2px}.scorebox span{font-size:12px;color:var(--muted)}
+    .bar{height:9px;background:#e7ebf3;border-radius:99px;overflow:hidden;margin-top:11px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:99px}
+    .textblock{border:1px solid var(--line);border-radius:20px;padding:20px;background:white}.textblock h3{margin:0 0 10px;font-size:20px}.textblock p{margin:10px 0;color:#3d4658;line-height:1.65}.textblock ul{margin:10px 0 0 19px;color:#3d4658;line-height:1.65;padding:0}
+    .sendbox{border:1px solid #d9e3ff;background:#f5f8ff;border-radius:22px;padding:22px}.sendbox h3{margin:0 0 7px}.sendbox p{color:#49566d;line-height:1.55;margin:0 0 14px}.send-actions{display:flex;gap:10px;flex-wrap:wrap}.fine{font-size:12px;color:#6f7b90;line-height:1.45;margin-top:14px}.license{text-align:center;color:#aeb9d2;font-size:12px;margin-top:22px;line-height:1.5}.print-note{display:none}
+    @media(max-width:930px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.side{position:relative;top:0}.score-row{grid-template-columns:1fr 1fr}.fields{grid-template-columns:1fr}}
+    @media(max-width:570px){.wrap{width:96vw;padding-top:16px}.questions,.intro-form,.actions,.result-body{padding-left:18px;padding-right:18px}.q{padding:17px}.score-row{grid-template-columns:1fr}h1{letter-spacing:-1px}.hero{padding-left:4px;padding-right:4px}}
+    @media print{body{background:#fff}.hero,.side,.actions,.sendbox{display:none}.grid{display:block}.panel{box-shadow:none;border:0}.result{display:block}.print-note{display:block}.q{break-inside:avoid}.wrap{width:100%;padding:0}.result-head{background:#fff;color:#111;border-bottom:2px solid #111}.result-head p{color:#333}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="badge"><span></span> Test profesional · Negociación Harvard aplicada</div>
+        <h1>Harvard en Acción</h1>
+        <p class="lead">Un test de microcasos para detectar si negocias desde posiciones, presión o método. No mide teoría: mide criterio negociador en situaciones reales.</p>
+      </div>
+      <div class="hero-card">
+        <strong>Qué obtiene el participante</strong>
+        <p>Un perfil interpretativo, puntuación por los 4 pilares Harvard, riesgo oculto, lectura del estilo negociador y un plan de mejora aplicable a la próxima negociación.</p>
+      </div>
+    </section>
+
+    <main class="grid">
+      <aside class="panel side">
+        <div class="side-inner">
+          <h2>Progreso</h2>
+          <p>Responde cada microcaso con la opción que más se parezca a lo que harías realmente, no a lo que “deberías” hacer.</p>
+          <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+          <div class="mini" id="progressText">0 de 24 preguntas respondidas</div>
+          <div class="pillars">
+            <div class="pillar"><b>1. Personas</b><span>Separar la relación, la emoción y la identidad del problema a resolver.</span></div>
+            <div class="pillar"><b>2. Intereses</b><span>Preguntar qué hay detrás de una posición, objeción o exigencia.</span></div>
+            <div class="pillar"><b>3. Opciones</b><span>Crear alternativas antes de decidir, conceder o bloquear.</span></div>
+            <div class="pillar"><b>4. Criterios</b><span>Usar datos, referencias y estándares para legitimar el acuerdo.</span></div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="intro-form">
+          <h2>Datos del participante</h2>
+          <p>Estos datos se incluirán en el resultado para poder enviarlo por email al finalizar.</p>
+          <div class="fields">
+            <div class="field"><label for="name">Nombre y apellidos *</label><input id="name" type="text" placeholder="Ej. Marta Soler" /></div>
+            <div class="field"><label for="email">Email del participante *</label><input id="email" type="email" placeholder="nombre@empresa.com" /></div>
+            <div class="field"><label for="company">Empresa / área</label><input id="company" type="text" placeholder="Ej. Dirección comercial" /></div>
+            <div class="field"><label for="date">Fecha</label><input id="date" type="text" readonly /></div>
+            <div class="field full"><label for="context">Negociación que más te gustaría mejorar</label><input id="context" type="text" placeholder="Ej. defender precio, negociar con compras, gestionar presión interna..." /></div>
+          </div>
+        </div>
+
+        <div class="questions" id="questions"></div>
+        <div class="actions">
+          <button class="primary" onclick="calculateResult()">Ver resultado y preparar envío obligatorio</button>
+          <button class="ghost" onclick="resetTest()">Reiniciar</button>
+          <span class="msg" id="message"></span>
+        </div>
+      </section>
+    </main>
+
+    <section class="panel result" id="resultPanel">
+      <div class="result-head">
+        <h2 id="profileTitle">Resultado</h2>
+        <p id="profileSubtitle"></p>
+      </div>
+      <div class="result-body">
+        <div class="score-row" id="scoreRow"></div>
+        <div class="textblock" id="diagnosticBlock"></div>
+        <div class="textblock" id="pillarsBlock"></div>
+        <div class="textblock" id="riskBlock"></div>
+        <div class="textblock" id="planBlock"></div>
+        <div class="sendbox">
+          <h3>Envío obligatorio del resultado</h3>
+          <p>Para completar el test, envía el resultado a <strong id="ivoEmailLabel"></strong> y conserva copia en el email del participante. El botón abrirá un email ya preparado con el diagnóstico completo.</p>
+          <div class="send-actions">
+            <button class="primary" onclick="sendMailto()">Abrir email con resultado</button>
+            <button class="secondary" onclick="copyResult()">Copiar resultado</button>
+            <button class="ghost" onclick="window.print()">Imprimir / guardar PDF</button>
+          </div>
+          <form id="formSubmit" method="POST" target="_blank" style="margin-top:12px;display:none;">
+            <input type="hidden" name="_subject" id="fsSubject" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="participante" id="fsName" />
+            <input type="hidden" name="email_participante" id="fsEmail" />
+            <textarea name="resultado" id="fsResult"></textarea>
+          </form>
+          <div class="fine">Nota técnica: un archivo HTML sin servidor no puede enviar correos de forma silenciosa ni comprobar si el usuario pulsó “Enviar” en su cliente de correo. Este test fuerza el paso de envío mediante email preparado y permite copiar/imprimir el resultado como respaldo.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="license">© 2026 Ivo Güell Torné. Test “Harvard en Acción”. Uso bajo licencia de Ivo Güell Torné. Prohibida su reproducción, venta o distribución no autorizada.</div>
+  </div>
+
+<script>
+const IVO_EMAIL = "ivo.guell@alumni.esae.edu";
+const pillarNames = {
+  people: "Personas",
+  interests: "Intereses",
+  options: "Opciones",
+  criteria: "Criterios"
+};
+
+const questions = [
+  {
+    title:"El cliente dice: “Sois demasiado caros”.",
+    context:"Estás en una reunión comercial y la objeción aparece antes de revisar todo el alcance.",
+    options:[
+      {t:"Defiendo el precio explicando todo el trabajo que hay detrás.", s:{people:1,interests:0,options:0,criteria:1}, risk:"defensa"},
+      {t:"Ofrezco un pequeño descuento para evitar que la conversación se cierre.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Pregunto respecto a qué criterio, alternativa o comparación lo considera caro.", s:{people:2,interests:3,options:2,criteria:3}, risk:"criterio"},
+      {t:"Vuelvo a presentar la propuesta desde el inicio para que entienda mejor el valor.", s:{people:1,interests:1,options:0,criteria:1}, risk:"explicacion"}
+    ]
+  },
+  {
+    title:"La otra parte critica duramente a tu equipo.",
+    context:"Dice: “Vuestro equipo no ha estado a la altura”. Hay tensión y varias personas presentes.",
+    options:[
+      {t:"Respondo con firmeza defendiendo al equipo y señalando errores del cliente.", s:{people:0,interests:0,options:0,criteria:1}, risk:"emocion"},
+      {t:"Ignoro el comentario y paso directamente a los puntos económicos.", s:{people:1,interests:0,options:0,criteria:0}, risk:"evitacion"},
+      {t:"Reconozco la molestia, separo el tono del problema y propongo revisar hechos concretos.", s:{people:3,interests:2,options:2,criteria:3}, risk:"persona"},
+      {t:"Pido una disculpa general y acepto compensar para calmar la situación.", s:{people:2,interests:0,options:1,criteria:0}, risk:"concesion"}
+    ]
+  },
+  {
+    title:"Compras exige un 15% de descuento hoy.",
+    context:"Te dicen que, si no aceptas antes de las 18h, el proyecto irá a otro proveedor.",
+    options:[
+      {t:"Acepto parcialmente: bajo un 7% para no perder la operación.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Rechazo la presión y digo que esas formas no son aceptables.", s:{people:1,interests:0,options:0,criteria:1}, risk:"emocion"},
+      {t:"Pregunto qué variable necesitan optimizar y ofrezco revisar alcance, plazos o condiciones antes que precio.", s:{people:2,interests:3,options:3,criteria:2}, risk:"opciones"},
+      {t:"Pido hablar con dirección para obtener autorización y ganar tiempo.", s:{people:1,interests:1,options:1,criteria:1}, risk:"preparacion"}
+    ]
+  },
+  {
+    title:"Un distribuidor pide exclusividad sin garantía de volumen.",
+    context:"Quiere reservarse una zona geográfica importante, pero no concreta objetivos mínimos.",
+    options:[
+      {t:"Acepto la exclusividad porque puede abrir mercado a medio plazo.", s:{people:1,interests:1,options:1,criteria:0}, risk:"concesion"},
+      {t:"La niego para no comprometer una zona estratégica.", s:{people:1,interests:0,options:0,criteria:1}, risk:"defensa"},
+      {t:"Propongo exclusividad condicionada a métricas, hitos y revisión trimestral.", s:{people:2,interests:2,options:3,criteria:3}, risk:"criterio"},
+      {t:"Le pido que primero demuestre ventas durante un año y luego hablaremos.", s:{people:1,interests:1,options:1,criteria:2}, risk:"rigidez"}
+    ]
+  },
+  {
+    title:"Tu jefe te pide cerrar “como sea”.",
+    context:"Internamente existe presión por cumplir objetivos de trimestre.",
+    options:[
+      {t:"Cierro con margen bajo; lo importante es facturar ahora.", s:{people:0,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Antes de negociar defino límite mínimo, BATNA, riesgos y concesiones posibles.", s:{people:2,interests:2,options:2,criteria:3}, risk:"preparacion"},
+      {t:"Traslado la presión al cliente para acelerar la firma.", s:{people:0,interests:0,options:0,criteria:0}, risk:"emocion"},
+      {t:"Intento cerrar rápido y luego renegociar internamente la entrega.", s:{people:0,interests:0,options:1,criteria:0}, risk:"cierre"}
+    ]
+  },
+  {
+    title:"El cliente menciona una oferta competidora más barata.",
+    context:"No sabes si la comparación es real, completa o estratégica.",
+    options:[
+      {t:"Igualo el precio si el proyecto es importante.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Explico que nuestra calidad es superior y que no somos comparables.", s:{people:1,interests:0,options:0,criteria:1}, risk:"defensa"},
+      {t:"Pido comparar alcance, garantías, riesgos, servicio, plazos y coste total.", s:{people:2,interests:2,options:2,criteria:3}, risk:"criterio"},
+      {t:"Digo que entienda que cada proveedor tiene su política y mantengo la propuesta.", s:{people:1,interests:0,options:0,criteria:1}, risk:"rigidez"}
+    ]
+  },
+  {
+    title:"Hay un retraso y la reunión empieza en tono acusatorio.",
+    context:"La otra parte abre con reproches y amenaza con penalizaciones.",
+    options:[
+      {t:"Detallo las causas del retraso para que vean que no todo depende de nosotros.", s:{people:1,interests:1,options:0,criteria:1}, risk:"explicacion"},
+      {t:"Reconozco el impacto, separo responsabilidades de soluciones y centro la reunión en el plan de recuperación.", s:{people:3,interests:2,options:3,criteria:2}, risk:"persona"},
+      {t:"Pido que bajen el tono antes de seguir hablando.", s:{people:1,interests:0,options:0,criteria:0}, risk:"emocion"},
+      {t:"Ofrezco una compensación para cerrar rápido el conflicto.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"}
+    ]
+  },
+  {
+    title:"Te piden añadir servicios gratis al contrato.",
+    context:"El cliente dice que “es un pequeño esfuerzo” y que ayudaría a firmar.",
+    options:[
+      {t:"Acepto si el coste interno no es muy alto.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Digo que nada adicional puede entrar sin pagar.", s:{people:1,interests:0,options:0,criteria:1}, risk:"rigidez"},
+      {t:"Exploro qué valor busca y propongo intercambio: más alcance a cambio de plazo, permanencia o volumen.", s:{people:2,interests:3,options:3,criteria:2}, risk:"opciones"},
+      {t:"Lo dejo pendiente para decidirlo después de la firma.", s:{people:0,interests:0,options:1,criteria:0}, risk:"cierre"}
+    ]
+  },
+  {
+    title:"La otra parte dice: “Esto no está alineado con lo que necesitamos”.",
+    context:"No concreta qué falla, pero expresa rechazo global.",
+    options:[
+      {t:"Pregunto qué objetivo, restricción o prioridad no estamos resolviendo bien.", s:{people:2,interests:3,options:2,criteria:2}, risk:"intereses"},
+      {t:"Le pido que nos envíe comentarios por email para rehacer la propuesta.", s:{people:1,interests:1,options:1,criteria:1}, risk:"cierre"},
+      {t:"Le explico los puntos fuertes que quizá no ha visto.", s:{people:1,interests:0,options:0,criteria:1}, risk:"explicacion"},
+      {t:"Ofrezco una versión más económica para facilitar el encaje.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"}
+    ]
+  },
+  {
+    title:"El cliente exige una penalización muy dura.",
+    context:"Quiere cubrir riesgos, pero la cláusula puede ser desproporcionada.",
+    options:[
+      {t:"La rechazo porque es inasumible jurídicamente.", s:{people:1,interests:0,options:0,criteria:1}, risk:"defensa"},
+      {t:"Acepto si el importe global del contrato compensa.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Pregunto qué riesgo quiere proteger y propongo una cláusula proporcional basada en hitos verificables.", s:{people:2,interests:3,options:3,criteria:3}, risk:"criterio"},
+      {t:"Derivo el tema a legal para no desgastar la negociación.", s:{people:1,interests:1,options:0,criteria:1}, risk:"evitacion"}
+    ]
+  },
+  {
+    title:"Tienes que preparar una negociación importante.",
+    context:"Dispones de poco tiempo y mucha información dispersa.",
+    options:[
+      {t:"Preparo una buena presentación y argumentos de valor.", s:{people:1,interests:1,options:0,criteria:1}, risk:"explicacion"},
+      {t:"Defino objetivos, mínimos, BATNA, intereses de la otra parte, criterios y concesiones intercambiables.", s:{people:2,interests:3,options:3,criteria:3}, risk:"preparacion"},
+      {t:"Me centro en anticipar objeciones y respuestas contundentes.", s:{people:1,interests:1,options:0,criteria:1}, risk:"defensa"},
+      {t:"Prefiero escuchar primero y decidir la estrategia en la reunión.", s:{people:1,interests:1,options:1,criteria:0}, risk:"improvisacion"}
+    ]
+  },
+  {
+    title:"Un socio dice: “Siempre lo hemos hecho con este margen”.",
+    context:"Usa la tradición como argumento principal para bloquear un cambio.",
+    options:[
+      {t:"Acepto el margen si es la práctica histórica de la relación.", s:{people:1,interests:0,options:0,criteria:0}, risk:"concesion"},
+      {t:"Digo que el mercado ha cambiado y que ese argumento ya no sirve.", s:{people:0,interests:0,options:0,criteria:1}, risk:"emocion"},
+      {t:"Propongo revisar costes, mercado, riesgo, volumen y valor aportado para definir un criterio actualizado.", s:{people:2,interests:2,options:2,criteria:3}, risk:"criterio"},
+      {t:"Mantengo mi posición y espero a que él mueva ficha.", s:{people:0,interests:0,options:0,criteria:0}, risk:"rigidez"}
+    ]
+  },
+  {
+    title:"Una persona monopoliza la reunión y convierte todo en algo personal.",
+    context:"Interrumpe, dramatiza y parece buscar culpables más que soluciones.",
+    options:[
+      {t:"Le corto para recuperar autoridad en la sala.", s:{people:0,interests:0,options:0,criteria:0}, risk:"emocion"},
+      {t:"Dejo que hable para que se desahogue y no escale el conflicto.", s:{people:1,interests:0,options:0,criteria:0}, risk:"evitacion"},
+      {t:"Valido la preocupación y reconduzco: hechos, impacto, opciones y decisión pendiente.", s:{people:3,interests:2,options:2,criteria:2}, risk:"persona"},
+      {t:"Propongo suspender la reunión y seguir por email.", s:{people:1,interests:0,options:0,criteria:0}, risk:"cierre"}
+    ]
+  },
+  {
+    title:"Dos departamentos del cliente se contradicen.",
+    context:"Uno quiere velocidad; otro exige seguridad y control.",
+    options:[
+      {t:"Intento contentar a ambos con una propuesta intermedia.", s:{people:1,interests:1,options:1,criteria:0}, risk:"concesion"},
+      {t:"Pregunto prioridades, riesgos y criterios de éxito de cada área antes de proponer solución.", s:{people:2,interests:3,options:2,criteria:2}, risk:"intereses"},
+      {t:"Pido que se pongan de acuerdo internamente antes de avanzar.", s:{people:1,interests:0,options:0,criteria:0}, risk:"evitacion"},
+      {t:"Defiendo la opción que técnicamente considero más correcta.", s:{people:1,interests:0,options:0,criteria:2}, risk:"defensa"}
+    ]
+  },
+  {
+    title:"El cliente tiene menos presupuesto del previsto.",
+    context:"Quiere avanzar, pero el presupuesto no cubre el alcance inicial.",
+    options:[
+      {t:"Bajo precio para mantener todo el alcance.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Rediseño fases, alcance, responsabilidades y calendario para preservar valor y margen.", s:{people:2,interests:3,options:3,criteria:2}, risk:"opciones"},
+      {t:"Le digo que vuelva cuando tenga presupuesto suficiente.", s:{people:0,interests:0,options:0,criteria:1}, risk:"rigidez"},
+      {t:"Mantengo precio y dejo que decida internamente.", s:{people:1,interests:0,options:0,criteria:1}, risk:"defensa"}
+    ]
+  },
+  {
+    title:"Aparece un nuevo decisor en la última reunión.",
+    context:"Hasta ahora habías negociado con otra persona y todo parecía avanzado.",
+    options:[
+      {t:"Repito toda la propuesta para ponerle al día.", s:{people:1,interests:0,options:0,criteria:1}, risk:"explicacion"},
+      {t:"Pregunto su rol, criterios de decisión, preocupaciones y qué necesita validar.", s:{people:2,interests:3,options:2,criteria:3}, risk:"criterio"},
+      {t:"Pido hablar a solas con mi contacto anterior para entender qué pasa.", s:{people:1,interests:1,options:1,criteria:0}, risk:"preparacion"},
+      {t:"Presiono para cerrar porque ya estaba todo hablado.", s:{people:0,interests:0,options:0,criteria:0}, risk:"emocion"}
+    ]
+  },
+  {
+    title:"Te piden un plazo que sabes que es casi imposible.",
+    context:"Aceptar puede dañar calidad, equipo o reputación.",
+    options:[
+      {t:"Acepto y luego intentaré que el equipo lo consiga.", s:{people:0,interests:0,options:1,criteria:0}, risk:"cierre"},
+      {t:"Digo que es imposible y planteo el plazo realista.", s:{people:1,interests:0,options:1,criteria:2}, risk:"rigidez"},
+      {t:"Exploro qué hito crítico necesitan y propongo opciones por fases con criterios de riesgo y calidad.", s:{people:2,interests:3,options:3,criteria:3}, risk:"opciones"},
+      {t:"Pido más precio por urgencia sin cambiar nada más.", s:{people:1,interests:1,options:1,criteria:1}, risk:"defensa"}
+    ]
+  },
+  {
+    title:"La otra parte dice: “O aceptáis esto o lo dejamos”.",
+    context:"No sabes si es una amenaza real, una táctica o un límite legítimo.",
+    options:[
+      {t:"Acepto si la operación es estratégica.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Respondo que nosotros tampoco negociamos bajo amenazas.", s:{people:0,interests:0,options:0,criteria:0}, risk:"emocion"},
+      {t:"Pregunto qué condición es realmente no negociable, qué alternativa tienen y qué espacio queda para crear valor.", s:{people:2,interests:3,options:3,criteria:2}, risk:"intereses"},
+      {t:"Pido una pausa para consultar internamente y evitar equivocarme.", s:{people:1,interests:1,options:1,criteria:1}, risk:"preparacion"}
+    ]
+  },
+  {
+    title:"Tras enviar propuesta, hay silencio durante días.",
+    context:"No sabes si es desinterés, bloqueo interno o comparación con alternativas.",
+    options:[
+      {t:"Envío un recordatorio amable preguntando si han podido revisarla.", s:{people:1,interests:0,options:0,criteria:0}, risk:"cierre"},
+      {t:"Ofrezco mejorar alguna condición para reactivar la conversación.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Pregunto qué elemento está bloqueando la decisión y propongo una llamada breve de desbloqueo.", s:{people:2,interests:3,options:2,criteria:1}, risk:"intereses"},
+      {t:"Espero para no parecer insistente.", s:{people:0,interests:0,options:0,criteria:0}, risk:"evitacion"}
+    ]
+  },
+  {
+    title:"El cliente dice: “No nos entendéis”.",
+    context:"Es una frase emocional, pero puede esconder una necesidad mal formulada.",
+    options:[
+      {t:"Le pido que me explique qué no hemos entendido y reformulo hasta validar.", s:{people:3,interests:3,options:1,criteria:1}, risk:"persona"},
+      {t:"Defiendo que hemos seguido todo lo que nos pidieron.", s:{people:0,interests:0,options:0,criteria:1}, risk:"defensa"},
+      {t:"Pido disculpas y propongo rehacer la propuesta completa.", s:{people:2,interests:1,options:1,criteria:0}, risk:"concesion"},
+      {t:"Sugiero dejarlo para otra reunión con más calma.", s:{people:1,interests:0,options:0,criteria:0}, risk:"evitacion"}
+    ]
+  },
+  {
+    title:"El acuerdo parece cerrado, pero todo queda verbal.",
+    context:"Hay buena sintonía, pero no se han concretado responsabilidades ni plazos.",
+    options:[
+      {t:"Confío en la relación y espero su confirmación formal.", s:{people:1,interests:0,options:0,criteria:0}, risk:"cierre"},
+      {t:"Resumo por escrito alcance, condiciones, responsables, plazos, riesgos pendientes y próximo paso.", s:{people:2,interests:2,options:2,criteria:3}, risk:"cierre"},
+      {t:"Celebro el avance y dejo que legal prepare el contrato.", s:{people:1,interests:0,options:0,criteria:1}, risk:"evitacion"},
+      {t:"Aprovecho el buen clima para añadir algún punto pendiente a nuestro favor.", s:{people:0,interests:0,options:1,criteria:0}, risk:"emocion"}
+    ]
+  },
+  {
+    title:"Sospechas que tu interlocutor no decide.",
+    context:"La reunión avanza, pero cada punto importante queda “pendiente de validar”.",
+    options:[
+      {t:"Sigo vendiendo valor para que él lo defienda internamente.", s:{people:1,interests:0,options:0,criteria:1}, risk:"explicacion"},
+      {t:"Pregunto cómo será el proceso de decisión, quién valida qué y con qué criterios.", s:{people:2,interests:3,options:2,criteria:3}, risk:"criterio"},
+      {t:"Le pido directamente hablar con quien manda.", s:{people:1,interests:0,options:0,criteria:1}, risk:"emocion"},
+      {t:"Le envío más información para que pueda convencer a los demás.", s:{people:1,interests:1,options:0,criteria:1}, risk:"explicacion"}
+    ]
+  },
+  {
+    title:"Notas que te estás irritando durante la negociación.",
+    context:"La otra parte repite argumentos injustos y te cuesta mantener distancia.",
+    options:[
+      {t:"Respondo con datos para demostrar que sus argumentos son débiles.", s:{people:0,interests:0,options:0,criteria:2}, risk:"defensa"},
+      {t:"Pido una pausa breve, ordeno el punto en discusión y vuelvo a la mesa con preguntas concretas.", s:{people:3,interests:2,options:2,criteria:2}, risk:"persona"},
+      {t:"Cedo en algún punto menor para que baje la tensión.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Mantengo silencio y espero a que cambie el tono.", s:{people:1,interests:0,options:0,criteria:0}, risk:"evitacion"}
+    ]
+  },
+  {
+    title:"Antes de cerrar, te piden una última concesión.",
+    context:"La frase es: “Si hacéis este gesto, firmamos”.", 
+    options:[
+      {t:"Acepto el gesto si garantiza la firma inmediata.", s:{people:1,interests:0,options:1,criteria:0}, risk:"concesion"},
+      {t:"Pregunto qué desbloquea exactamente, lo vinculo a una contraprestación y lo documento.", s:{people:2,interests:3,options:3,criteria:3}, risk:"opciones"},
+      {t:"Me niego porque una última concesión abre la puerta a más concesiones.", s:{people:1,interests:0,options:0,criteria:1}, risk:"rigidez"},
+      {t:"Digo que lo consultaré y respondo después.", s:{people:1,interests:1,options:1,criteria:1}, risk:"preparacion"}
+    ]
+  },
+  {
+    title:"La otra parte llega con una posición cerrada por escrito.",
+    context:"Presentan un documento y dicen que no quieren “perder tiempo” rediscutiendo.",
+    options:[
+      {t:"Trabajo sobre su documento para no bloquear la reunión.", s:{people:1,interests:0,options:1,criteria:1}, risk:"concesion"},
+      {t:"Marco nuestra posición alternativa y comparo punto por punto.", s:{people:1,interests:0,options:1,criteria:2}, risk:"defensa"},
+      {t:"Pregunto qué intereses protege cada punto, qué criterios han usado y dónde hay margen de diseño.", s:{people:2,interests:3,options:3,criteria:3}, risk:"criterio"},
+      {t:"Propongo aplazar la reunión para revisar con calma.", s:{people:1,interests:0,options:0,criteria:0}, risk:"evitacion"}
+    ]
+  }
+];
+
+const maxPerPillar = questions.length * 3;
+let lastResultText = "";
+let lastSubject = "";
+
+document.getElementById("date").value = new Date().toLocaleDateString("es-ES");
+document.getElementById("ivoEmailLabel").textContent = IVO_EMAIL;
+
+document.getElementById("questions").innerHTML = questions.map((q, i) => `
+  <article class="q" id="q${i}">
+    <div class="qtop">
+      <div class="qnum">${i+1}</div>
+      <div><h3>${q.title}</h3><p class="context">${q.context}</p></div>
+    </div>
+    <div class="options">
+      ${q.options.map((o, j) => `
+        <label class="opt" for="q${i}o${j}">
+          <input type="radio" name="q${i}" id="q${i}o${j}" value="${j}" onchange="updateProgress()" />
+          <span><strong>${String.fromCharCode(65+j)}.</strong> ${o.t}</span>
+        </label>`).join("")}
+    </div>
+  </article>`).join("");
+
+function updateProgress(){
+  document.querySelectorAll('.opt').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('input[type="radio"]:checked').forEach(inp => inp.closest('.opt').classList.add('selected'));
+  const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+  const pct = Math.round(answered / questions.length * 100);
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${answered} de ${questions.length} preguntas respondidas`;
+}
+
+function resetTest(){
+  if(!confirm('¿Seguro que quieres reiniciar el test?')) return;
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  updateProgress();
+  document.getElementById('resultPanel').style.display='none';
+  document.getElementById('message').textContent='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function getLevel(pct){
+  if(pct >= 82) return {name:"Negociador/a Harvard avanzado/a", tone:"Tu patrón negociador muestra criterio estratégico, autocontrol y capacidad para transformar tensión en avance. No dependes solo de intuición: sabes ordenar la conversación, proteger valor y construir legitimidad."};
+  if(pct >= 65) return {name:"Negociador/a estratégico/a en consolidación", tone:"Tienes una base negociadora sólida y ya aplicas buena parte del método. Tu mejora principal está en convertir ese criterio en rutina bajo presión, especialmente cuando aparecen urgencias, poder asimétrico o exigencias económicas."};
+  if(pct >= 50) return {name:"Negociador/a táctico/a con puntos ciegos", tone:"Sueles resolver la situación inmediata, pero todavía hay momentos en los que negocias desde reacción, defensa o concesión prematura. El potencial está claro: necesitas más estructura antes, durante y después de la mesa."};
+  return {name:"Negociador/a reactivo-posicional", tone:"Tu resultado sugiere que, ante presión, tiendes a defender, explicar, ceder o bloquear antes de investigar intereses y criterios. No es falta de capacidad: es falta de método estable. Con una preparación mínima, tu mejora puede ser muy rápida."};
+}
+
+function pillarInterpretation(key, pct){
+  const name = pillarNames[key];
+  if(key === 'people'){
+    if(pct >= 80) return `<p><strong>${name}:</strong> gestionas bien la dimensión humana de la negociación. Sabes bajar la temperatura emocional, validar sin someterte y reconducir ataques hacia hechos, impactos y soluciones. Este punto es esencial porque muchas negociaciones no fracasan por el desacuerdo técnico, sino por amenaza al ego, falta de reconocimiento o mala gestión del tono.</p>`;
+    if(pct >= 60) return `<p><strong>${name}:</strong> tienes sensibilidad relacional, aunque bajo presión puedes entrar en defensa, justificación o evitación. Tu reto es no confundir cuidar la relación con ceder, ni firmeza con dureza. Separar persona y problema debe convertirse en una frase operativa: “entiendo la preocupación; veamos los hechos y las opciones”.</p>`;
+    return `<p><strong>${name}:</strong> aquí aparece una alerta. Puedes personalizar demasiado la tensión o dejar que el tono condicione tu respuesta. En Harvard, proteger la relación no significa ser blando; significa impedir que la emoción destruya la calidad del acuerdo. Necesitas entrenar pausas, reformulación y reconducción a hechos.</p>`;
+  }
+  if(key === 'interests'){
+    if(pct >= 80) return `<p><strong>${name}:</strong> tu punto fuerte es investigar lo que hay detrás de las posiciones. Cuando alguien pide precio, plazo, exclusividad o penalización, tiendes a preguntar qué riesgo, objetivo o restricción hay debajo. Esa es una competencia de alto valor porque permite crear acuerdos que no se ven desde la superficie.</p>`;
+    if(pct >= 60) return `<p><strong>${name}:</strong> sabes preguntar, pero no siempre sostienes la exploración cuando aparece una exigencia fuerte. El salto cualitativo está en no responder a la primera petición como si fuera la necesidad real. Antes de conceder o rechazar, formula: “¿qué tiene que resolver exactamente este punto para vosotros?”.</p>`;
+    return `<p><strong>${name}:</strong> necesitas reforzar la escucha diagnóstica. El riesgo es negociar contra frases, no contra necesidades reales. Precio, plazo, garantía, exclusividad o penalización suelen ser posiciones visibles; detrás puede haber miedo, control, reputación interna, presupuesto, riesgo político o presión de terceros.</p>`;
+  }
+  if(key === 'options'){
+    if(pct >= 80) return `<p><strong>${name}:</strong> muestras buena capacidad para diseñar alternativas antes de cerrar. No caes fácilmente en el falso dilema “sí/no” o “precio/descuento”. Sabes jugar con alcance, fases, plazos, garantías, volumen, contraprestaciones y condiciones de revisión.</p>`;
+    if(pct >= 60) return `<p><strong>${name}:</strong> generas opciones, pero todavía puedes mejorar en momentos de urgencia. La negociación excelente no consiste solo en defender una propuesta, sino en rediseñar el paquete sin regalar valor. Tu pregunta clave: “¿qué variables podemos mover sin destruir el margen ni el compromiso?”.</p>`;
+    return `<p><strong>${name}:</strong> este bloque indica tendencia a aceptar, rechazar o explicar antes de crear alternativas. Eso empobrece la mesa y te deja atrapado en concesiones. Trabaja con paquetes: opción A conservadora, opción B equilibrada, opción C premium, siempre con condiciones claras.</p>`;
+  }
+  if(pct >= 80) return `<p><strong>${name}:</strong> usas muy bien la legitimidad: datos, comparables, métricas, hitos, estándares y criterios de proporcionalidad. Esto te permite ser firme sin parecer arbitrario. Los criterios objetivos reducen lucha de poder y convierten el acuerdo en algo defendible internamente.</p>`;
+  if(pct >= 60) return `<p><strong>${name}:</strong> tienes criterio, pero a veces argumentas desde valor percibido o experiencia sin aterrizarlo en referencias verificables. Para ganar solidez, prepara antes de la reunión tres estándares: mercado, coste/riesgo y métrica de éxito.</p>`;
+  return `<p><strong>${name}:</strong> aquí conviene trabajar. Sin criterios objetivos, la negociación se convierte en opinión contra opinión o fuerza contra fuerza. Tu posición será más sólida si cada punto relevante puede justificarse con datos, estándares, precedentes, límites técnicos o compromisos medibles.</p>`;
+}
+
+const riskTexts = {
+  concesion: {title:"Concesión prematura", text:"Tu riesgo principal es conceder demasiado pronto para proteger la relación, acelerar el cierre o evitar tensión. El problema no es conceder; el problema es conceder sin entender qué desbloquea la concesión y sin pedir una contraprestación. A partir de ahora, ninguna concesión debería salir sola: debe ir vinculada a alcance, plazo, volumen, permanencia, pago, referencia, reducción de riesgo o compromiso verificable."},
+  defensa: {title:"Defensa de posiciones", text:"Tu riesgo principal es responder defendiendo tu propuesta antes de investigar la lógica de la otra parte. Defender puede ser necesario, pero si lo haces demasiado pronto conviertes la mesa en un debate de argumentos. Cambia el orden: primero pregunta, después reformula, luego usa criterios y finalmente defiende."},
+  emocion: {title:"Reactividad emocional", text:"Tu riesgo principal es que el tono de la otra parte te saque del método. Cuando esto ocurre, puedes presionar, cortar, justificarte o entrar en lucha de poder. Tu mejora pasa por dominar una secuencia simple: pausa, reconocimiento de la preocupación, hechos verificables, pregunta útil y siguiente paso."},
+  evitacion: {title:"Evitación del conflicto real", text:"Tu riesgo principal es aplazar, suavizar o derivar temas incómodos. Eso puede mantener la relación a corto plazo, pero deja bombas pendientes para el cierre o la ejecución. El objetivo no es incomodar: es abrir el punto difícil con método, respeto y criterios."},
+  explicacion: {title:"Exceso de explicación", text:"Tu riesgo principal es creer que la otra parte cambiará de posición si explicas mejor. A veces sí, pero muchas objeciones no se resuelven con más discurso, sino con mejores preguntas. Menos presentación, más diagnóstico: qué compara, qué teme, quién decide, qué criterio usará y qué alternativa tiene."},
+  rigidez: {title:"Rigidez negociadora", text:"Tu riesgo principal es proteger valor cerrando demasiado pronto la exploración. La firmeza es positiva, pero si no abres opciones puedes perder acuerdos buenos. No se trata de ceder; se trata de diseñar condiciones que hagan viable el acuerdo sin destruir tu mínimo aceptable."},
+  cierre: {title:"Cierre débil o ambiguo", text:"Tu riesgo principal es avanzar con buena sensación pero sin suficiente concreción. Un acuerdo verbal, una intención positiva o una frase de consenso no son todavía un acuerdo operativo. Cierra siempre con alcance, responsables, plazos, condiciones, riesgos pendientes y confirmación escrita."},
+  preparacion: {title:"Preparación insuficiente", text:"Tu riesgo principal aparece antes de sentarte a negociar. Si no tienes BATNA, mínimo aceptable, ZOPA estimada, criterios, concesiones intercambiables e intereses probables de la otra parte, la reunión te llevará a ti en lugar de llevarla tú a ella."},
+  intereses: {title:"Lectura incompleta de intereses", text:"Tu mejora está en sostener más tiempo la exploración de necesidades reales. La primera demanda rara vez es toda la verdad. Pregunta por objetivos, miedos, restricciones, presión interna, criterios de decisión y consecuencias de no acordar."},
+  opciones: {title:"Diseño insuficiente de opciones", text:"Tu mejora está en ampliar el tablero. En vez de negociar una sola variable, trabaja paquetes: precio con volumen, plazo con alcance, garantía con hitos, descuento con permanencia, urgencia con prioridad y coste de oportunidad."},
+  criterio: {title:"Necesidad de legitimar mejor", text:"Tu mejora está en convertir argumentos en criterios. Cuanto más objetiva sea la base del acuerdo, menos dependerás de carisma, presión o buena voluntad. Lleva referencias, métricas, comparables y límites claros."},
+  persona: {title:"Gestión relacional como palanca", text:"Tu patrón muestra sensibilidad hacia la dimensión humana. Vigila que esa capacidad no derive en complacencia. La relación se cuida mejor con claridad, límites y respeto que con concesiones silenciosas."},
+  improvisacion: {title:"Improvisación táctica", text:"Tu riesgo principal es confiar demasiado en tu capacidad de adaptación. La agilidad es una ventaja solo cuando está sostenida por preparación. Sin mapa, puedes confundir movimiento con avance."}
+};
+
+function calculateResult(){
+  const msg = document.getElementById('message');
+  msg.textContent = '';
+  msg.className = 'msg';
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  if(!name || !email){
+    msg.textContent = 'Faltan nombre y email del participante.'; msg.classList.add('error'); return;
+  }
+  const checked = [...document.querySelectorAll('input[type="radio"]:checked')];
+  if(checked.length < questions.length){
+    const firstMissing = questions.findIndex((q,i)=>!document.querySelector(`input[name="q${i}"]:checked`));
+    msg.textContent = `Faltan preguntas por responder. Primera pendiente: ${firstMissing+1}.`; msg.classList.add('error');
+    document.getElementById(`q${firstMissing}`).scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  const scores = {people:0, interests:0, options:0, criteria:0};
+  const riskCounts = {};
+  const selectedLines = [];
+  questions.forEach((q,i)=>{
+    const v = Number(document.querySelector(`input[name="q${i}"]:checked`).value);
+    const opt = q.options[v];
+    Object.keys(scores).forEach(k=>scores[k]+=opt.s[k]);
+    riskCounts[opt.risk] = (riskCounts[opt.risk] || 0) + 1;
+    selectedLines.push(`${i+1}. ${q.title} → ${String.fromCharCode(65+v)}. ${opt.t}`);
+  });
+  const pcts = Object.fromEntries(Object.entries(scores).map(([k,v])=>[k, Math.round(v/maxPerPillar*100)]));
+  const totalPct = Math.round((scores.people+scores.interests+scores.options+scores.criteria)/(maxPerPillar*4)*100);
+  const level = getLevel(totalPct);
+  const strongest = Object.keys(pcts).sort((a,b)=>pcts[b]-pcts[a])[0];
+  const weakest = Object.keys(pcts).sort((a,b)=>pcts[a]-pcts[b])[0];
+  const mainRisk = Object.keys(riskCounts).sort((a,b)=>riskCounts[b]-riskCounts[a])[0] || 'preparacion';
+  const risk = riskTexts[mainRisk] || riskTexts.preparacion;
+
+  document.getElementById('profileTitle').textContent = `${level.name} · ${totalPct}/100`;
+  document.getElementById('profileSubtitle').textContent = level.tone;
+  document.getElementById('scoreRow').innerHTML = Object.keys(pcts).map(k=>`
+    <div class="scorebox"><b>${pillarNames[k]}</b><div class="n">${pcts[k]}</div><span>sobre 100</span><div class="bar"><i style="width:${pcts[k]}%"></i></div></div>`).join('');
+
+  document.getElementById('diagnosticBlock').innerHTML = `
+    <h3>Lectura ejecutiva del resultado</h3>
+    <p><strong>${name}</strong>, tu resultado global es <strong>${totalPct}/100</strong>. El test sugiere que tu mayor fortaleza relativa está en <strong>${pillarNames[strongest]}</strong> y tu principal área de mejora está en <strong>${pillarNames[weakest]}</strong>.</p>
+    <p>La lectura importante no es si “sabes” Harvard, sino si lo aplicas cuando aparece presión: precio, urgencia, ataques personales, comparaciones con competidores, nuevos decisores, silencios, concesiones finales o cierres ambiguos. Ahí es donde se ve la diferencia entre negociar desde intuición y negociar con arquitectura.</p>
+    <p>Tu siguiente salto profesional consiste en convertir cada conversación difícil en una secuencia: bajar tensión, descubrir intereses, ampliar opciones, legitimar con criterios y cerrar con compromisos verificables.</p>`;
+
+  document.getElementById('pillarsBlock').innerHTML = `<h3>Análisis por los 4 pilares Harvard</h3>` + Object.keys(pcts).map(k=>pillarInterpretation(k,pcts[k])).join('');
+  document.getElementById('riskBlock').innerHTML = `
+    <h3>Riesgo oculto predominante: ${risk.title}</h3>
+    <p>${risk.text}</p>
+    <p><strong>Señal de alerta:</strong> cuando notes que quieres responder demasiado rápido, justificarte, cerrar cuanto antes o hacer una concesión para aliviar tensión, probablemente estás saliendo del método. Vuelve a una pregunta útil antes de mover tu posición.</p>`;
+  document.getElementById('planBlock').innerHTML = `
+    <h3>Plan de mejora para la próxima negociación</h3>
+    <ul>
+      <li><strong>Antes:</strong> define tu BATNA, mínimo aceptable, objetivo ambicioso, ZOPA estimada, criterios objetivos y concesiones intercambiables.</li>
+      <li><strong>Durante:</strong> no respondas a una posición sin hacer al menos una pregunta de intereses: “¿qué tiene que resolver exactamente este punto?”.</li>
+      <li><strong>Cuando haya presión:</strong> separa tono y problema. Usa una frase puente: “entiendo la preocupación; revisemos hechos, impacto y opciones”.</li>
+      <li><strong>Cuando pidan precio:</strong> no descuentes primero. Compara alcance, riesgo, plazo, volumen, garantías, coste total y alternativa real.</li>
+      <li><strong>Al cerrar:</strong> deja por escrito alcance, responsables, fechas, condiciones, riesgos pendientes y siguiente paso. Sin eso, puede haber conversación, pero no acuerdo.</li>
+    </ul>
+    <p><strong>Frase de entrenamiento:</strong> “No negocio contra frases; negocio entendiendo intereses, diseñando opciones y legitimando criterios”.</p>`;
+
+  lastSubject = `Resultado Test Harvard en Acción - ${name}`;
+  lastResultText = buildResultText(name, email, totalPct, level, pcts, strongest, weakest, risk, selectedLines);
+  document.getElementById('fsSubject').value = lastSubject;
+  document.getElementById('fsName').value = name;
+  document.getElementById('fsEmail').value = email;
+  document.getElementById('fsResult').value = lastResultText;
+  document.getElementById('formSubmit').action = `https://formsubmit.co/${IVO_EMAIL}`;
+
+  document.getElementById('resultPanel').style.display='block';
+  document.getElementById('resultPanel').scrollIntoView({behavior:'smooth'});
+  msg.textContent = 'Resultado generado. Completa ahora el envío obligatorio.'; msg.classList.add('ok');
+}
+
+function buildResultText(name,email,totalPct,level,pcts,strongest,weakest,risk,selectedLines){
+  const company = document.getElementById('company').value.trim() || 'No indicado';
+  const context = document.getElementById('context').value.trim() || 'No indicado';
+  const date = document.getElementById('date').value;
+  return `TEST HARVARD EN ACCIÓN\nBajo licencia de Ivo Güell Torné\n\nParticipante: ${name}\nEmail participante: ${email}\nEmpresa / área: ${company}\nFecha: ${date}\nNegociación que desea mejorar: ${context}\n\nRESULTADO GLOBAL\n${level.name}\nPuntuación: ${totalPct}/100\n\n${level.tone}\n\nPUNTUACIÓN POR PILARES\n- Personas: ${pcts.people}/100\n- Intereses: ${pcts.interests}/100\n- Opciones: ${pcts.options}/100\n- Criterios: ${pcts.criteria}/100\n\nFortaleza relativa: ${pillarNames[strongest]}\nÁrea principal de mejora: ${pillarNames[weakest]}\n\nRIESGO OCULTO PREDOMINANTE\n${risk.title}\n${risk.text}\n\nLECTURA EJECUTIVA\nEste test no mide teoría, sino comportamiento probable ante microcasos de presión. La clave es observar si el participante tiende a defender posiciones, conceder rápido, explicar demasiado, evitar tensión o aplicar método: separar personas del problema, explorar intereses, diseñar opciones y legitimar con criterios objetivos.\n\nPLAN DE MEJORA\n1. Antes de negociar: BATNA, mínimo aceptable, objetivo ambicioso, ZOPA estimada, criterios y concesiones intercambiables.\n2. Durante: no responder a una posición sin una pregunta de intereses.\n3. Ante presión: separar tono y problema; pasar a hechos, impacto y opciones.\n4. Ante precio: comparar alcance, riesgo, plazo, volumen, garantías y coste total antes de tocar descuento.\n5. Al cerrar: confirmar por escrito alcance, responsables, fechas, condiciones, riesgos pendientes y próximo paso.\n\nRESPUESTAS SELECCIONADAS\n${selectedLines.join('\n')}\n\n© 2026 Ivo Güell Torné. Uso bajo licencia de Ivo Güell Torné.`;
+}
+
+function sendMailto(){
+  if(!lastResultText){ calculateResult(); if(!lastResultText) return; }
+  const participantEmail = document.getElementById('email').value.trim();
+  const body = encodeURIComponent(lastResultText);
+  const subject = encodeURIComponent(lastSubject);
+  const cc = encodeURIComponent(participantEmail);
+  window.location.href = `mailto:${IVO_EMAIL}?cc=${cc}&subject=${subject}&body=${body}`;
+}
+
+async function copyResult(){
+  if(!lastResultText){ calculateResult(); if(!lastResultText) return; }
+  try{
+    await navigator.clipboard.writeText(lastResultText);
+    const msg = document.getElementById('message'); msg.textContent='Resultado copiado al portapapeles.'; msg.className='msg ok';
+  }catch(e){
+    alert('No se ha podido copiar automáticamente. Selecciona el texto desde el email preparado o imprime el resultado.');
+  }
+}
+
+updateProgress();
+</script>
+</body>
+</html>

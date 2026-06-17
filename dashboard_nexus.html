@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexus Mentor OS · Demo interactiva</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --ink:#102033;
+      --muted:#6d7c90;
+      --line:#dbe4ef;
+      --blue:#2563eb;
+      --blue2:#0ea5e9;
+      --deep:#0f2a4a;
+      --soft:#eaf2ff;
+      --green:#16a34a;
+      --amber:#f59e0b;
+      --red:#ef4444;
+      --shadow:0 22px 55px rgba(18,42,70,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.18), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(14,165,233,.14), transparent 28%),
+        var(--bg);
+      color:var(--ink);
+      min-height:100vh;
+    }
+
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+
+    aside{
+      background:linear-gradient(180deg, #071f3d 0%, #0b2b55 100%);
+      color:#fff;
+      padding:28px 22px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    aside:before{
+      content:"";
+      position:absolute;
+      width:250px;height:250px;
+      border-radius:50%;
+      background:rgba(255,255,255,.06);
+      top:-90px;left:-60px;
+    }
+
+    .brand{
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:34px;
+    }
+
+    .logo{
+      width:45px;height:45px;border-radius:16px;
+      background:linear-gradient(135deg, var(--blue2), var(--blue));
+      display:grid;place-items:center;
+      box-shadow:0 12px 25px rgba(37,99,235,.35);
+      font-weight:800;
+      letter-spacing:-1px;
+    }
+
+    .brand h1{
+      font-size:18px;
+      margin:0;
+      letter-spacing:-.4px;
+    }
+
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:rgba(255,255,255,.65);
+    }
+
+    nav{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .nav-btn{
+      border:0;
+      background:transparent;
+      color:rgba(255,255,255,.74);
+      text-align:left;
+      padding:13px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      transition:.18s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active{
+      background:rgba(255,255,255,.12);
+      color:#fff;
+    }
+
+    .side-card{
+      position:absolute;
+      left:22px;right:22px;bottom:24px;
+      padding:18px;
+      border-radius:20px;
+      background:rgba(255,255,255,.1);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    .side-card strong{
+      display:block;
+      font-size:13px;
+      margin-bottom:7px;
+    }
+
+    .side-card span{
+      font-size:12px;
+      color:rgba(255,255,255,.68);
+      line-height:1.45;
+      display:block;
+    }
+
+    main{
+      padding:28px;
+      overflow:auto;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .headline h2{
+      margin:0;
+      font-size:30px;
+      letter-spacing:-1.1px;
+      color:#102033;
+    }
+
+    .headline p{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    button{
+      font-family:inherit;
+    }
+
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:12px 15px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+      transition:.18s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .btn.primary{
+      color:#fff;
+      background:linear-gradient(135deg, var(--blue), var(--blue2));
+      box-shadow:0 14px 25px rgba(37,99,235,.22);
+    }
+
+    .btn.secondary{
+      background:#fff;
+      color:var(--deep);
+      border:1px solid var(--line);
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:18px;
+    }
+
+    .card{
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(219,228,239,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card.pad{
+      padding:20px;
+    }
+
+    .hero{
+      grid-column: span 8;
+      min-height:270px;
+      position:relative;
+      background:
+        linear-gradient(135deg, rgba(15,42,74,.96), rgba(37,99,235,.87)),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,.24), transparent 30%);
+      color:#fff;
+      padding:30px;
+      overflow:hidden;
+    }
+
+    .hero:after{
+      content:"";
+      position:absolute;
+      right:-80px;bottom:-120px;
+      width:330px;height:330px;
+      border-radius:50%;
+      border:55px solid rgba(255,255,255,.08);
+    }
+
+    .hero small{
+      display:inline-block;
+      padding:8px 12px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:999px;
+      font-weight:700;
+      font-size:12px;
+      margin-bottom:22px;
+    }
+
+    .hero h3{
+      margin:0;
+      max-width:680px;
+      font-size:38px;
+      line-height:1.04;
+      letter-spacing:-1.5px;
+      position:relative;
+      z-index:1;
+    }
+
+    .hero p{
+      max-width:650px;
+      margin:18px 0 24px;
+      color:rgba(255,255,255,.78);
+      line-height:1.55;
+      position:relative;
+      z-index:1;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
+    }
+
+    .btn.light{
+      background:#fff;
+      color:#102033;
+    }
+
+    .btn.ghost{
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    .readiness{
+      grid-column: span 4;
+    }
+
+    .score{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .circle{
+      width:126px;height:126px;
+      border-radius:50%;
+      background:
+        conic-gradient(var(--blue) 0 74%, #e6edf7 74% 100%);
+      display:grid;place-items:center;
+      position:relative;
+      flex-shrink:0;
+    }
+
+    .circle:before{
+      content:"";
+      position:absolute;
+      width:92px;height:92px;
+      border-radius:50%;
+      background:#fff;
+    }
+
+    .circle span{
+      position:relative;
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-1px;
+    }
+
+    .card-title{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .card-title h4{
+      margin:0;
+      font-size:16px;
+      letter-spacing:-.35px;
+    }
+
+    .card-title p{
+      margin:5px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .badge{
+      display:inline-flex;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      background:var(--soft);
+      color:var(--blue);
+      white-space:nowrap;
+    }
+
+    .kpis{
+      grid-column: span 12;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+
+    .kpi{
+      padding:20px;
+    }
+
+    .kpi span{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+
+    .kpi strong{
+      display:block;
+      font-size:34px;
+      letter-spacing:-1.4px;
+      margin-top:8px;
+    }
+
+    .kpi small{
+      display:block;
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .clients{
+      grid-column: span 7;
+    }
+
+    .intelligence{
+      grid-column: span 5;
+    }
+
+    .client-row{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr .7fr auto;
+      gap:12px;
+      align-items:center;
+      padding:14px 0;
+      border-top:1px solid var(--line);
+    }
+
+    .client-row:first-of-type{border-top:0}
+
+    .client strong{
+      display:block;
+      font-size:14px;
+    }
+
+    .client span{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:var(--green);
+    }
+
+    .dot.amber{background:var(--amber)}
+    .dot.red{background:var(--red)}
+
+    .mini-btn{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      padding:9px 11px;
+      font-weight:800;
+      font-size:12px;
+      color:var(--deep);
+      cursor:pointer;
+    }
+
+    .chat{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .bubble{
+      padding:13px 14px;
+      border-radius:16px;
+      font-size:13px;
+      line-height:1.48;
+    }
+
+    .bubble.ai{
+      background:var(--soft);
+      color:#12365f;
+      border-top-left-radius:4px;
+    }
+
+    .bubble.user{
+      background:#0f2a4a;
+      color:#fff;
+      border-top-right-radius:4px;
+      align-self:flex-end;
+      max-width:82%;
+    }
+
+    .chat-input{
+      display:flex;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .chat-input input{
+      flex:1;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 13px;
+      font:inherit;
+      outline:none;
+    }
+
+    .phases{
+      grid-column: span 12;
+    }
+
+    .phase-grid{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:12px;
+    }
+
+    .phase{
+      padding:16px;
+      border-radius:18px;
+      background:#f8fbff;
+      border:1px solid var(--line);
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .phase:hover{transform:translateY(-2px); background:#fff}
+
+    .phase b{
+      display:block;
+      font-size:13px;
+      margin-bottom:8px;
+    }
+
+    .phase span{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .accordion{
+      grid-column: span 6;
+    }
+
+    .costs{
+      grid-column: span 6;
+    }
+
+    .acc-item{
+      border-top:1px solid var(--line);
+    }
+
+    .acc-head{
+      width:100%;
+      border:0;
+      background:#fff;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:16px 0;
+      font-weight:850;
+      color:var(--deep);
+      text-align:left;
+    }
+
+    .acc-body{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+      padding:0 0 16px;
+      display:none;
+    }
+
+    .acc-item.open .acc-body{display:block}
+    .acc-item.open .plus{transform:rotate(45deg)}
+
+    .plus{
+      transition:.18s ease;
+      font-size:21px;
+      color:var(--blue);
+    }
+
+    .cost-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .cost{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:13px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#f8fbff;
+      font-size:13px;
+    }
+
+    .cost b{color:var(--deep)}
+    .cost span{color:var(--muted)}
+
+    .drawer{
+      position:fixed;
+      top:0;right:-470px;
+      width:450px;
+      max-width:92vw;
+      height:100vh;
+      background:#fff;
+      box-shadow:-25px 0 60px rgba(15,42,74,.18);
+      z-index:20;
+      padding:24px;
+      transition:.26s ease;
+      overflow:auto;
+    }
+
+    .drawer.open{right:0}
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(8,24,43,.38);
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+      z-index:19;
+    }
+
+    .overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .drawer-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      border-bottom:1px solid var(--line);
+      padding-bottom:18px;
+      margin-bottom:18px;
+    }
+
+    .drawer h3{
+      margin:0;
+      letter-spacing:-.6px;
+      font-size:24px;
+    }
+
+    .drawer p{
+      color:var(--muted);
+      line-height:1.55;
+      font-size:13px;
+    }
+
+    .close{
+      border:0;
+      background:#f0f5fb;
+      color:var(--deep);
+      width:38px;height:38px;
+      border-radius:13px;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .detail-list{
+      display:grid;
+      gap:12px;
+      margin:18px 0;
+    }
+
+    .detail{
+      padding:14px;
+      border-radius:16px;
+      background:#f8fbff;
+      border:1px solid var(--line);
+    }
+
+    .detail span{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      margin-bottom:6px;
+    }
+
+    .detail b{
+      font-size:14px;
+    }
+
+    .modal{
+      position:fixed;
+      left:50%;top:50%;
+      transform:translate(-50%,-46%) scale(.96);
+      width:640px;
+      max-width:92vw;
+      background:#fff;
+      border-radius:24px;
+      box-shadow:0 30px 80px rgba(9,30,55,.26);
+      z-index:30;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+      overflow:hidden;
+    }
+
+    .modal.open{
+      opacity:1;
+      pointer-events:auto;
+      transform:translate(-50%,-50%) scale(1);
+    }
+
+    .modal-header{
+      padding:24px;
+      background:linear-gradient(135deg, #0f2a4a, #2563eb);
+      color:#fff;
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:flex-start;
+    }
+
+    .modal-header h3{
+      margin:0;
+      font-size:22px;
+      letter-spacing:-.6px;
+    }
+
+    .modal-header p{
+      margin:7px 0 0;
+      color:rgba(255,255,255,.75);
+      font-size:13px;
+    }
+
+    .modal-body{
+      padding:24px;
+    }
+
+    .report{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      background:#f8fbff;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .hidden-section{
+      display:none;
+    }
+
+    .hidden-section.visible{
+      display:block;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:15px;
+    }
+
+    .tab{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:9px 12px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .tab.active{
+      background:var(--blue);
+      color:#fff;
+      border-color:var(--blue);
+    }
+
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%) translateY(30px);
+      background:#0f2a4a;
+      color:#fff;
+      padding:13px 16px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      box-shadow:0 18px 35px rgba(15,42,74,.22);
+      opacity:0;
+      pointer-events:none;
+      transition:.22s ease;
+      z-index:50;
+    }
+
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1050px){
+      .app{grid-template-columns:1fr}
+      aside{display:none}
+      main{padding:20px}
+      .hero,.readiness,.clients,.intelligence,.accordion,.costs{grid-column:span 12}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .phase-grid{grid-template-columns:repeat(2,1fr)}
+      .topbar{align-items:flex-start; flex-direction:column}
+      .actions{justify-content:flex-start}
+    }
+
+    @media (max-width: 640px){
+      .kpis{grid-template-columns:1fr}
+      .phase-grid{grid-template-columns:1fr}
+      .client-row{grid-template-columns:1fr}
+      .hero h3{font-size:30px}
+      .headline h2{font-size:25px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="logo">NX</div>
+        <div>
+          <h1>Nexus Mentor OS</h1>
+          <p>Intel·ligència operativa privada</p>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" onclick="scrollToBlock('dashboard')">Dashboard <span>⌘</span></button>
+        <button class="nav-btn" onclick="scrollToBlock('clients')">Clients <span>→</span></button>
+        <button class="nav-btn" onclick="scrollToBlock('phases')">Fases <span>→</span></button>
+        <button class="nav-btn" onclick="scrollToBlock('diagnostic')">Diagnòstic <span>→</span></button>
+        <button class="nav-btn" onclick="openModal()">Informe IA <span>✦</span></button>
+      </nav>
+
+      <div class="side-card">
+        <strong>Demo comercial navegable</strong>
+        <span>Maqueta HTML amb botons, panells, acordions, xat simulat i informe executiu generat.</span>
+      </div>
+    </aside>
+
+    <main id="dashboard">
+      <section class="topbar">
+        <div class="headline">
+          <h2>Dashboard executiu de coneixement intern</h2>
+          <p>Una demo funcional per explicar diagnòstic, seguiment, automatització i decisió amb IA.</p>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" onclick="toggleSection('hiddenDemo')">Obrir / tancar resum</button>
+          <button class="btn secondary" onclick="openDrawer('Mespack Industrial')">Fitxa client</button>
+          <button class="btn primary" onclick="openModal()">Generar informe IA</button>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card hero">
+          <small>Business Knowledge Readiness Check</small>
+          <h3>No automatitzem caos. Ordenem coneixement, processos i decisions abans d’activar IA.</h3>
+          <p>
+            Sistema privat de seguiment per veure clients, projectes, reunions, documents, decisions,
+            tasques i riscos en un únic espai executiu.
+          </p>
+          <div class="hero-actions">
+            <button class="btn light" onclick="openDrawer('Demo Pilot · Customer Service')">Veure pilot</button>
+            <button class="btn ghost" onclick="scrollToBlock('diagnostic')">Veure diagnòstic</button>
+          </div>
+        </article>
+
+        <article class="card pad readiness">
+          <div class="card-title">
+            <div>
+              <h4>Maduresa estimada</h4>
+              <p>Puntuació simulada sobre 30 punts.</p>
+            </div>
+            <span class="badge">Pilot viable</span>
+          </div>
+          <div class="score">
+            <div>
+              <p style="margin:0;color:var(--muted);line-height:1.55;font-size:13px">
+                L’empresa té eines, però necessita ordenació documental i criteris de seguiment abans d’escalar.
+              </p>
+              <button class="mini-btn" style="margin-top:14px" onclick="showToast('Lectura: maduresa mitjana. Recomanable pilot controlat de 4-8 setmanes.')">Interpretar</button>
+            </div>
+            <div class="circle"><span>22</span></div>
+          </div>
+        </article>
+
+        <section id="hiddenDemo" class="card pad hidden-section" style="grid-column:span 12">
+          <div class="card-title">
+            <div>
+              <h4>Resum executiu de la proposta</h4>
+              <p>Aquest bloc s’obre i es tanca amb botó. Serveix per ensenyar interactivitat en demo.</p>
+            </div>
+            <span class="badge">Interactiu</span>
+          </div>
+          <p style="color:var(--muted);line-height:1.65;margin:0">
+            La proposta no és vendre una app tancada, sinó un procés: diagnòstic, ordenació,
+            pilot funcional, formació, seguiment i ajustos. Això permet dimensionar costos, riscos,
+            implicació interna i viabilitat tècnica abans de prometre una implantació completa.
+          </p>
+        </section>
+
+        <section class="kpis">
+          <article class="card kpi">
+            <span>Clients actius</span>
+            <strong>12</strong>
+            <small>3 amb risc de seguiment feble</small>
+          </article>
+          <article class="card kpi">
+            <span>Projectes vius</span>
+            <strong>18</strong>
+            <small>6 en fase de pilot</small>
+          </article>
+          <article class="card kpi">
+            <span>Tasques pendents</span>
+            <strong>47</strong>
+            <small>9 vencen aquesta setmana</small>
+          </article>
+          <article class="card kpi">
+            <span>Documents indexats</span>
+            <strong>326</strong>
+            <small>SharePoint / OneDrive</small>
+          </article>
+        </section>
+
+        <article id="clients" class="card pad clients">
+          <div class="card-title">
+            <div>
+              <h4>Clients i projectes prioritaris</h4>
+              <p>Fitxes clicables per obrir panell lateral.</p>
+            </div>
+            <span class="badge">CRM executiu</span>
+          </div>
+
+          <div class="client-row">
+            <div class="client"><strong>Mespack Industrial</strong><span>Organització i equips</span></div>
+            <div class="status"><i class="dot amber"></i> Pilot pendent</div>
+            <div class="status">4 setmanes</div>
+            <button class="mini-btn" onclick="openDrawer('Mespack Industrial')">Obrir</button>
+          </div>
+
+          <div class="client-row">
+            <div class="client"><strong>InterPur Chemicals</strong><span>Comunicació interna</span></div>
+            <div class="status"><i class="dot"></i> En curs</div>
+            <div class="status">8 hores</div>
+            <button class="mini-btn" onclick="openDrawer('InterPur Chemicals')">Obrir</button>
+          </div>
+
+          <div class="client-row">
+            <div class="client"><strong>Ajuntament · Promoció Econòmica</strong><span>Talent, IA i ocupació</span></div>
+            <div class="status"><i class="dot"></i> Preparat</div>
+            <div class="status">25 hores</div>
+            <button class="mini-btn" onclick="openDrawer('Ajuntament · Promoció Econòmica')">Obrir</button>
+          </div>
+
+          <div class="client-row">
+            <div class="client"><strong>Customer Service Hub</strong><span>Fluxos, reunions i decisions</span></div>
+            <div class="status"><i class="dot red"></i> Fricció alta</div>
+            <div class="status">8 setmanes</div>
+            <button class="mini-btn" onclick="openDrawer('Customer Service Hub')">Obrir</button>
+          </div>
+        </article>
+
+        <article class="card pad intelligence">
+          <div class="card-title">
+            <div>
+              <h4>Xat de coneixement</h4>
+              <p>Simulació de resposta IA sobre documents i reunions.</p>
+            </div>
+            <span class="badge">IA privada</span>
+          </div>
+
+          <div class="chat">
+            <div class="bubble ai">Pregunta’m pel client, les tasques pendents o el risc del projecte.</div>
+            <div class="bubble user">Què preocupa ara del Customer Service Hub?</div>
+            <div id="aiAnswer" class="bubble ai">Hi ha tres riscos: manca de criteris comuns, reunions sense acta útil i decisions que no queden assignades a responsables.</div>
+            <div class="chat-input">
+              <input id="chatText" placeholder="Escriu una pregunta de demo..." />
+              <button class="btn primary" onclick="fakeChat()">Enviar</button>
+            </div>
+          </div>
+        </article>
+
+        <article id="phases" class="card pad phases">
+          <div class="card-title">
+            <div>
+              <h4>Fases de venda segura</h4>
+              <p>Clica cada fase per obrir un missatge comercial.</p>
+            </div>
+            <span class="badge">Metodologia</span>
+          </div>
+          <div class="phase-grid">
+            <div class="phase" onclick="showToast('Fase 1: demo visual per vendre visió sense comprometre implantació.')">
+              <b>1 · Demo</b><span>Caràtula navegable, dades fictícies i relat executiu.</span>
+            </div>
+            <div class="phase" onclick="showToast('Fase 2: diagnòstic per valorar maduresa documental, permisos i processos.')">
+              <b>2 · Diagnòstic</b><span>Auditoria ràpida de coneixement intern i eines.</span>
+            </div>
+            <div class="phase" onclick="showToast('Fase 3: pilot petit amb un client, una carpeta i fluxos limitats.')">
+              <b>3 · Pilot</b><span>Prova controlada abans d’escalar.</span>
+            </div>
+            <div class="phase" onclick="showToast('Fase 4: implementació amb automatitzacions, dashboard i responsables.')">
+              <b>4 · Implementació</b><span>Dashboard, bases, fluxos i adopció.</span>
+            </div>
+            <div class="phase" onclick="showToast('Fase 5: seguiment i ajustos per evitar que el sistema mori.')">
+              <b>5 · Ajustos</b><span>Millora contínua, manteniment i governança.</span>
+            </div>
+          </div>
+        </article>
+
+        <article id="diagnostic" class="card pad accordion">
+          <div class="card-title">
+            <div>
+              <h4>Diagnòstic de maduresa</h4>
+              <p>Acordions funcionals per explicar on pot estar el risc.</p>
+            </div>
+            <span class="badge">Readiness</span>
+          </div>
+
+          <div class="acc-item open">
+            <button class="acc-head" onclick="toggleAcc(this)">Estructura documental <span class="plus">+</span></button>
+            <div class="acc-body">Carpetes, nomenclatura, versions, actes, informes i documents vinculats a client/projecte.</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-head" onclick="toggleAcc(this)">Permisos Microsoft 365 <span class="plus">+</span></button>
+            <div class="acc-body">Validació d’administrador, accés a SharePoint, Outlook, Teams, OneDrive i criteris de seguretat.</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-head" onclick="toggleAcc(this)">Processos i responsables <span class="plus">+</span></button>
+            <div class="acc-body">Qui crea actes, qui assigna tasques, qui actualitza estats i qui manté viu el sistema.</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-head" onclick="toggleAcc(this)">Adopció i canvi <span class="plus">+</span></button>
+            <div class="acc-body">Formació, resistències, conflictes previs i capacitat real d’incorporar nous hàbits.</div>
+          </div>
+        </article>
+
+        <article class="card pad costs">
+          <div class="card-title">
+            <div>
+              <h4>Blocs de cost defensables</h4>
+              <p>Això transforma la demo en consultoria vendible.</p>
+            </div>
+            <span class="badge">Pressupost</span>
+          </div>
+
+          <div class="tabs">
+            <button class="tab active" onclick="openTab(event,'t1')">Anàlisi</button>
+            <button class="tab" onclick="openTab(event,'t2')">Implementació</button>
+            <button class="tab" onclick="openTab(event,'t3')">Seguiment</button>
+          </div>
+
+          <div id="t1" class="tab-panel active">
+            <div class="cost-list">
+              <div class="cost"><b>Diagnòstic inicial</b><span>1-2 setmanes</span></div>
+              <div class="cost"><b>Mapa documental</b><span>revisió i criteris</span></div>
+              <div class="cost"><b>Riscos i permisos</b><span>IT / seguretat</span></div>
+            </div>
+          </div>
+
+          <div id="t2" class="tab-panel">
+            <div class="cost-list">
+              <div class="cost"><b>Base de dades</b><span>Lists / SharePoint</span></div>
+              <div class="cost"><b>Automatitzacions</b><span>Power Automate / n8n</span></div>
+              <div class="cost"><b>Dashboard</b><span>interfície i proves</span></div>
+            </div>
+          </div>
+
+          <div id="t3" class="tab-panel">
+            <div class="cost-list">
+              <div class="cost"><b>Formació d’ús</b><span>equip intern</span></div>
+              <div class="cost"><b>Ajustos pilot</b><span>2-4 setmanes</span></div>
+              <div class="cost"><b>Manteniment</b><span>evolució mensual</span></div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="overlay" class="overlay" onclick="closeAll()"></div>
+
+  <aside id="drawer" class="drawer">
+    <div class="drawer-head">
+      <div>
+        <h3 id="drawerTitle">Fitxa client</h3>
+        <p>Vista resum amb estat del projecte, riscos, tasques i següent acció.</p>
+      </div>
+      <button class="close" onclick="closeAll()">×</button>
+    </div>
+
+    <div class="detail-list">
+      <div class="detail">
+        <span>Estat</span>
+        <b id="detailStatus">Pilot pendent de validació</b>
+      </div>
+      <div class="detail">
+        <span>Risc principal</span>
+        <b>Documents i decisions sense estructura comuna.</b>
+      </div>
+      <div class="detail">
+        <span>Següent acció</span>
+        <b>Fer diagnòstic de maduresa i seleccionar un projecte pilot.</b>
+      </div>
+      <div class="detail">
+        <span>Recursos mínims</span>
+        <b>Consultor funcional + responsable intern + suport IT puntual.</b>
+      </div>
+    </div>
+
+    <p>
+      Lectura executiva: abans de connectar IA i automatitzacions, cal confirmar que el client té
+      processos, permisos i una arquitectura documental mínima. Si no, la primera venda ha de ser
+      diagnòstic i ordenació.
+    </p>
+
+    <button class="btn primary" onclick="openModal()">Crear informe d’aquest client</button>
+  </aside>
+
+  <section id="modal" class="modal">
+    <div class="modal-header">
+      <div>
+        <h3>Informe executiu generat</h3>
+        <p>Exemple de sortida IA per a reunió comercial o proposta.</p>
+      </div>
+      <button class="close" onclick="closeAll()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="report">
+        <b>Conclusió:</b> el client mostra una maduresa mitjana. És viable iniciar un pilot, però no una
+        implantació completa immediata.<br><br>
+        <b>Recomanació:</b> començar amb una carpeta SharePoint, un projecte, una base de tasques,
+        una rutina d’actes i un dashboard executiu inicial.<br><br>
+        <b>Costos defensables:</b> anàlisi, ordenació documental, configuració de fluxos, formació,
+        seguiment i ajustos durant les primeres setmanes.
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn secondary" onclick="showToast('Informe copiat en mode demo.')">Copiar informe</button>
+        <button class="btn primary" onclick="showToast('Proposta generada en mode demo.')">Convertir en proposta</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast">Missatge</div>
+
+  <script>
+    function scrollToBlock(id){
+      document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function toggleSection(id){
+      document.getElementById(id).classList.toggle('visible');
+    }
+
+    function openDrawer(name){
+      document.getElementById('drawerTitle').textContent = name;
+      const status = {
+        'Mespack Industrial':'Pilot pendent de validació directiva',
+        'InterPur Chemicals':'Formació i comunicació interna en curs',
+        'Ajuntament · Promoció Econòmica':'Programa preparat per activació',
+        'Customer Service Hub':'Fricció alta i necessitat de seguiment',
+        'Demo Pilot · Customer Service':'Pilot controlat de 4-8 setmanes'
+      };
+      document.getElementById('detailStatus').textContent = status[name] || 'Pilot pendent de validació';
+      document.getElementById('drawer').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function openModal(){
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function closeAll(){
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('modal').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    function toggleAcc(btn){
+      btn.parentElement.classList.toggle('open');
+    }
+
+    function openTab(evt, id){
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      evt.currentTarget.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+
+    function showToast(msg){
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function fakeChat(){
+      const input = document.getElementById('chatText');
+      const answer = document.getElementById('aiAnswer');
+      const text = input.value.trim();
+      if(!text){
+        showToast('Escriu una pregunta de prova.');
+        return;
+      }
+      answer.textContent = 'Resposta demo: per respondre bé a "' + text + '", primer revisaria documents, actes, tasques i decisions vinculades al client. Recomanació: començar per diagnòstic i pilot.';
+      input.value = '';
+      showToast('Resposta IA simulada generada.');
+    }
+  </script>
+</body>
+</html>

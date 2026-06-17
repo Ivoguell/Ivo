@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IDEI Consultores OS · Demo HTML</title>
+  <style>
+    :root{
+      --bg:#f5f8fc;
+      --panel:#ffffff;
+      --ink:#071b3a;
+      --muted:#6c7a92;
+      --line:#dbe5f2;
+      --blue:#0057d9;
+      --blue2:#0a84ff;
+      --navy:#071f46;
+      --soft:#eef5ff;
+      --soft2:#f8fbff;
+      --green:#16a34a;
+      --amber:#f59e0b;
+      --red:#ef4444;
+      --shadow:0 22px 60px rgba(7,31,70,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 9% 12%, rgba(10,132,255,.13), transparent 26%),
+        radial-gradient(circle at 95% 5%, rgba(0,87,217,.13), transparent 27%),
+        linear-gradient(180deg,#ffffff 0%, var(--bg) 100%);
+    }
+
+    .shell{
+      display:grid;
+      grid-template-columns:380px 1fr;
+      min-height:100vh;
+    }
+
+    .cover{
+      padding:42px 38px;
+      position:relative;
+      overflow:hidden;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.98), rgba(248,251,255,.96)),
+        radial-gradient(circle at 0% 100%, rgba(0,87,217,.1), transparent 35%);
+      border-right:1px solid var(--line);
+    }
+
+    .cover:before{
+      content:"";
+      position:absolute;
+      inset:-90px auto auto 210px;
+      width:440px;
+      height:130%;
+      transform:rotate(9deg);
+      background:linear-gradient(180deg, rgba(0,87,217,.08), rgba(0,87,217,0));
+      border-left:1px solid rgba(0,87,217,.12);
+    }
+
+    .brand{
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:58px;
+    }
+
+    .mark{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#08255b 0%,#0057d9 60%,#2db2ff 100%);
+      display:grid;
+      place-items:center;
+      box-shadow:0 17px 35px rgba(0,87,217,.25);
+    }
+
+    .mark span{
+      font-size:26px;
+      font-weight:950;
+      color:white;
+      letter-spacing:-2px;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:36px;
+      letter-spacing:9px;
+      line-height:.9;
+      color:var(--navy);
+    }
+
+    .brand small{
+      display:block;
+      margin-top:8px;
+      color:var(--blue);
+      letter-spacing:7px;
+      font-weight:800;
+      font-size:13px;
+    }
+
+    .claim{
+      position:relative;
+      z-index:1;
+      margin-bottom:30px;
+    }
+
+    .claim h2{
+      margin:0;
+      font-size:36px;
+      line-height:1.16;
+      letter-spacing:-1.1px;
+      font-weight:550;
+    }
+
+    .claim h2 strong{
+      color:var(--blue);
+      font-weight:850;
+    }
+
+    .line{
+      width:88px;
+      height:5px;
+      border-radius:99px;
+      background:linear-gradient(90deg,var(--blue),var(--blue2));
+      margin:28px 0;
+    }
+
+    .claim p{
+      margin:0;
+      font-size:18px;
+      line-height:1.55;
+      color:#12284b;
+    }
+
+    .features{
+      position:relative;
+      z-index:1;
+      display:grid;
+      gap:14px;
+      margin-top:34px;
+    }
+
+    .feature{
+      display:grid;
+      grid-template-columns:48px 1fr;
+      gap:14px;
+      align-items:center;
+      padding:10px;
+      border-radius:18px;
+      transition:.18s ease;
+      cursor:pointer;
+    }
+
+    .feature:hover{
+      background:var(--soft);
+      transform:translateX(3px);
+    }
+
+    .icon{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      display:grid;
+      place-items:center;
+      color:var(--blue);
+      background:white;
+      font-size:22px;
+      box-shadow:0 9px 20px rgba(7,31,70,.05);
+    }
+
+    .feature b{
+      display:block;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .feature span{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .privacy{
+      position:relative;
+      z-index:1;
+      margin-top:36px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.75);
+      border-radius:20px;
+      padding:18px;
+      display:grid;
+      grid-template-columns:48px 1fr;
+      gap:14px;
+      align-items:center;
+    }
+
+    .privacy b{
+      display:block;
+      margin-bottom:5px;
+      font-size:14px;
+    }
+
+    .privacy span{
+      color:var(--muted);
+      line-height:1.4;
+      font-size:12px;
+    }
+
+    .workspace{
+      padding:34px 34px 28px;
+      overflow:auto;
+    }
+
+    .window{
+      min-height:calc(100vh - 62px);
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:20px 24px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);
+    }
+
+    .top-left{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      min-width:0;
+    }
+
+    .hamb{
+      border:0;
+      background:#f1f6ff;
+      color:var(--navy);
+      border-radius:13px;
+      width:42px;
+      height:42px;
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .product-name{
+      font-size:18px;
+      font-weight:950;
+      white-space:nowrap;
+    }
+
+    .search{
+      width:310px;
+      max-width:35vw;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:13px;
+      background:#fff;
+    }
+
+    .chips{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      font-weight:800;
+      font-size:12px;
+      color:#12305b;
+      background:white;
+      white-space:nowrap;
+    }
+
+    .chip.blue{
+      color:var(--blue);
+      background:#f5f9ff;
+    }
+
+    .appgrid{
+      display:grid;
+      grid-template-columns:190px 1fr 310px;
+      min-height:calc(100vh - 146px);
+    }
+
+    .mini-nav{
+      border-right:1px solid var(--line);
+      padding:20px 16px;
+      background:#fbfdff;
+      transition:.25s ease;
+    }
+
+    .mini-nav.closed{
+      width:0;
+      padding:20px 0;
+      overflow:hidden;
+      border-right:0;
+    }
+
+    .navitem{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      border:0;
+      background:transparent;
+      width:100%;
+      text-align:left;
+      padding:13px 11px;
+      border-radius:14px;
+      cursor:pointer;
+      color:#12305b;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    .navitem.active,
+    .navitem:hover{
+      background:var(--soft);
+      color:var(--blue);
+    }
+
+    .integrations{
+      margin-top:32px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:white;
+    }
+
+    .integrations h4{
+      margin:0 0 12px;
+      font-size:13px;
+    }
+
+    .integrations div{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      margin:11px 0;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .content{
+      padding:22px;
+      background:#fff;
+    }
+
+    .content-head{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+      margin-bottom:20px;
+    }
+
+    .content h3{
+      margin:0;
+      font-size:22px;
+      letter-spacing:-.55px;
+    }
+
+    .content p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:11px 13px;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:850;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition:.18s ease;
+      font-family:inherit;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .btn.primary{
+      background:linear-gradient(135deg,var(--blue),var(--blue2));
+      color:#fff;
+      box-shadow:0 15px 25px rgba(0,87,217,.21);
+    }
+
+    .btn.secondary{
+      background:#fff;
+      color:#11305d;
+      border:1px solid var(--line);
+    }
+
+    .kpis{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .kpi{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:15px;
+      background:#fff;
+    }
+
+    .kpi span{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.45px;
+    }
+
+    .kpi b{
+      display:block;
+      margin-top:8px;
+      font-size:27px;
+      letter-spacing:-1px;
+    }
+
+    .kpi small{
+      display:block;
+      color:var(--muted);
+      margin-top:4px;
+      font-size:11px;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:#fff;
+      overflow:hidden;
+      margin-bottom:16px;
+    }
+
+    .panel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px 18px 0;
+    }
+
+    .panel-head h4{
+      margin:0;
+      font-size:19px;
+      letter-spacing:-.45px;
+    }
+
+    .panel-head small{
+      display:block;
+      color:var(--muted);
+      margin-top:5px;
+    }
+
+    .tabs{
+      display:flex;
+      gap:6px;
+      padding:14px 18px 0;
+      border-bottom:1px solid var(--line);
+    }
+
+    .tab{
+      border:0;
+      background:transparent;
+      padding:13px 11px;
+      font-weight:850;
+      font-size:12px;
+      color:var(--muted);
+      cursor:pointer;
+      border-bottom:3px solid transparent;
+    }
+
+    .tab.active{
+      color:var(--blue);
+      border-bottom-color:var(--blue);
+    }
+
+    .tab-panel{
+      display:none;
+      padding:18px;
+    }
+
+    .tab-panel.active{display:block}
+
+    .twocol{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:var(--soft2);
+    }
+
+    .box h5{
+      margin:0 0 12px;
+      font-size:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .task,
+    .doc,
+    .decision{
+      display:grid;
+      grid-template-columns:24px 1fr auto;
+      align-items:center;
+      gap:9px;
+      padding:10px 0;
+      border-top:1px solid var(--line);
+      font-size:12px;
+    }
+
+    .task:first-of-type,
+    .doc:first-of-type,
+    .decision:first-of-type{
+      border-top:0;
+    }
+
+    .circle{
+      width:15px;
+      height:15px;
+      border:1px solid #95a7bf;
+      border-radius:50%;
+      background:#fff;
+    }
+
+    .pill{
+      display:inline-flex;
+      padding:5px 8px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:900;
+      background:#e8f2ff;
+      color:var(--blue);
+      white-space:nowrap;
+    }
+
+    .pill.amber{background:#fff4df;color:#a45f00}
+    .pill.green{background:#e9f9ef;color:#087833}
+    .pill.red{background:#ffecec;color:#bb1d1d}
+
+    .bottom-strip{
+      display:grid;
+      grid-template-columns:repeat(4,1fr) 150px;
+      align-items:center;
+      background:linear-gradient(135deg,#071f46,#004dbb);
+      color:#fff;
+      gap:0;
+      padding:20px 24px;
+    }
+
+    .metric{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      border-right:1px solid rgba(255,255,255,.24);
+      padding:0 20px;
+      min-height:58px;
+    }
+
+    .metric:first-child{padding-left:0}
+
+    .metric:last-child{
+      border-right:0;
+      justify-content:flex-end;
+      font-size:27px;
+      font-weight:950;
+      letter-spacing:5px;
+    }
+
+    .metric i{
+      font-style:normal;
+      font-size:28px;
+    }
+
+    .metric span{
+      font-size:14px;
+      line-height:1.35;
+    }
+
+    .rightbar{
+      border-left:1px solid var(--line);
+      padding:20px 16px;
+      background:#fbfdff;
+    }
+
+    .right-card{
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:#fff;
+      padding:16px;
+      margin-bottom:14px;
+    }
+
+    .right-card h4{
+      margin:0 0 12px;
+      font-size:15px;
+      color:var(--blue);
+    }
+
+    .bubble{
+      padding:12px 13px;
+      border-radius:15px;
+      line-height:1.45;
+      font-size:12px;
+      margin-bottom:11px;
+    }
+
+    .bubble.user{
+      background:#dcebff;
+      margin-left:32px;
+      border-top-right-radius:4px;
+    }
+
+    .bubble.ai{
+      background:#fff;
+      border:1px solid var(--line);
+      border-top-left-radius:4px;
+    }
+
+    .chat-input{
+      display:flex;
+      gap:8px;
+    }
+
+    .chat-input input{
+      min-width:0;
+      flex:1;
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:10px;
+      font-size:12px;
+      outline:none;
+    }
+
+    .generator{
+      display:grid;
+      gap:10px;
+    }
+
+    .gen{
+      width:100%;
+      justify-content:space-between;
+      background:#fff;
+      border:1px solid var(--line);
+      color:#12305b;
+      padding:13px;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    .drawer{
+      position:fixed;
+      top:0;
+      right:-470px;
+      width:450px;
+      max-width:92vw;
+      height:100vh;
+      background:#fff;
+      box-shadow:-28px 0 70px rgba(7,31,70,.22);
+      z-index:50;
+      transition:.25s ease;
+      padding:24px;
+      overflow:auto;
+    }
+
+    .drawer.open{right:0}
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(7,31,70,.4);
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+      z-index:40;
+    }
+
+    .overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .drawer-head{
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+      align-items:flex-start;
+      border-bottom:1px solid var(--line);
+      padding-bottom:18px;
+      margin-bottom:18px;
+    }
+
+    .drawer h3{
+      margin:0;
+      font-size:24px;
+      letter-spacing:-.6px;
+    }
+
+    .drawer p{
+      color:var(--muted);
+      line-height:1.55;
+      font-size:13px;
+    }
+
+    .close{
+      border:0;
+      width:38px;
+      height:38px;
+      border-radius:13px;
+      background:#f1f6ff;
+      color:var(--navy);
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .detail{
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:var(--soft2);
+      margin-bottom:10px;
+    }
+
+    .detail span{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.55px;
+      margin-bottom:6px;
+    }
+
+    .detail b{
+      font-size:14px;
+    }
+
+    .modal{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-46%) scale(.96);
+      width:680px;
+      max-width:92vw;
+      background:white;
+      border-radius:26px;
+      box-shadow:0 30px 90px rgba(7,31,70,.26);
+      z-index:60;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+      overflow:hidden;
+    }
+
+    .modal.open{
+      opacity:1;
+      pointer-events:auto;
+      transform:translate(-50%,-50%) scale(1);
+    }
+
+    .modal-head{
+      padding:24px;
+      color:white;
+      background:linear-gradient(135deg,#071f46,#0069f5);
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+      align-items:flex-start;
+    }
+
+    .modal h3{
+      margin:0;
+      font-size:23px;
+      letter-spacing:-.5px;
+    }
+
+    .modal p{
+      margin:7px 0 0;
+      color:rgba(255,255,255,.78);
+      font-size:13px;
+    }
+
+    .modal-body{
+      padding:24px;
+    }
+
+    .report{
+      border:1px solid var(--line);
+      background:var(--soft2);
+      border-radius:18px;
+      padding:18px;
+      line-height:1.65;
+      font-size:13px;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:26px;
+      transform:translateX(-50%) translateY(30px);
+      background:#071f46;
+      color:white;
+      border-radius:999px;
+      padding:13px 17px;
+      font-size:13px;
+      font-weight:850;
+      box-shadow:0 18px 38px rgba(7,31,70,.24);
+      opacity:0;
+      transition:.22s ease;
+      z-index:80;
+      pointer-events:none;
+    }
+
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    @media(max-width:1200px){
+      .shell{grid-template-columns:1fr}
+      .cover{display:none}
+      .workspace{padding:18px}
+      .window{min-height:calc(100vh - 36px)}
+    }
+
+    @media(max-width:980px){
+      .appgrid{grid-template-columns:1fr}
+      .mini-nav,.rightbar{display:none}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .twocol{grid-template-columns:1fr}
+      .bottom-strip{grid-template-columns:1fr; gap:14px}
+      .metric{border-right:0;border-bottom:1px solid rgba(255,255,255,.18);padding:0 0 14px}
+      .metric:last-child{border-bottom:0;justify-content:flex-start}
+      .search{display:none}
+    }
+
+    @media(max-width:620px){
+      .workspace{padding:10px}
+      .topbar{flex-direction:column;align-items:flex-start}
+      .chips{justify-content:flex-start}
+      .kpis{grid-template-columns:1fr}
+      .content-head{flex-direction:column}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <aside class="cover">
+      <div class="brand">
+        <div class="mark"><span>ID</span></div>
+        <div>
+          <h1>IDEI</h1>
+          <small>CONSULTORES</small>
+        </div>
+      </div>
+
+      <section class="claim">
+        <h2>Coneixement que <strong>transforma.</strong><br/>Execució que <strong>genera resultats.</strong></h2>
+        <div class="line"></div>
+        <p>Sistema privat de seguiment, coneixement i execució per a projectes de consultoria i direcció.</p>
+      </section>
+
+      <section class="features">
+        <div class="feature" onclick="showToast('Vista 360º del client: projectes, reunions, decisions i riscos.')">
+          <div class="icon">👥</div>
+          <div><b>Clients i Projectes</b><span>Visió 360º del negoci i de les intervencions actives.</span></div>
+        </div>
+        <div class="feature" onclick="showToast('Actes, decisions i traçabilitat accionable.')">
+          <div class="icon">📅</div>
+          <div><b>Reunions i Decisions</b><span>Actes, acords, responsables i traçabilitat.</span></div>
+        </div>
+        <div class="feature" onclick="showToast('Documents estructurats per client, projecte i data.')">
+          <div class="icon">📄</div>
+          <div><b>Documents i Coneixement</b><span>Informació ordenada, localitzable i reutilitzable.</span></div>
+        </div>
+        <div class="feature" onclick="showToast('Tasques amb responsable, venciment i estat.')">
+          <div class="icon">☑</div>
+          <div><b>Tasques i Seguiment</b><span>Execució, responsables, terminis i alertes.</span></div>
+        </div>
+        <div class="feature" onclick="showToast('IA aplicada a informes, resums, emails i plans d’acció.')">
+          <div class="icon">✦</div>
+          <div><b>Intel·ligència i Automatització</b><span>IA que dona temps, claredat i capacitat d’acció.</span></div>
+        </div>
+      </section>
+
+      <section class="privacy">
+        <div class="icon">🛡</div>
+        <div><b>Entorn privat i controlat</b><span>El contingut s’organitza amb criteris de seguretat, permisos i governança.</span></div>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <section class="window">
+        <header class="topbar">
+          <div class="top-left">
+            <button class="hamb" onclick="toggleNav()">☰</button>
+            <div class="product-name">IDEI CONSULTORES OS</div>
+            <input class="search" placeholder="Buscar en tot el sistema..." />
+          </div>
+          <div class="chips">
+            <span class="chip blue">Microsoft 365 connectable</span>
+            <span class="chip">Privat</span>
+            <span class="chip">Demo HTML</span>
+          </div>
+        </header>
+
+        <section class="appgrid">
+          <nav id="miniNav" class="mini-nav">
+            <button class="navitem active" onclick="showTab(event,'resum')">⌂ Inici</button>
+            <button class="navitem" onclick="showTab(event,'clients')">👥 Clients</button>
+            <button class="navitem" onclick="showTab(event,'docs')">📄 Documents</button>
+            <button class="navitem" onclick="showTab(event,'tasques')">☑ Tasques</button>
+            <button class="navitem" onclick="openModal()">✦ Generador IA</button>
+
+            <div class="integrations">
+              <h4>Integracions actives</h4>
+              <div>☁ OneDrive</div>
+              <div>▦ SharePoint</div>
+              <div>✉ Outlook</div>
+              <div>👥 Teams</div>
+              <button class="btn secondary" style="width:100%;justify-content:center;margin-top:8px" onclick="showToast('Demo: l’estat real dependrà de permisos i llicències del client.')">Veure estat</button>
+            </div>
+          </nav>
+
+          <section class="content">
+            <div class="content-head">
+              <div>
+                <h3>Dashboard privat de seguiment executiu</h3>
+                <p>Estat general de clients, projectes, documents, decisions i tasques.</p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn secondary" onclick="toggleBlock('diagnosticBlock')">Obrir / tancar diagnòstic</button>
+                <button class="btn primary" onclick="openDrawer('Programa Customer Service')">Veure fitxa del projecte</button>
+              </div>
+            </div>
+
+            <section class="kpis">
+              <article class="kpi"><span>Clients actius</span><b>8</b><small>+1 aquest mes</small></article>
+              <article class="kpi"><span>Projectes</span><b>12</b><small>3 en pilot</small></article>
+              <article class="kpi"><span>Reunions</span><b>5</b><small>2 aquesta setmana</small></article>
+              <article class="kpi"><span>Tasques</span><b>14</b><small>7 vencen aviat</small></article>
+              <article class="kpi"><span>Documents</span><b>23</b><small>Actualitzats avui</small></article>
+            </section>
+
+            <section id="diagnosticBlock" class="panel hidden">
+              <div class="panel-head">
+                <div>
+                  <h4>Diagnòstic de maduresa prèvia</h4>
+                  <small>Aquest bloc s’obre i es tanca per explicar la venda segura: diagnòstic abans d’implementació.</small>
+                </div>
+                <button class="btn secondary" onclick="showToast('Lectura: maduresa mitjana. Recomanable pilot controlat.')">Interpretar</button>
+              </div>
+              <div class="tab-panel active">
+                <div class="twocol">
+                  <div class="box">
+                    <h5>Estructura documental <span class="pill amber">Mitjana</span></h5>
+                    <p>Hi ha carpetes i documents, però falta criteri comú per client, projecte, reunió, decisió i tasca.</p>
+                  </div>
+                  <div class="box">
+                    <h5>Permisos i IT <span class="pill amber">Validar</span></h5>
+                    <p>Abans de connectar Microsoft 365 cal revisar administrador, permisos, llicències i política de dades.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h4>Client: Programa Customer Service</h4>
+                  <small>Projecte: comunicació interna, seguiment i decisions operatives.</small>
+                </div>
+                <button class="btn secondary" onclick="openDrawer('Programa Customer Service')">Veure fitxa</button>
+              </div>
+
+              <div class="tabs">
+                <button class="tab active" onclick="showTab(event,'resum')">Resum</button>
+                <button class="tab" onclick="showTab(event,'clients')">Clients</button>
+                <button class="tab" onclick="showTab(event,'docs')">Documents</button>
+                <button class="tab" onclick="showTab(event,'tasques')">Tasques</button>
+              </div>
+
+              <div id="resum" class="tab-panel active">
+                <div class="twocol">
+                  <div class="box">
+                    <h5>Reunions recents <button class="btn secondary" onclick="showToast('S’obriria el resum de reunió.')">Veure totes</button></h5>
+                    <div class="decision"><span>📅</span><b>Reunió 12/06/2026<br><small>Teams · 60 min · protocol d’actuació</small></b><span class="pill">Avui</span></div>
+                    <div class="decision"><span>✓</span><b>Validar proposta de rols amb direcció</b><span></span></div>
+                    <div class="decision"><span>✓</span><b>Preparar esborrany del pla de comunicació</b><span></span></div>
+                    <div class="decision"><span>📅</span><b>Reunió 29/05/2026<br><small>Teams · 45 min · seguiment inicial</small></b><span class="pill">Resum</span></div>
+                  </div>
+
+                  <div class="box">
+                    <h5>Properes tasques <button class="btn secondary" onclick="showToast('S’obriria el tauler complet de tasques.')">Veure totes</button></h5>
+                    <div class="task"><span class="circle"></span><b>Validar proposta de rols</b><span class="pill">En curs</span></div>
+                    <div class="task"><span class="circle"></span><b>Esborrany protocol intern</b><span class="pill amber">Pendent</span></div>
+                    <div class="task"><span class="circle"></span><b>Anàlisi de friccions comunicatives</b><span class="pill amber">Pendent</span></div>
+                    <div class="task"><span class="circle"></span><b>Reunió de seguiment</b><span class="pill green">Programada</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="clients" class="tab-panel">
+                <div class="twocol">
+                  <div class="box">
+                    <h5>Projectes actius</h5>
+                    <div class="decision"><span>●</span><b>Comunicació interna per equips</b><span class="pill green">Actiu</span></div>
+                    <div class="decision"><span>●</span><b>Talent & People amb IA</b><span class="pill">Proposta</span></div>
+                    <div class="decision"><span>●</span><b>Direcció estratègica pimes</b><span class="pill amber">Validar</span></div>
+                  </div>
+                  <div class="box">
+                    <h5>Riscos detectats</h5>
+                    <p>Friccions no explicitades, decisions sense propietari i documents dispersos entre correu, Teams i carpetes personals.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div id="docs" class="tab-panel">
+                <div class="twocol">
+                  <div class="box">
+                    <h5>Documents recents</h5>
+                    <div class="doc"><span>📄</span><b>Diagnòstic inicial v2</b><span>OneDrive</span></div>
+                    <div class="doc"><span>📄</span><b>Pla d’acció comunicació interna</b><span>SharePoint</span></div>
+                    <div class="doc"><span>📄</span><b>Acta reunió 12/06/2026</b><span>Teams</span></div>
+                    <div class="doc"><span>✉</span><b>Email resum reunió</b><span>Outlook</span></div>
+                  </div>
+                  <div class="box">
+                    <h5>Criteri d’ordenació</h5>
+                    <p>Client → Projecte → Reunió → Document → Decisió → Tasca → Responsable → Estat.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div id="tasques" class="tab-panel">
+                <div class="twocol">
+                  <div class="box">
+                    <h5>Tasques crítiques</h5>
+                    <div class="task"><span class="circle"></span><b>Definir responsable intern del sistema</b><span class="pill red">Crítica</span></div>
+                    <div class="task"><span class="circle"></span><b>Validar permisos Microsoft 365</b><span class="pill amber">Pendent</span></div>
+                    <div class="task"><span class="circle"></span><b>Seleccionar carpeta pilot</b><span class="pill">En curs</span></div>
+                  </div>
+                  <div class="box">
+                    <h5>Pròxim pas recomanat</h5>
+                    <p>Iniciar un pilot limitat de 4-8 setmanes amb un únic projecte i una estructura documental controlada.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </section>
+
+          <aside class="rightbar">
+            <section class="right-card">
+              <h4>Chat amb coneixement</h4>
+              <div class="bubble user">Què em dius del projecte Customer Service?</div>
+              <div id="aiBubble" class="bubble ai">
+                El projecte mostra bona oportunitat, però necessita ordenar documents, decisions i responsables abans d’automatitzar.
+              </div>
+              <div class="chat-input">
+                <input id="chatInput" placeholder="Pregunta de demo..." />
+                <button class="btn primary" onclick="fakeAnswer()">Enviar</button>
+              </div>
+            </section>
+
+            <section class="right-card">
+              <h4>Generador IA</h4>
+              <div class="generator">
+                <button class="btn gen" onclick="openModal()">Informe de seguiment <span>›</span></button>
+                <button class="btn gen" onclick="showToast('Email post-reunió generat en mode demo.')">Email post-reunió <span>›</span></button>
+                <button class="btn gen" onclick="showToast('Pla d’acció generat en mode demo.')">Pla d’acció <span>›</span></button>
+                <button class="btn gen" onclick="showToast('Resum executiu generat en mode demo.')">Resum executiu <span>›</span></button>
+              </div>
+            </section>
+          </aside>
+        </section>
+
+        <footer class="bottom-strip">
+          <div class="metric"><i>◎</i><span>Visió 360º<br/>del client</span></div>
+          <div class="metric"><i>🧠</i><span>Coneixement<br/>estructurat</span></div>
+          <div class="metric"><i>⌬</i><span>Automatització<br/>intel·ligent</span></div>
+          <div class="metric"><i>▥</i><span>Decisions<br/>més ràpides</span></div>
+          <div class="metric">IDEI</div>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <div id="overlay" class="overlay" onclick="closeAll()"></div>
+
+  <aside id="drawer" class="drawer">
+    <div class="drawer-head">
+      <div>
+        <h3 id="drawerTitle">Fitxa del projecte</h3>
+        <p>Vista executiva per convertir informació dispersa en seguiment accionable.</p>
+      </div>
+      <button class="close" onclick="closeAll()">×</button>
+    </div>
+
+    <div class="detail"><span>Estat</span><b>Pilot recomanat abans d’implantació completa.</b></div>
+    <div class="detail"><span>Risc principal</span><b>Documents, reunions i decisions sense arquitectura comuna.</b></div>
+    <div class="detail"><span>Temps orientatiu</span><b>4-8 setmanes per a pilot funcional controlat.</b></div>
+    <div class="detail"><span>Recursos mínims</span><b>Consultor funcional + responsable intern + suport IT puntual.</b></div>
+
+    <p>
+      Aquesta fitxa ajuda a defensar que el projecte té costos d’anàlisi, ordenació prèvia,
+      implementació, formació, seguiment i ajustos. La demo ven la visió; el diagnòstic dimensiona el projecte real.
+    </p>
+
+    <button class="btn primary" onclick="openModal()">Generar informe</button>
+  </aside>
+
+  <section id="modal" class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>Informe executiu generat</h3>
+        <p>Exemple de sortida IA per a una proposta comercial d’IDEI Consultores.</p>
+      </div>
+      <button class="close" onclick="closeAll()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="report">
+        <b>Lectura del projecte:</b> l’empresa pot iniciar un sistema privat de seguiment i coneixement,
+        però necessita una fase prèvia de diagnòstic per validar documents, permisos, processos i responsables.<br><br>
+        <b>Recomanació:</b> començar amb un pilot limitat: un projecte, una carpeta SharePoint/OneDrive,
+        una base de tasques, una rutina d’actes i un generador d’informes executius.<br><br>
+        <b>Costos defensables:</b> anàlisi, ordenació documental, resolució de friccions prèvies,
+        implementació, formació, seguiment i ajustos.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+        <button class="btn secondary" onclick="showToast('Informe copiat en mode demo.')">Copiar informe</button>
+        <button class="btn primary" onclick="showToast('Convertit en proposta comercial en mode demo.')">Convertir en proposta</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast">Missatge demo</div>
+
+  <script>
+    function toggleNav(){
+      document.getElementById('miniNav').classList.toggle('closed');
+    }
+
+    function toggleBlock(id){
+      document.getElementById(id).classList.toggle('hidden');
+    }
+
+    function showTab(evt, id){
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      if(evt && evt.currentTarget.classList.contains('tab')){
+        evt.currentTarget.classList.add('active');
+      } else {
+        const firstTab = document.querySelector('.tab');
+        if(firstTab) firstTab.classList.add('active');
+      }
+
+      const panel = document.getElementById(id);
+      if(panel) panel.classList.add('active');
+
+      document.querySelectorAll('.navitem').forEach(n => n.classList.remove('active'));
+      if(evt && evt.currentTarget.classList.contains('navitem')){
+        evt.currentTarget.classList.add('active');
+      }
+    }
+
+    function openDrawer(title){
+      document.getElementById('drawerTitle').textContent = title;
+      document.getElementById('drawer').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function openModal(){
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function closeAll(){
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('modal').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    function showToast(msg){
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function fakeAnswer(){
+      const input = document.getElementById('chatInput');
+      const bubble = document.getElementById('aiBubble');
+      const text = input.value.trim();
+      if(!text){
+        showToast('Escriu una pregunta de prova.');
+        return;
+      }
+      bubble.textContent = 'Resposta demo: per respondre bé a "' + text + '", el sistema revisaria client, projecte, actes, documents, decisions i tasques. Recomanació: diagnòstic + pilot controlat.';
+      input.value = '';
+      showToast('Resposta IA simulada generada.');
+    }
+  </script>
+</body>
+</html>
